@@ -9,7 +9,10 @@ int main(void)
 
 	ft::vector<std::string>::iterator	it = test.begin();
 
-	std::cout << it[1] << std::endl;
+	std::cout << *(++it) << std::endl;
+	*it = "truc";
+	std::cout << *it << std::endl;
+
 
 	return 0;
 }

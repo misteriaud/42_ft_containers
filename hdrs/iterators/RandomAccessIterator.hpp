@@ -12,10 +12,13 @@ namespace ft {
 
 			typedef ft::random_access_iterator_tag							iterator_category;
 			typedef RandomAccessIterator									it;
-			typedef typename ft::BidirectionalIterator<T>::difference_type	difference_type;
+			using typename ft::BidirectionalIterator<T>::difference_type;
+			using typename ft::BidirectionalIterator<T>::value_type;
+			using typename ft::BidirectionalIterator<T>::pointer;
+			using typename ft::BidirectionalIterator<T>::reference;
 
 			RandomAccessIterator(): BidirectionalIterator<T>() {};
-			RandomAccessIterator(T* from): BidirectionalIterator<T>(from) {};
+			RandomAccessIterator(pointer from): BidirectionalIterator<T>(from) {};
 			RandomAccessIterator(const RandomAccessIterator& from): BidirectionalIterator<T>(from) {};
 			virtual ~RandomAccessIterator() {};
 
@@ -56,17 +59,13 @@ namespace ft {
 				this->_elem -= diff;
 				return (*this);
 			};
-			T&		operator[](int index) {
+			reference	operator[](int index) {
+				return (this->_elem[index]);
+			};
+			const reference		operator[](int index) const {
 				return (this->_elem[index]);
 			};
 	};
-
-	// template <typename T>
-	// class RandomAccessIterator<const T>: public BidirectionalIterator<const T> {
-	// 	RandomAccessIterator(): BidirectionalIterator<T> {};
-	// 	RandomAccessIterator(const RandomAccessIterator& from): BidirectionalIterator<T>(from) {};
-	// 	virtual ~RandomAccessIterator() {};
-	// };
 }
 
 #endif

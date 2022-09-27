@@ -34,6 +34,9 @@ namespace ft {
 		iterator	begin() {
 			return iterator(_pool);
 		}
+		const_iterator	cbegin() const {
+			return const_iterator(_pool);
+		}
 
 	private:
 		T*	_pool;

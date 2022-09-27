@@ -35,52 +35,47 @@ namespace ft {
 			virtual bool	operator!=(const BidirectionalIterator& rhs) {
 				return !(*this == rhs);
 			};
-			virtual T&		operator*() {
+			virtual reference		operator*() {
 				if (!_elem)
 					throw std::exception();
 				return (*_elem);
 			};
-			virtual T&		operator->() {
+			virtual reference		operator->() {
+				return (operator*());
+			};
+			virtual const reference		operator*() const {
+				if (!this->_elem)
+					throw std::exception();
+				return (*this->_elem);
+			};
+			virtual const reference		operator->() const {
 				return (operator*());
 			};
 
 			// Increment / decrement
-			BidirectionalIterator&	operator++() {
+			BidirectionalIterator&	operator++(int) {
 				_elem++;
 				return (*this);
 			};
-			BidirectionalIterator&	operator--() {
+			BidirectionalIterator&	operator--(int) {
 				_elem--;
 				return (*this);
 			};
-			// BidirectionalIterator	operator++() {
-			// 	BidirectionalIterator tmp = *this;
-			// 	tmp++;
-			// 	return (tmp);
-			// };
-			// BidirectionalIterator	operator--() {
-			// 	BidirectionalIterator tmp = *this;
-			// 	tmp--;
-			// 	return (tmp);
-			// };
+			BidirectionalIterator	operator++(void) {
+				BidirectionalIterator tmp = *this;
+				tmp++;
+				return (tmp);
+			};
+			BidirectionalIterator	operator--(void) {
+				BidirectionalIterator tmp = *this;
+				tmp--;
+				return (tmp);
+			};
 
 		protected:
 			pointer	_elem;
 
 	};
-
-	// template <typename T>
-	// class BidirectionalIterator<const T > {
-	// 	public:
-	// 		virtual const T&		operator*() {
-	// 			if (!_elem)
-	// 				throw std::exception();
-	// 			return (*_elem);
-	// 		};
-	// 		virtual const T&		operator->() {
-	// 			return (operator*());
-	// 		};
-	// };
 }
 
 #endif
