@@ -66,21 +66,67 @@ namespace ft {
 		typedef ft::VectorIt<T>						iterator;
 		typedef ft::VectorIt<const T>				const_iterator;
 
-		vector(): _pool(new T[50]) {
-			_pool[1] = "test";
+		// CONSTRUCTORS AND DESTRUCTOR
+		explicit vector (const allocator_type& alloc = allocator_type())
+		: _alloc(alloc), _buffer(NULL), _capacity(0), _size(0) { };
+		explicit vector (size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type())
+		: _alloc(alloc), _buffer(_alloc.allocate(n)), _capacity(n), _size(n)
+		{
+			// _alloc.allocate(n, &_buffer);
+			for (size_t i = 0; i < n; i++)
+				_alloc.construct(_alloc + n, val);
+		}
+		template <class InputIterator>
+		vector (InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type())
+		: _alloc(alloc), _buffer(NULL), _capacity(0), _size(0) {
+			for(; first != last; first++)
+				push_back(*first);
 		};
 		vector(const vector&);
-		vector&	operator=(const vector&);
 		~vector() {};
+
+
+		//insertion
+		void	push_back(const value_type& val) {
+			if (_size == _capacity) {
+				size_type	new_capacity = _capacity ? _capacity * 2 : 1;
+				T*	new_buffer = _alloc.allocate(new_capacity);
+				for (size_type i = 0; i < _size; i++) {
+					_alloc.construct(new_buffer + i, _buffer[i]);
+					_alloc.destroy(_buffer + i);
+				}
+				_alloc.deallocate(_buffer, _capacity);
+				_buffer = new_buffer;
+			}
+			_buffer[_size] = val;
+			_size++;
+		}
+		void	pop_back() {
+			if (_size == 0)
+				return ;
+			_alloc.destroy(_buffer[_size - 1]);
+		}
+		void	resize(size_type n, value_type val = value_type()) {
+			while (_size < n)
+				push_back(val);
+			while (_size > n)
+				pop_back();
+		};
+
+		vector&	operator=(const vector&);
 		iterator	begin() {
-			return iterator(_pool);
+			return iterator(_buffer);
 		}
 		const_iterator	cbegin() const {
-			return const_iterator(_pool);
+			return const_iterator(_buffer);
 		}
 
 	private:
-		T*	_pool;
+		Allocator	_alloc;
+		T*			_buffer;
+		size_type	_capacity;
+		size_type	_size;
+
 
 	};
 }
