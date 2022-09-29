@@ -4,6 +4,7 @@
 
 #include <memory>
 #include "iterators/RandomAccessIterator.hpp"
+#include <stdexcept>
 
 namespace ft {
 
@@ -85,19 +86,71 @@ namespace ft {
 		vector(const vector&);
 		~vector() {};
 
+		//
+		//	ITERATORS
+		//
+		iterator	begin() {
+			return iterator(_buffer);
+		}
+		iterator	end() {
+			return iterator(_buffer + _size);
+		}
+		const_iterator	cbegin() const {
+			return const_iterator(_buffer);
+		}
+		const_iterator	cend() {
+			return const_iterator(_buffer + _size);
+		}
 
-		//insertion
-		void	push_back(const value_type& val) {
-			if (_size == _capacity) {
-				size_type	new_capacity = _capacity ? _capacity * 2 : 1;
-				T*	new_buffer = _alloc.allocate(new_capacity);
-				for (size_type i = 0; i < _size; i++) {
-					_alloc.construct(new_buffer + i, _buffer[i]);
-					_alloc.destroy(_buffer + i);
-				}
-				_alloc.deallocate(_buffer, _capacity);
-				_buffer = new_buffer;
+
+
+		//
+		//	CAPACITY
+		//
+		size_type	size(void) const { return (_size); }
+		size_type	max_size(void) const {
+			// return std::numeric_limits<size_type>::max() / sizeof(value_type);
+			return _alloc.max_size();
+		}
+		void	resize(size_type n, value_type val = value_type()) {
+			while (_size < n)
+				push_back(val);
+			while (_size > n)
+				pop_back();
+		};
+		size_type	capacity(void) const { return (_capacity); }
+		bool		empty() const { return (!_size); }
+		void		reserve(size_type n) {
+			if (n <= _capacity)
+				return ;
+			if (n > max_size())
+				throw std::length_error("max size over");
+			size_type	new_capacity = _capacity ? _capacity * 2 : 1;
+			while (new_capacity < n)
+				new_capacity *= 2;
+			T*	new_buffer = _alloc.allocate(new_capacity);
+			for (size_type i = 0; i < _size; i++) {
+				_alloc.construct(new_buffer + i, _buffer[i]);
+				_alloc.destroy(_buffer + i);
 			}
+			_alloc.deallocate(_buffer, _capacity);
+			_capacity = new_capacity;
+			_buffer = new_buffer;
+		}
+
+
+
+		//
+		//	ELEMENT ACCESS
+		//
+
+
+
+		//
+		//	MODIFIERS
+		//
+		void	push_back(const value_type& val) {
+			reserve (_size + 1);
 			_buffer[_size] = val;
 			_size++;
 		}
@@ -106,28 +159,14 @@ namespace ft {
 				return ;
 			_alloc.destroy(_buffer[_size - 1]);
 		}
-		void	resize(size_type n, value_type val = value_type()) {
-			while (_size < n)
-				push_back(val);
-			while (_size > n)
-				pop_back();
-		};
 
 		vector&	operator=(const vector&);
-		iterator	begin() {
-			return iterator(_buffer);
-		}
-		const_iterator	cbegin() const {
-			return const_iterator(_buffer);
-		}
 
 	private:
 		Allocator	_alloc;
 		T*			_buffer;
 		size_type	_capacity;
 		size_type	_size;
-
-
 	};
 }
 

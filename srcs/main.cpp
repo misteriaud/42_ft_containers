@@ -1,6 +1,7 @@
 
 #include <string>
 #include <iostream>
+#include <algorithm>
 
 #if 1
 # include "../hdrs/vector.hpp"
@@ -14,11 +15,18 @@
 
 int main(void)
 {
-	NS::vector<std::string>	test;
+	NS::vector<size_t>	test;
 
-	test.push_back("coucou");
-	NS::vector<std::string>::iterator	it = test.begin();
-	std::cout << *it << std::endl;
+	for (size_t i = 0; i < 10; i++)
+	{
+		test.push_back(i);
+		std::cout << "size: " << test.size() << ", capacity: " << test.capacity() << std::endl;
+
+	}
+
+	NS::vector<size_t>::iterator	it = test.begin();
+	for (; it != test.end(); it++)
+		std::cout << *it << std::endl;
 
 	// NS::vector<std::string>::iterator	it = test.begin();
 	// NS::vector<std::string>::iterator	it2 = test.begin();
