@@ -6,7 +6,7 @@
 #include "IteratorUtils.hpp"
 
 namespace ft {
-	template <typename T>
+	template <typename T, typename It>
 	class BidirectionalIterator {
 
 		public:
@@ -18,63 +18,32 @@ namespace ft {
 
 			BidirectionalIterator(): _elem(NULL) {};
 			BidirectionalIterator(const pointer from): _elem(from) {};
-			BidirectionalIterator(const BidirectionalIterator& from): _elem(from._elem) {};
-			virtual BidirectionalIterator&	operator=(const BidirectionalIterator& rhs) {
+			BidirectionalIterator(const It& from): _elem(from._elem) {};
+			virtual It&	operator=(const It& rhs) {
 				if (this == &rhs)
-					return (*this);
+					return (dynamic_cast<It&>(*this));
 				_elem = rhs._elem;
-				return (*this);
+				return (dynamic_cast<It&>(*this));
 
 			};
 			virtual ~BidirectionalIterator() {};
 
 			// Comp overloading
-			virtual bool	operator==(const BidirectionalIterator& rhs) {
-				return (_elem == rhs._elem);
-			};
-			virtual bool	operator!=(const BidirectionalIterator& rhs) {
-				return !(*this == rhs);
-			};
-			virtual reference		operator*() {
-				if (!_elem)
-					throw std::exception();
-				return (*_elem);
-			};
-			virtual reference		operator->() {
-				return (operator*());
-			};
-			virtual const reference		operator*() const {
-				if (!this->_elem)
-					throw std::exception();
-				return (*this->_elem);
-			};
-			virtual const reference		operator->() const {
-				return (operator*());
-			};
+			virtual bool					operator==(const It& rhs) { return (_elem == rhs._elem); };
+			virtual bool					operator!=(const It& rhs) { return !(*this == rhs); };
+			virtual reference				operator*() { if (!_elem) throw std::exception(); return (*_elem); };
+			virtual reference				operator->() { return (operator*()); };
+			virtual reference				operator*() const { if (!this->_elem) throw std::exception(); return (*this->_elem); };
+			virtual reference				operator->() const { return (operator*()); };
 
 			// Increment / decrement
-			BidirectionalIterator&	operator++(int) {
-				_elem++;
-				return (*this);
-			};
-			BidirectionalIterator&	operator--(int) {
-				_elem--;
-				return (*this);
-			};
-			BidirectionalIterator	operator++(void) {
-				BidirectionalIterator tmp = *this;
-				tmp++;
-				return (tmp);
-			};
-			BidirectionalIterator	operator--(void) {
-				BidirectionalIterator tmp = *this;
-				tmp--;
-				return (tmp);
-			};
+			virtual It&	operator++(int) = 0;
+			virtual It&	operator--(int) = 0;
+			virtual It	operator++(void) = 0;
+			virtual It	operator--(void) = 0;
 
 		protected:
 			pointer	_elem;
-
 	};
 }
 
