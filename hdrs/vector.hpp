@@ -4,6 +4,7 @@
 
 #include <memory>
 #include "iterators/RandomAccessIterator.hpp"
+#include "iterators/iterator_traits.hpp"
 #include <stdexcept>
 
 namespace ft {
@@ -67,7 +68,11 @@ namespace ft {
 		typedef ft::VectorIt<T>						iterator;
 		typedef ft::VectorIt<const T>				const_iterator;
 
-		// CONSTRUCTORS AND DESTRUCTOR
+
+
+		//
+		//	CONSTRUCTORS AND DESTRUCTORS
+		//
 		explicit vector (const allocator_type& alloc = allocator_type())
 		: _alloc(alloc), _buffer(NULL), _capacity(0), _size(0) { };
 		explicit vector (size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type())
@@ -84,7 +89,15 @@ namespace ft {
 				push_back(*first);
 		};
 		vector(const vector&);
-		~vector() {};
+		~vector() {
+			if (!_buffer)
+				return ;
+			for (size_type i = 0; i < _size; i++)
+				_alloc.destroy(_buffer + i);
+			_alloc.deallocate(_buffer, _capacity);
+		};
+
+
 
 		//
 		//	ITERATORS
@@ -120,7 +133,140 @@ namespace ft {
 		};
 		size_type	capacity(void) const { return (_capacity); }
 		bool		empty() const { return (!_size); }
-		void		reserve(size_type n) {
+		void		reserve(size_type n) { return (allocate(n)); }
+
+
+
+		//
+		//	ELEMENT ACCESS
+		//
+		reference		operator[](size_type n) {
+			return (_buffer[n]);
+		}
+		const_reference	operator[](size_type n) const {
+			return (_buffer[n]);
+		}
+		reference		at(size_type n) {
+			if (n < 0 || n >= _size)
+				throw std::out_of_range("out of bound request");
+			return (_buffer[n]);
+		}
+		const_reference at (size_type n) const {
+			if (n < 0 || n >= _size)
+				throw std::out_of_range("out of bound request");
+			return (_buffer[n]);
+		}
+		reference		front() {
+			return (*_buffer);
+		}
+		const_reference	front() const {
+			return (*_buffer);
+		}
+		reference		back() {
+			return (_buffer[_size]);
+		}
+		const_reference	back() const {
+			return (_buffer[_size]);
+		}
+
+
+
+		//
+		//	MODIFIERS
+		//
+		template <class InputIterator>
+		void	assign(InputIterator first, InputIterator last) {
+			typedef typename ft::iterator_traits<InputIterator>::iterator_category tag;
+			assign(first, last, tag());
+		}
+		void 	assign(size_type n, const value_type& val) {
+			size_type	i = 0;
+			if (n > _capacity) {
+				allocate(n, false);
+				for (; i < n; i++)
+					_alloc.construct(_buffer + i, val);
+			}
+			else {
+				for (; i < _size && i < n; i++) {
+					_alloc.destroy(_buffer + i);
+					_alloc.construct(_buffer + i, val);
+				}
+				for (; i < _capacity && i < n; i++) {
+					_alloc.construct(_buffer + i, val);
+				}
+			}
+			_size = n;
+		}
+		void	push_back(const value_type& val) {
+			reserve(_size + 1);
+			_alloc.construct(_buffer + _size, val);
+			_size++;
+		}
+		void	pop_back() {
+			if (_size == 0)
+				return ;
+			_alloc.destroy(_buffer[_size - 1]);
+		}
+		void	clear() {
+			for (size_t i = 0; i < _size; i++)
+				_alloc.destroy(_buffer + i);
+			// _alloc.deallocate(_buffer, _capacity);
+			_size = 0;
+			// _capacity = 0;
+		}
+		iterator insert(iterator position, const value_type& val) {
+
+		}
+		void 	insert(iterator position, size_type n, const value_type& val);
+		template <class InputIterator>
+		void 	insert(iterator position, InputIterator first, InputIterator last);
+
+
+		vector&	operator=(const vector&);
+
+	private:
+		Allocator	_alloc;
+		T*			_buffer;
+		size_type	_capacity;
+		size_type	_size;
+
+		// SPECIALIZATION
+		template <typename InputIterator>
+		void	assign(InputIterator first, InputIterator last, std::input_iterator_tag) {
+			// std::cout << "be careful with InputIterator" << std::endl;
+			clear();
+			for (; first != last; first++)
+				push_back(*first);
+		}
+		template <typename Iterator>
+		void	assign(Iterator first, Iterator last, ft::bidirectional_iterator_tag) {
+			// std::cout << "some iterator" << std::endl;
+			size_type 	distance = static_cast<size_type>(ft::distance(first, last));
+			size_type	i = 0;
+			if (distance < 1)
+				return ;
+			if (distance > _capacity) {
+				allocate(distance, false);
+				for (; i < distance; i++) {
+					_alloc.construct(_buffer + i, *first);
+					first++;
+				}
+			}
+			else {
+				for (; i < _size && i < distance; i++) {
+					_alloc.destroy(_buffer + i);
+					_alloc.construct(_buffer + i, *first);
+					first++;
+				}
+				for (; i < _capacity && i < distance; i++) {
+					_alloc.construct(_buffer + i, *first);
+					first++;
+				}
+			}
+			_size = distance;
+
+		}
+		void	allocate(size_type n, bool duplicate = 1, size_type length = 0) {
 			if (n <= _capacity)
 				return ;
 			if (n > max_size())
@@ -130,43 +276,16 @@ namespace ft {
 				new_capacity *= 2;
 			T*	new_buffer = _alloc.allocate(new_capacity);
 			for (size_type i = 0; i < _size; i++) {
-				_alloc.construct(new_buffer + i, _buffer[i]);
+				if (duplicate && (!length || i < length))
+					_alloc.construct(new_buffer + i, _buffer[i]);
 				_alloc.destroy(_buffer + i);
 			}
-			_alloc.deallocate(_buffer, _capacity);
+			if (_buffer)
+				_alloc.deallocate(_buffer, _capacity);
 			_capacity = new_capacity;
 			_buffer = new_buffer;
 		}
 
-
-
-		//
-		//	ELEMENT ACCESS
-		//
-
-
-
-		//
-		//	MODIFIERS
-		//
-		void	push_back(const value_type& val) {
-			reserve (_size + 1);
-			_buffer[_size] = val;
-			_size++;
-		}
-		void	pop_back() {
-			if (_size == 0)
-				return ;
-			_alloc.destroy(_buffer[_size - 1]);
-		}
-
-		vector&	operator=(const vector&);
-
-	private:
-		Allocator	_alloc;
-		T*			_buffer;
-		size_type	_capacity;
-		size_type	_size;
 	};
 }
 
