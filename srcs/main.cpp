@@ -13,6 +13,11 @@
 #endif
 
 
+struct s_test {
+	const int	a;
+	int			b;
+};
+
 
 int main(void)
 {
@@ -49,18 +54,19 @@ int main(void)
 		std::cerr << e.what() << '\n';
 	}
 
-	// NS::vector<std::string>::iterator	it = test.begin();
-	// NS::vector<std::string>::iterator	it2 = test.begin();
+	try
+	{
+		NS::vector<s_test> 	test;
 
-	// *it = "coucou";
-	// it2++;
-	// it2++;
-	// it2++;
-	// it2++;
-	// std::cout << *it << std::endl;
-	// it = it2;
-	// *it2 = "test";
-	// std::cout << *it << std::endl;
+		// s_test a
+
+		test.push_back()
+	}
+	catch(const std::exception& e)
+	{
+		std::cerr << e.what() << '\n';
+	}
+
 
 	return 0;
 }

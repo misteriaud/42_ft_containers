@@ -57,6 +57,9 @@ namespace ft {
 	class vector {
 	public:
 
+		//
+		//	TYPES DEFINITIONS
+		//
 		typedef T									value_type;
 		typedef Allocator							allocator_type;
 		typedef std::size_t							size_type;
@@ -76,8 +79,7 @@ namespace ft {
 		explicit vector (const allocator_type& alloc = allocator_type())
 		: _alloc(alloc), _buffer(NULL), _capacity(0), _size(0) { };
 		explicit vector (size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type())
-		: _alloc(alloc), _buffer(_alloc.allocate(n)), _capacity(n), _size(n)
-		{
+		: _alloc(alloc), _buffer(_alloc.allocate(n)), _capacity(n), _size(n) {
 			// _alloc.allocate(n, &_buffer);
 			for (size_t i = 0; i < n; i++)
 				_alloc.construct(_alloc + n, val);
@@ -96,6 +98,19 @@ namespace ft {
 				_alloc.destroy(_buffer + i);
 			_alloc.deallocate(_buffer, _capacity);
 		};
+		vector&	operator=(const vector& rhs) {
+			if (this == &rhs)
+				return (*this);
+			if (_capacity < rhs._size) {
+				allocate(rhs._size, false);
+			}
+			for (size_type i = 0; i < rhs._size; i++)
+				i < _size
+					? _buffer[i] = rhs._buffer[i];
+					: _alloc.construct(_buffer + i, rhs._buffer[i]);
+			_size = rhs._size;
+			_capacity = rhs._capacity;
+		}
 
 
 
@@ -175,11 +190,11 @@ namespace ft {
 		//	MODIFIERS
 		//
 		template <class InputIterator>
-		void	assign(InputIterator first, InputIterator last) {
+		void		assign(InputIterator first, InputIterator last) {
 			typedef typename ft::iterator_traits<InputIterator>::iterator_category tag;
 			assign(first, last, tag());
 		}
-		void 	assign(size_type n, const value_type& val) {
+		void	 	assign(size_type n, const value_type& val) {
 			size_type	i = 0;
 			if (n > _capacity) {
 				allocate(n, false);
@@ -197,32 +212,47 @@ namespace ft {
 			}
 			_size = n;
 		}
-		void	push_back(const value_type& val) {
+		void		push_back(const value_type& val) {
 			reserve(_size + 1);
 			_alloc.construct(_buffer + _size, val);
 			_size++;
 		}
-		void	pop_back() {
+		void		pop_back() {
 			if (_size == 0)
 				return ;
 			_alloc.destroy(_buffer[_size - 1]);
 		}
-		void	clear() {
+		void		clear() {
 			for (size_t i = 0; i < _size; i++)
 				_alloc.destroy(_buffer + i);
 			// _alloc.deallocate(_buffer, _capacity);
 			_size = 0;
 			// _capacity = 0;
 		}
-		iterator insert(iterator position, const value_type& val) {
+		iterator	insert(iterator position, const value_type& val) {
+			if (position ==  end()) {
+				push_back(val);
+				return (iterator(_buffer + _size - 1));
+			}
+			difference_type	diff = ft::distance<iterator>(begin(), position);
+			pointer new_buffer = _alloc.allocate()
 
 		}
-		void 	insert(iterator position, size_type n, const value_type& val);
+		void 		insert(iterator position, size_type n, const value_type& val) {
+
+		}
 		template <class InputIterator>
-		void 	insert(iterator position, InputIterator first, InputIterator last);
+		void 		insert(iterator position, InputIterator first, InputIterator last) {
+
+		}
+		iterator	erase(iterator position) {
+
+		};
+		iterator	erase(iterator first, iterator last) {
+
+		}
 
 
-		vector&	operator=(const vector&);
 
 	private:
 		Allocator	_alloc;
@@ -282,6 +312,8 @@ namespace ft {
 			}
 			if (_buffer)
 				_alloc.deallocate(_buffer, _capacity);
+			if (!duplicate)
+				_size = 0;
 			_capacity = new_capacity;
 			_buffer = new_buffer;
 		}
