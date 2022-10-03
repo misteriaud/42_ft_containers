@@ -224,9 +224,7 @@ namespace ft {
 		void		clear() {
 			for (size_t i = 0; i < _size; i++)
 				_alloc.destroy(_buffer + i);
-			// _alloc.deallocate(_buffer, _capacity);
 			_size = 0;
-			// _capacity = 0;
 		}
 		iterator	insert(iterator position, const value_type& val) {
 			if (position ==  end()) {
@@ -252,61 +250,18 @@ namespace ft {
 				_alloc.construct(_buffer + diff + i, val);
 			return ;
 		}
-		// template <class InputIterator>
-		// void 		insert(iterator position, InputIterator first, InputIterator last) {
-
-		// }
-		// iterator	erase(iterator position) {
-
-		// };
-		// iterator	erase(iterator first, iterator last) {
-
-		// }
-
+		template <class InputIterator>
+		void 		insert(iterator position, InputIterator first, InputIterator last) {
+			typedef typename ft::iterator_traits<InputIterator>::iterator_category tag;
+			insert(position, first, last, tag());
+		}
 
 
 	private:
-		Allocator	_alloc;
-		T*			_buffer;
-		size_type	_capacity;
-		size_type	_size;
-
-		// SPECIALIZATION
-		template <typename InputIterator>
-		void	assign(InputIterator first, InputIterator last, std::input_iterator_tag) {
-			// std::cout << "be careful with InputIterator" << std::endl;
-			clear();
-			for (; first != last; first++)
-				push_back(*first);
-		}
-		template <typename Iterator>
-		void	assign(Iterator first, Iterator last, ft::bidirectional_iterator_tag) {
-			// std::cout << "some iterator" << std::endl;
-			size_type 	distance = static_cast<size_type>(ft::distance(first, last));
-			size_type	i = 0;
-			if (distance < 1)
-				return ;
-			if (distance > _capacity) {
-				manage_array(distance, 0);
-				for (; i < distance; i++) {
-					_alloc.construct(_buffer + i, *first);
-					first++;
-				}
-			}
-			else {
-				for (; i < _size && i < distance; i++) {
-					_alloc.destroy(_buffer + i);
-					_alloc.construct(_buffer + i, *first);
-					first++;
-				}
-				for (; i < _capacity && i < distance; i++) {
-					_alloc.construct(_buffer + i, *first);
-					first++;
-				}
-			}
-			_size = distance;
-
-		}
+		Allocator		_alloc;
+		T*				_buffer;
+		size_type		_capacity;
+		size_type		_size;
 
 		/**
 		*
@@ -354,6 +309,64 @@ namespace ft {
 				_alloc.deallocate(_buffer, old_capacity);
 			_buffer = new_buffer;
 			_size += offset;
+		}
+
+		// SPECIALIZATION
+		template <typename InputIterator>
+		void	assign(InputIterator first, InputIterator last, std::input_iterator_tag) {
+			// std::cout << "be careful with InputIterator" << std::endl;
+			clear();
+			for (; first != last; first++)
+				push_back(*first);
+		}
+		template <typename Iterator>
+		void	assign(Iterator first, Iterator last, ft::bidirectional_iterator_tag) {
+			// std::cout << "some iterator" << std::endl;
+			size_type 	distance = static_cast<size_type>(ft::distance(first, last));
+			size_type	i = 0;
+			if (distance < 1)
+				return ;
+			if (distance > _capacity) {
+				manage_array(distance, 0);
+				for (; i < distance; i++) {
+					_alloc.construct(_buffer + i, *first);
+					first++;
+				}
+			}
+			else {
+				for (; i < _size && i < distance; i++) {
+					_alloc.destroy(_buffer + i);
+					_alloc.construct(_buffer + i, *first);
+					first++;
+				}
+				for (; i < _capacity && i < distance; i++) {
+					_alloc.construct(_buffer + i, *first);
+					first++;
+				}
+			}
+			_size = distance;
+		}
+		template <typename InputIterator>
+		void	insert(iterator position, InputIterator first, InputIterator last, std::input_iterator_tag) {
+			typedef typename ft::iterator_traits<iterator>::iterator_category tag;
+			vector<value_type>	temp;
+			for (; first != last; first++)
+				temp.push_back(*first);
+			insert(position, temp.begin(), temp.end(), tag());
+		}
+		template <typename InputIterator>
+		void	insert(iterator position, InputIterator first, InputIterator last, ft::bidirectional_iterator_tag) {
+			size_type		j = 0;
+			difference_type	length = ft::distance<iterator>(begin(), position);
+			difference_type	to_insert = static_cast<difference_type>(ft::distance<iterator>(first, last));
+			manage_array(_size + to_insert, length, to_insert);
+			for (InputIterator i = first; first != last; first++)
+			{
+				_alloc.construct(_buffer + length + j++, *i);
+				std::cout << *i << std::endl;
+
+			}
+			return ;
 		}
 
 

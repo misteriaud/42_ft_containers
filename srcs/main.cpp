@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <iterator>
 
-#if 0
+#if 1
 # include "../hdrs/vector.hpp"
 # define NS ft
 #else
@@ -102,6 +102,20 @@ int main(void)
 		for (It i = test.begin(); i != test.end(); i++)
 			std::cout << "i: " << *i << std::endl;
 		std::cout << test.size() << std::endl;
+
+		// insert(position, first, last);
+		NS::vector<BaseTest>		toFill;
+		BaseTest						nathan("Nathan Alhachimi", 24);
+		BaseTest						leslie("Leslie Gaborieau", 26);
+		toFill.push_back(nathan);
+		toFill.push_back(leslie);
+		toFill.push_back(nathan);
+		it = toFill.begin();
+		it++;
+		toFill.insert(it, test.begin(), test.end());
+		for (It i = toFill.begin(); i != toFill.end(); i++)
+			std::cout << "i: " << *i << std::endl;
+		std::cout << toFill.size() << std::endl;
 	}
 	catch(const std::exception& e)
 	{
