@@ -79,6 +79,7 @@ int main(void)
 		NS::vector<BaseTest>		 	test;
 		BaseTest						max("Maxime Riaud", 25);
 		BaseTest						alina("Alina Ray Zamora", 31);
+		BaseTest						nicolas("Nicolas Riaud", 30);
 		NS::vector<BaseTest>::iterator	it;
 
 		typedef NS::vector<BaseTest>::iterator It;
@@ -94,9 +95,13 @@ int main(void)
 		test.insert(it, alina);
 		for (It i = test.begin(); i != test.end(); i++)
 			std::cout << "i: " << *i << std::endl;
-
 		std::cout << test.size() << std::endl;
-
+		it = test.begin();
+		// it++;
+		test.insert(it, 5, nicolas);
+		for (It i = test.begin(); i != test.end(); i++)
+			std::cout << "i: " << *i << std::endl;
+		std::cout << test.size() << std::endl;
 	}
 	catch(const std::exception& e)
 	{

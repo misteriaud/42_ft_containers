@@ -80,7 +80,6 @@ namespace ft {
 		: _alloc(alloc), _buffer(NULL), _capacity(0), _size(0) { };
 		explicit vector (size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type())
 		: _alloc(alloc), _buffer(_alloc.allocate(n)), _capacity(n), _size(n) {
-			// _alloc.allocate(n, &_buffer);
 			for (size_t i = 0; i < n; i++)
 				_alloc.construct(_alloc + n, val);
 		}
@@ -102,7 +101,7 @@ namespace ft {
 			if (this == &rhs)
 				return (*this);
 			if (_capacity < rhs._size) {
-				allocate(rhs._size, false);
+				manage_array(rhs._size, 0);
 			}
 			for (size_type i = 0; i < rhs._size; i++)
 				i < _size
@@ -148,7 +147,7 @@ namespace ft {
 		};
 		size_type	capacity(void) const { return (_capacity); }
 		bool		empty() const { return (!_size); }
-		void		reserve(size_type n) { return (allocate(n)); }
+		void		reserve(size_type n) { return (manage_array(n, _size)); }
 
 
 
@@ -197,7 +196,7 @@ namespace ft {
 		void	 	assign(size_type n, const value_type& val) {
 			size_type	i = 0;
 			if (n > _capacity) {
-				allocate(n, false);
+				manage_array(n, 0);
 				for (; i < n; i++)
 					_alloc.construct(_buffer + i, val);
 			}
@@ -235,13 +234,24 @@ namespace ft {
 				return (iterator(_buffer + _size - 1));
 			}
 			difference_type	diff = ft::distance<iterator>(begin(), position);
-			allocate(_capacity + 1, true, diff, 1);
+			manage_array(_capacity + 1, diff, 1);
 			_alloc.construct(_buffer + diff, val);
-			return (iterator(_buffer + diff));
+			return (iterator(_buffer + _size - 1));
 		}
-		// void 		insert(iterator position, size_type n, const value_type& val) {
-
-		// }
+		void 		insert(iterator position, size_type n, const value_type& val) {
+			if (position ==  end()) {
+				manage_array(_size + n, _size);
+				for (size_type i = 0; i < n; i++)
+					_alloc.construct(_buffer + _size + i, val);
+				_size += n;
+				return ;
+			}
+			difference_type	diff = ft::distance<iterator>(begin(), position);
+			manage_array(_capacity + n, diff, n);
+			for (size_type i = 0; i < n; i++)
+				_alloc.construct(_buffer + diff + i, val);
+			return ;
+		}
 		// template <class InputIterator>
 		// void 		insert(iterator position, InputIterator first, InputIterator last) {
 
@@ -277,7 +287,7 @@ namespace ft {
 			if (distance < 1)
 				return ;
 			if (distance > _capacity) {
-				allocate(distance, false);
+				manage_array(distance, 0);
 				for (; i < distance; i++) {
 					_alloc.construct(_buffer + i, *first);
 					first++;
@@ -297,35 +307,55 @@ namespace ft {
 			_size = distance;
 
 		}
-		void	allocate(size_type n, bool duplicate = 1, size_type length = 0, size_type offset = 0) {
-			if (n <= _capacity)
-				return ;
-			if (n > max_size())
-				throw std::length_error("max size over");
-			size_type	new_capacity = _capacity ? _capacity * 2 : 1;
-			while (new_capacity < n)
-				new_capacity *= 2;
-			T*	new_buffer = _alloc.allocate(new_capacity);
-			for (size_type i = 0; i < _size; i++)
-				if (duplicate && (!length || i < length))
+
+		/**
+		*
+		*
+		* @param n			The new size to allocate.
+		* @param length		The number of element to duplicate from the last allocated array
+		* @param offset		The number of element to skip,
+		* 					if offset != 0 the rest of the array will be copy after the offset.
+		*/
+		void	manage_array(size_type n, size_type length, size_type offset = 0) {
+			T*			new_buffer = _buffer;
+			size_type	old_capacity = _capacity;
+			if (n > _capacity) {
+				if (n > max_size())
+					throw std::length_error("max size over");
+				size_type	new_capacity = _capacity ? _capacity * 2 : 1;
+				while (new_capacity < n)
+					new_capacity *= 2;
+				new_buffer = _alloc.allocate(new_capacity);
+				for (size_type i = 0; i < length; i++)
+				{
 					_alloc.construct(new_buffer + i, _buffer[i]);
+					_alloc.destroy(_buffer + i);
+				}
+				_capacity = new_capacity;
+				// for (; i < _size; i++)
+				// 	_alloc.construct(new_buffer + i + offset, _buffer[i]);
+			}
 			// FROM: XXXXXXXXXXXX -> XXXXXXXX....XXXX (create an offset to write something else)
-			if (duplicate && length && offset)
-				for (size_type i = length; i < _size; i++)
-					_alloc.construct(new_buffer + i + offset, _buffer[i]);
-			for (size_type i = 0; i < _size; i++)
+			for (size_type j =
+				n < _size ? n + offset - 1 : _size + offset - 1;
+				offset && j > length + offset - 1;
+				j--)
+			{
+				if (j < n)
+					_alloc.construct(new_buffer + j, _buffer[j - offset]);
+				if (new_buffer != _buffer && j < _size)
+					_alloc.destroy(_buffer + j - offset);
+				if (new_buffer == _buffer && j > n)
+					_alloc.destroy(_buffer + j);
+			}
+			for (size_type i = length; i < length + offset && i < _size; i++)
 				_alloc.destroy(_buffer + i);
-			if (_buffer)
-				_alloc.deallocate(_buffer, _capacity);
-			if (!duplicate)
-				_size = 0;
-			else if (length && offset)
-				_size += offset;
-			else if (length)
-				_size = length;
-			_capacity = new_capacity;
+			if (new_buffer != _buffer && _buffer)
+				_alloc.deallocate(_buffer, old_capacity);
 			_buffer = new_buffer;
+			_size += offset;
 		}
+
 
 	};
 }
