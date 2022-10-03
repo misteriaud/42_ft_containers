@@ -13,10 +13,30 @@
 #endif
 
 
-struct s_test {
-	const int	a;
-	int			b;
+class BaseTest {
+	private:
+		const std::string	_name;
+		unsigned int		_age;
+	public:
+		BaseTest(const std::string name, unsigned int age): _name(name), _age(age) {};
+		BaseTest(const BaseTest& ref): _name(ref._name), _age(ref._age) {};
+		BaseTest& operator=(const BaseTest& rhs) {
+			if (this == &rhs)
+				return (*this);
+			_age = rhs._age;
+			return (*this);
+		};
+		const std::string	getName() const { return _name; };
+		unsigned int 		getAge() const { return _age; };
 };
+
+std::ostream& operator<< (std::ostream& out, const BaseTest& character)
+{
+	out << "Je suis " << character.getName() << " et j'ai " << character.getAge() << " ans";
+
+    return out; // return std::ostream so we can chain calls to operator<<
+}
+
 
 
 int main(void)
@@ -56,11 +76,27 @@ int main(void)
 
 	try
 	{
-		NS::vector<s_test> 	test;
+		NS::vector<BaseTest>		 	test;
+		BaseTest						max("Maxime Riaud", 25);
+		BaseTest						alina("Alina Ray Zamora", 31);
+		NS::vector<BaseTest>::iterator	it;
+
+		typedef NS::vector<BaseTest>::iterator It;
 
 		// s_test a
 
-		test.push_back()
+
+		test.push_back(max);
+		test.push_back(max);
+		it = test.begin();
+		it++;
+		std::cout << "it: " << *it << std::endl;
+		test.insert(it, alina);
+		for (It i = test.begin(); i != test.end(); i++)
+			std::cout << "i: " << *i << std::endl;
+
+		std::cout << test.size() << std::endl;
+
 	}
 	catch(const std::exception& e)
 	{
