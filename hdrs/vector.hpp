@@ -271,6 +271,18 @@ namespace ft {
 			manage_array(_capacity, length, 0, to_erase);
 			return (iterator(_buffer + length + 1));
 		}
+		void swap (vector& x) {
+			const pointer	tmp_buffer = x._buffer;
+			const size_type	tmp_size = x._size;
+			const size_type	tmp_capacity = x._capacity;
+
+			x._buffer = _buffer;
+			x._size = _size;
+			x._capacity = _capacity;
+			_buffer = tmp_buffer;
+			_size = tmp_size;
+			_capacity = tmp_capacity;
+		}
 
 	private:
 		Allocator		_alloc;

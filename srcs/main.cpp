@@ -138,7 +138,13 @@ int main(void)
 		it++;
 		it++;
 		toFill.erase(it, toFill.end());
-		std::cout << BOLDWHITE << " Content of toFill vector after erase:\n" << RESET;
+		std::cout << BOLDWHITE << " Content of toFill vector after erase range:\n" << RESET;
+		for (It i = toFill.begin(); i != toFill.end(); i++)
+			std::cout << "i: " << *i << std::endl;
+		std::cout << toFill.size() << std::endl;
+
+		toFill.swap(test);
+		std::cout << BOLDWHITE << " Content of toFill vector after swap:\n" << RESET;
 		for (It i = toFill.begin(); i != toFill.end(); i++)
 			std::cout << "i: " << *i << std::endl;
 		std::cout << toFill.size() << std::endl;
