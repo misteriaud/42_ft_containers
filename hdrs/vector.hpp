@@ -219,7 +219,8 @@ namespace ft {
 		void		pop_back() {
 			if (_size == 0)
 				return ;
-			_alloc.destroy(_buffer[_size - 1]);
+			_alloc.destroy(_buffer + _size - 1);
+			_size--;
 		}
 		void		clear() {
 			for (size_t i = 0; i < _size; i++)
@@ -234,7 +235,7 @@ namespace ft {
 			difference_type	diff = ft::distance<iterator>(begin(), position);
 			manage_array(_capacity + 1, diff, 1);
 			_alloc.construct(_buffer + diff, val);
-			return (iterator(_buffer + _size - 1));
+			return (iterator(_buffer + diff + 1));
 		}
 		void 		insert(iterator position, size_type n, const value_type& val) {
 			if (position ==  end()) {
@@ -255,7 +256,21 @@ namespace ft {
 			typedef typename ft::iterator_traits<InputIterator>::iterator_category tag;
 			insert(position, first, last, tag());
 		}
-
+		iterator	erase(iterator position) {
+			if (position == iterator(_buffer + _size - 1)) {
+				pop_back();
+				return (iterator(_buffer + _size - 1));
+			}
+			difference_type	diff = ft::distance<iterator>(begin(), position);
+			manage_array(_capacity, diff, 0, 1);
+			return (iterator(_buffer + diff + 1));
+		}
+		iterator erase (iterator first, iterator last) {
+			difference_type	length = ft::distance<iterator>(begin(), first);
+			difference_type	to_erase = ft::distance<iterator>(first, last);
+			manage_array(_capacity, length, 0, to_erase);
+			return (iterator(_buffer + length + 1));
+		}
 
 	private:
 		Allocator		_alloc;
@@ -267,12 +282,12 @@ namespace ft {
 		*		Function to manage the reallocation of the array using the Allocator passed at the creation.
 		*
 		* @param n			The new size to allocate.
-		* @param length		The number of element to duplicate from the last allocated array
-		* @param offset		The number of element to let empty after the *length* first elements,
+		* @param length		The number of first element which will not be affected by this function
+		* @param insert		The number of number of space that will be available,
 		* 					if offset != 0 the rest of the array will be copy after the offset.
-		* @param skip		The number of element to skip after the *length* first elements
+		* @param erase		The number of element to erase
 		*/
-		void	manage_array(size_type n, size_type length, size_type offset = 0, size_type skip = 0) {
+		void	manage_array(size_type n, size_type length, size_type insert = 0, size_type erase = 0) {
 			T*			new_buffer = _buffer;
 			size_type	old_capacity = _capacity;
 			size_type	i;
@@ -290,30 +305,38 @@ namespace ft {
 				}
 				_capacity = new_capacity;
 			}
-			// if offset > skip, we must copy right to left, if not we must copy left to right
-			if (skip > offset || (!skip && offset)) // ABC___EF <--
+			// if insert > erase, we must copy right to left, if not we must copy left to right
+			if (insert > erase || (insert && !erase)) // ABC___EF <--
 				for (i = n < _size
-						? n + offset - skip - 1
-						: _size + offset - skip - 1;
-					i > length + offset - 1;
+						? n + insert - erase - 1
+						: _size + insert - erase - 1;
+					i > length + insert - 1;
 					i--) {
-						_alloc.construct(new_buffer + i, _buffer[i - offset + skip]);
-						if (i - offset + skip >= length + offset)
-							_alloc.destroy(_buffer + i - offset + skip);
+						_alloc.construct(new_buffer + i, _buffer[i - insert + erase]);
+						if (i - insert + erase >= length + insert)
+							_alloc.destroy(_buffer + i - insert + erase);
 					}
-			else if (skip < offset || (skip && !offset)) // ABC_ --> FGH
-				for (i = length + offset - 1;
-					i < _size + offset - skip - 1;
+			else if (insert < erase || (erase && !insert)) // ABC_ --> FGH
+				for (i = length + insert;
+					i < _size + insert - erase - 1;
 					i++) {
 						_alloc.destroy(_buffer + i);
-						_alloc.construct(new_buffer + i, _buffer[i - offset + skip]);
+						_alloc.construct(new_buffer + i, _buffer[i - insert + erase]);
 					}
-			for (size_type i = length; i < length + offset && i < _size; i++)
+			// cleaning remaining insert elements
+			for (size_type i = length; i < length + insert && i < _size; i++)
+				_alloc.destroy(_buffer + i);
+			// cleaning remaining erased elements
+			for (i = n < _size
+					? n + insert - erase
+					: _size + insert - erase;
+				i < _size;
+				i++)
 				_alloc.destroy(_buffer + i);
 			if (new_buffer != _buffer && _buffer)
 				_alloc.deallocate(_buffer, old_capacity);
 			_buffer = new_buffer;
-			_size += offset;
+			_size += insert - erase;
 		}
 
 		// SPECIALIZATION

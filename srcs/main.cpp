@@ -87,26 +87,27 @@ int main(void)
 
 		// s_test a
 
-
+		std::cout << BOLDWHITE << "insert max 2 times\n" << RESET;
 		test.push_back(max);
 		test.push_back(max);
 		it = test.begin();
 		it++;
 		std::cout << "it: " << *it << std::endl;
+		std::cout << BOLDWHITE << "insert Alina in the middle\n" << RESET;
 		test.insert(it, alina);
-		std::cout << BOLDWHITE << " Content of test vector:\n" << RESET;
+		std::cout << BOLDWHITE << "Content of test vector:\n" << RESET;
 		for (It i = test.begin(); i != test.end(); i++)
 			std::cout << "i: " << *i << std::endl;
 		std::cout << test.size() << std::endl;
 		it = test.begin();
 		// it++;
+		std::cout << BOLDWHITE << "insert Nicolas at the begining 5 times\n" << RESET;
 		test.insert(it, 5, nicolas);
-		std::cout << BOLDWHITE << " Content of test vector:\n" << RESET;
+		std::cout << BOLDWHITE << "Content of test vector:\n" << RESET;
 		for (It i = test.begin(); i != test.end(); i++)
 			std::cout << "i: " << *i << std::endl;
 		std::cout << test.size() << std::endl;
 
-		// insert(position, first, last);
 		NS::vector<BaseTest>		toFill;
 		BaseTest						nathan("Nathan Alhachimi", 24);
 		BaseTest						leslie("Leslie Gaborieau", 26);
@@ -117,14 +118,31 @@ int main(void)
 		it++;
 		toFill.insert(it, test.begin(), test.end());
 
-		std::cout << BOLDWHITE << " Content of test vector:\n" << RESET;
-		for (It i = test.begin(); i != test.end(); i++)
-			std::cout << "i: " << *i << std::endl;
-
 		std::cout << BOLDWHITE << " Content of toFill vector:\n" << RESET;
 		for (It i = toFill.begin(); i != toFill.end(); i++)
 			std::cout << "i: " << *i << std::endl;
 		std::cout << toFill.size() << std::endl;
+
+		it = toFill.begin();
+		it++;
+		it++;
+		it++;
+		toFill.erase(it);
+		std::cout << BOLDWHITE << " Content of toFill vector after erase:\n" << RESET;
+		for (It i = toFill.begin(); i != toFill.end(); i++)
+			std::cout << "i: " << *i << std::endl;
+		std::cout << toFill.size() << std::endl;
+
+		it = toFill.begin();
+		it++;
+		it++;
+		it++;
+		toFill.erase(it, toFill.end());
+		std::cout << BOLDWHITE << " Content of toFill vector after erase:\n" << RESET;
+		for (It i = toFill.begin(); i != toFill.end(); i++)
+			std::cout << "i: " << *i << std::endl;
+		std::cout << toFill.size() << std::endl;
+
 	}
 	catch(const std::exception& e)
 	{
