@@ -264,7 +264,7 @@ namespace ft {
 		size_type		_size;
 
 		/**
-		*
+		*		Function to manage the reallocation of the array using the Allocator passed at the creation.
 		*
 		* @param n			The new size to allocate.
 		* @param length		The number of element to duplicate from the last allocated array
@@ -360,12 +360,8 @@ namespace ft {
 			difference_type	length = ft::distance<iterator>(begin(), position);
 			difference_type	to_insert = static_cast<difference_type>(ft::distance<iterator>(first, last));
 			manage_array(_size + to_insert, length, to_insert);
-			for (InputIterator i = first; first != last; first++)
-			{
-				_alloc.construct(_buffer + length + j++, *i);
-				std::cout << *i << std::endl;
-
-			}
+			for (; first != last; first++)
+				_alloc.construct(_buffer + length + j++, *first);
 			return ;
 		}
 

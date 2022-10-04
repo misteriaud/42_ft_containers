@@ -3,6 +3,7 @@
 #include <iostream>
 #include <algorithm>
 #include <iterator>
+#include "../hdrs/colors.h"
 
 #if 1
 # include "../hdrs/vector.hpp"
@@ -93,12 +94,14 @@ int main(void)
 		it++;
 		std::cout << "it: " << *it << std::endl;
 		test.insert(it, alina);
+		std::cout << BOLDWHITE << " Content of test vector:\n" << RESET;
 		for (It i = test.begin(); i != test.end(); i++)
 			std::cout << "i: " << *i << std::endl;
 		std::cout << test.size() << std::endl;
 		it = test.begin();
 		// it++;
 		test.insert(it, 5, nicolas);
+		std::cout << BOLDWHITE << " Content of test vector:\n" << RESET;
 		for (It i = test.begin(); i != test.end(); i++)
 			std::cout << "i: " << *i << std::endl;
 		std::cout << test.size() << std::endl;
@@ -113,6 +116,12 @@ int main(void)
 		it = toFill.begin();
 		it++;
 		toFill.insert(it, test.begin(), test.end());
+
+		std::cout << BOLDWHITE << " Content of test vector:\n" << RESET;
+		for (It i = test.begin(); i != test.end(); i++)
+			std::cout << "i: " << *i << std::endl;
+
+		std::cout << BOLDWHITE << " Content of toFill vector:\n" << RESET;
 		for (It i = toFill.begin(); i != toFill.end(); i++)
 			std::cout << "i: " << *i << std::endl;
 		std::cout << toFill.size() << std::endl;
