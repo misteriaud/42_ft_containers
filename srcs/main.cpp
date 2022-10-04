@@ -55,25 +55,25 @@ int main(void)
 	// 	for (; it != test.end(); it++)
 	// 		std::cout << *it << std::endl;
 	// }
-	try
-	{
-		NS::vector<std::string>	test;
-		NS::vector<std::string>	test2;
+	// try
+	// {
+	// 	NS::vector<std::string>	test;
+	// 	NS::vector<std::string>	test2;
 
-		test.push_back("un");
-		test.push_back("deux");
-		test.push_back("trois");
-		test.push_back("quatre");
+	// 	test.push_back("un");
+	// 	test.push_back("deux");
+	// 	test.push_back("trois");
+	// 	test.push_back("quatre");
 
-		// test2.assign(500, "coucou");
-		test.assign(test.begin(), test.end());
-		// test.assign(std::istream_iterator<std::string>(std::cin), std::istream_iterator<std::string>());
-		/* code */
-	}
-	catch(const std::exception& e)
-	{
-		std::cerr << e.what() << '\n';
-	}
+	// 	// test2.assign(500, "coucou");
+	// 	test.assign(test.begin(), test.end());
+	// 	// test.assign(std::istream_iterator<std::string>(std::cin), std::istream_iterator<std::string>());
+	// 	/* code */
+	// }
+	// catch(const std::exception& e)
+	// {
+	// 	std::cerr << e.what() << '\n';
+	// }
 
 	try
 	{

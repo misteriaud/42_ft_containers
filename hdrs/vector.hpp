@@ -268,12 +268,14 @@ namespace ft {
 		*
 		* @param n			The new size to allocate.
 		* @param length		The number of element to duplicate from the last allocated array
-		* @param offset		The number of element to skip,
+		* @param offset		The number of element to let empty after the *length* first elements,
 		* 					if offset != 0 the rest of the array will be copy after the offset.
+		* @param skip		The number of element to skip after the *length* first elements
 		*/
-		void	manage_array(size_type n, size_type length, size_type offset = 0) {
+		void	manage_array(size_type n, size_type length, size_type offset = 0, size_type skip = 0) {
 			T*			new_buffer = _buffer;
 			size_type	old_capacity = _capacity;
+			size_type	i;
 			if (n > _capacity) {
 				if (n > max_size())
 					throw std::length_error("max size over");
@@ -287,22 +289,25 @@ namespace ft {
 					_alloc.destroy(_buffer + i);
 				}
 				_capacity = new_capacity;
-				// for (; i < _size; i++)
-				// 	_alloc.construct(new_buffer + i + offset, _buffer[i]);
 			}
-			// FROM: XXXXXXXXXXXX -> XXXXXXXX....XXXX (create an offset to write something else)
-			for (size_type j =
-				n < _size ? n + offset - 1 : _size + offset - 1;
-				offset && j > length + offset - 1;
-				j--)
-			{
-				if (j < n)
-					_alloc.construct(new_buffer + j, _buffer[j - offset]);
-				if (new_buffer != _buffer && j < _size)
-					_alloc.destroy(_buffer + j - offset);
-				if (new_buffer == _buffer && j > n)
-					_alloc.destroy(_buffer + j);
-			}
+			// if offset > skip, we must copy right to left, if not we must copy left to right
+			if (skip > offset || (!skip && offset)) // ABC___EF <--
+				for (i = n < _size
+						? n + offset - skip - 1
+						: _size + offset - skip - 1;
+					i > length + offset - 1;
+					i--) {
+						_alloc.construct(new_buffer + i, _buffer[i - offset + skip]);
+						if (i - offset + skip >= length + offset)
+							_alloc.destroy(_buffer + i - offset + skip);
+					}
+			else if (skip < offset || (skip && !offset)) // ABC_ --> FGH
+				for (i = length + offset - 1;
+					i < _size + offset - skip - 1;
+					i++) {
+						_alloc.destroy(_buffer + i);
+						_alloc.construct(new_buffer + i, _buffer[i - offset + skip]);
+					}
 			for (size_type i = length; i < length + offset && i < _size; i++)
 				_alloc.destroy(_buffer + i);
 			if (new_buffer != _buffer && _buffer)
