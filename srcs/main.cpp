@@ -5,7 +5,7 @@
 #include <iterator>
 #include "../hdrs/colors.h"
 
-#if 1
+#if 0
 # include "../hdrs/vector.hpp"
 # define NS ft
 #else
@@ -148,6 +148,20 @@ int main(void)
 		for (It i = toFill.begin(); i != toFill.end(); i++)
 			std::cout << "i: " << *i << std::endl;
 		std::cout << toFill.size() << std::endl;
+
+		NS::vector<int>		intvec;
+
+		intvec.push_back(1);
+		intvec.push_back(2);
+		intvec.push_back(3);
+		intvec.push_back(4);
+		intvec.push_back(5);
+
+		intvec.assign(5, 7);
+		std::cout << BOLDWHITE << " Content of intvec vector after assign:\n" << RESET;
+		for (NS::vector<int>::iterator i = intvec.begin(); i != intvec.end(); i++)
+			std::cout << "i: " << *i << std::endl;
+		std::cout << intvec.size() << std::endl;
 
 	}
 	catch(const std::exception& e)
