@@ -81,7 +81,7 @@ namespace ft {
 		explicit vector (size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type())
 		: _alloc(alloc), _buffer(_alloc.allocate(n)), _capacity(n), _size(n) {
 			for (size_t i = 0; i < n; i++)
-				_alloc.construct(_alloc + n, val);
+				_alloc.construct(_buffer + n, val);
 		}
 		template <class InputIterator>
 		vector (InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type())
@@ -103,12 +103,15 @@ namespace ft {
 			if (_capacity < rhs._size) {
 				manage_array(rhs._size, 0);
 			}
-			for (size_type i = 0; i < rhs._size; i++)
-				i < _size
-					? _buffer[i] = rhs._buffer[i]
-					: _alloc.construct(_buffer + i, rhs._buffer[i]);
+			for (size_type i = 0; i < rhs._size; i++) {
+				if (i < _size)
+					_buffer[i] = rhs._buffer[i];
+				else
+					_alloc.construct(_buffer + i, rhs._buffer[i]);
+			}
 			_size = rhs._size;
 			_capacity = rhs._capacity;
+			return (*this);
 		}
 
 
