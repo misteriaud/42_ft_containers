@@ -81,7 +81,7 @@ namespace ft {
 		explicit vector (size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type())
 		: _alloc(alloc), _buffer(_alloc.allocate(n)), _capacity(n), _size(n) {
 			for (size_t i = 0; i < n; i++)
-				_alloc.construct(_alloc + n, val);
+				_alloc.construct(_buffer + n, val);
 		}
 		template <class InputIterator>
 		vector (InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type())
@@ -122,10 +122,10 @@ namespace ft {
 		iterator	end() {
 			return iterator(_buffer + _size);
 		}
-		const_iterator	cbegin() const {
+		const_iterator	begin() const {
 			return const_iterator(_buffer);
 		}
-		const_iterator	cend() {
+		const_iterator	end() const {
 			return const_iterator(_buffer + _size);
 		}
 
@@ -139,7 +139,7 @@ namespace ft {
 			// return std::numeric_limits<size_type>::max() / sizeof(value_type);
 			return _alloc.max_size();
 		}
-		void	resize(size_type n, value_type val = value_type()) {
+		void		resize(size_type n, value_type val = value_type()) {
 			while (_size < n)
 				push_back(val);
 			while (_size > n)
@@ -188,7 +188,7 @@ namespace ft {
 		//
 		//	MODIFIERS
 		//
-		template <class InputIterator>
+		template <class InputIterator, typename ft::enable_if<!std::is_arithmetic<InputIterator>::value>::type>
 		void		assign(InputIterator first, InputIterator last) {
 			typedef typename ft::iterator_traits<InputIterator>::iterator_category tag;
 			assign(first, last, tag());
