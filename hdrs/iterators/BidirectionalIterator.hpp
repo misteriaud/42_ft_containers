@@ -37,10 +37,10 @@ namespace ft {
 			virtual reference				operator->() const { return (operator*()); };
 
 			// Increment / decrement
-			virtual It&	operator++(int) = 0;
-			virtual It&	operator--(int) = 0;
-			virtual It	operator++(void) = 0;
-			virtual It	operator--(void) = 0;
+			virtual It&	operator++() = 0;
+			virtual It&	operator--() = 0;
+			virtual It	operator++(int) = 0;
+			virtual It	operator--(int) = 0;
 
 		protected:
 			pointer	_elem;

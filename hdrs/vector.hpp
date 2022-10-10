@@ -29,10 +29,10 @@ namespace ft {
 
 			//operators
 			// Increment / decrement
-			it&	operator++(int) { this->_elem++; return (*this);};
-			it&	operator--(int) { this->_elem--; return (*this);};
-			it	operator++(void) { it tmp = *this; (*this)++; return (tmp);};
-			it	operator--(void) { it tmp = *this; (*this)--; return (tmp);};
+			it&	operator++() { this->_elem++; return (*this);};
+			it&	operator--() { this->_elem--; return (*this);};
+			it	operator++(int) { it tmp = *this; this->_elem++; return (tmp);};
+			it	operator--(int) { it tmp = *this; this->_elem--; return (tmp);};
 			// arythmetic operator
 			// a +/- n
 			it	operator+(const difference_type a) const { it temp(*this); return temp += a; };
@@ -77,19 +77,23 @@ namespace ft {
 		//
 		//	CONSTRUCTORS AND DESTRUCTORS
 		//
+			// DEFAULT
 		explicit vector (const allocator_type& alloc = allocator_type())
 		: _alloc(alloc), _buffer(NULL), _capacity(0), _size(0) { };
-		explicit vector (size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type())
+			// FILL CONSTRUCTEUR
+		vector (size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type())
 		: _alloc(alloc), _buffer(_alloc.allocate(n)), _capacity(n), _size(n) {
 			for (size_t i = 0; i < n; i++)
-				_alloc.construct(_buffer + n, val);
+				_alloc.construct(_buffer + i, val);
 		}
+			// RANGE
 		template <class InputIterator>
-		vector (InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type())
+		vector (InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type(), typename ft::enable_if<!ft::is_integral<InputIterator>::value, int>::type =0)
 		: _alloc(alloc), _buffer(NULL), _capacity(0), _size(0) {
 			for(; first != last; first++)
 				push_back(*first);
 		};
+			// COPY
 		vector(const vector& from)
 		: _alloc(from._alloc), _buffer(_alloc.allocate(from._capacity)), _capacity(from._capacity), _size(from._size) {
 			for (size_type i = 0; i < _size; i++)
@@ -124,19 +128,18 @@ namespace ft {
 		//
 		//	ITERATORS
 		//
-		iterator	begin() {
+		iterator	begin(void) {
 			return iterator(_buffer);
 		}
-		iterator	end() {
+		iterator	end(void) {
 			return iterator(_buffer + _size);
 		}
-		const_iterator	begin() const {
+		const_iterator	begin(void) {
 			return const_iterator(_buffer);
 		}
-		const_iterator	end() const {
+		const_iterator	end(void) {
 			return const_iterator(_buffer + _size);
 		}
-
 
 
 		//
@@ -185,10 +188,10 @@ namespace ft {
 			return (*_buffer);
 		}
 		reference		back() {
-			return (_buffer[_size]);
+			return (_buffer[_size - 1]);
 		}
 		const_reference	back() const {
-			return (_buffer[_size]);
+			return (_buffer[_size - 1]);
 		}
 
 
@@ -242,9 +245,11 @@ namespace ft {
 				return (iterator(_buffer + _size - 1));
 			}
 			difference_type	diff = ft::distance<iterator>(begin(), position);
+			if (diff > 0)
+				diff--;
 			manage_array(_capacity + 1, diff, 1);
 			_alloc.construct(_buffer + diff, val);
-			return (iterator(_buffer + diff + 1));
+			return (iterator(_buffer + diff));
 		}
 		void 		insert(iterator position, size_type n, const value_type& val) {
 			if (position ==  end()) {
@@ -255,13 +260,17 @@ namespace ft {
 				return ;
 			}
 			difference_type	diff = ft::distance<iterator>(begin(), position);
+			if (diff > 0)
+				diff--;
 			manage_array(_capacity + n, diff, n);
 			for (size_type i = 0; i < n; i++)
 				_alloc.construct(_buffer + diff + i, val);
 			return ;
 		}
 		template <class InputIterator>
-		void 		insert(iterator position, InputIterator first, InputIterator last) {
+		typename ft::enable_if<!ft::is_integral<InputIterator>::value, void>::type
+		// void
+					insert(iterator position, InputIterator first, InputIterator last) {
 			typedef typename ft::iterator_traits<InputIterator>::iterator_category tag;
 			insert(position, first, last, tag());
 		}
@@ -274,7 +283,7 @@ namespace ft {
 			manage_array(_capacity, diff, 0, 1);
 			return (iterator(_buffer + diff + 1));
 		}
-		iterator erase (iterator first, iterator last) {
+		iterator	erase(iterator first, iterator last) {
 			difference_type	length = ft::distance<iterator>(begin(), first);
 			difference_type	to_erase = ft::distance<iterator>(first, last);
 			manage_array(_capacity, length, 0, to_erase);
@@ -373,6 +382,7 @@ namespace ft {
 			// std::cout << "some iterator" << std::endl;
 			size_type 	distance = static_cast<size_type>(ft::distance(first, last));
 			size_type	i = 0;
+			// std::cout << "distance: " << distance << std::endl;
 			if (distance < 1)
 				return ;
 			if (distance > _capacity) {
@@ -383,17 +393,11 @@ namespace ft {
 				}
 			}
 			else {
-				for (; i < _size && i < distance; i++) {
-					_alloc.destroy(_buffer + i);
-					_alloc.construct(_buffer + i, *first);
-					first++;
-				}
-				for (; i < _capacity && i < distance; i++) {
-					_alloc.construct(_buffer + i, *first);
-					first++;
-				}
+				clear();
+				for (;i < distance; i++)
+					_alloc.construct(_buffer + i, *(first++));
 			}
-			_size = distance;
+			_size = distance - 1;
 		}
 		template <typename InputIterator>
 		void	insert(iterator position, InputIterator first, InputIterator last, std::input_iterator_tag) {
@@ -408,6 +412,10 @@ namespace ft {
 			size_type		j = 0;
 			difference_type	length = ft::distance<iterator>(begin(), position);
 			difference_type	to_insert = static_cast<difference_type>(ft::distance<iterator>(first, last));
+			if (length > 0)
+				length--;
+			if (to_insert > 0)
+				to_insert--;
 			manage_array(_size + to_insert, length, to_insert);
 			for (; first != last; first++)
 				_alloc.construct(_buffer + length + j++, *first);
