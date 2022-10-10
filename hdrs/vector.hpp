@@ -31,8 +31,8 @@ namespace ft {
 			// Increment / decrement
 			it&	operator++(int) { this->_elem++; return (*this);};
 			it&	operator--(int) { this->_elem--; return (*this);};
-			it	operator++(void) { it tmp = *this; tmp++; return (tmp);};
-			it	operator--(void) { it tmp = *this; tmp--; return (tmp);};
+			it	operator++(void) { it tmp = *this; (*this)++; return (tmp);};
+			it	operator--(void) { it tmp = *this; (*this)--; return (tmp);};
 			// arythmetic operator
 			// a +/- n
 			it	operator+(const difference_type a) const { it temp(*this); return temp += a; };
@@ -90,7 +90,11 @@ namespace ft {
 			for(; first != last; first++)
 				push_back(*first);
 		};
-		vector(const vector&);
+		vector(const vector& from)
+		: _alloc(from._alloc), _buffer(_alloc.allocate(from._capacity)), _capacity(from._capacity), _size(from._size) {
+			for (size_type i = 0; i < _size; i++)
+				_alloc.construct(_buffer + i, from[i]);
+		};
 		~vector() {
 			if (!_buffer)
 				return ;
@@ -192,7 +196,7 @@ namespace ft {
 		//
 		//	MODIFIERS
 		//
-		template <class InputIterator>
+		template <typename InputIterator>
 		typename ft::enable_if<!ft::is_integral<InputIterator>::value, void>::type
 					assign(InputIterator first, InputIterator last) {
 			typedef typename ft::iterator_traits<InputIterator>::iterator_category tag;

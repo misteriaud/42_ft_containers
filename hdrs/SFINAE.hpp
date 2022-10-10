@@ -25,18 +25,15 @@ namespace ft {
 	template <typename Result>
 	struct enable_if<true, Result> {
 		typedef Result	type;
-		// using type = Result;
 	};
 
 
 	// IS_INTEGRAL
 	struct false_type {
-		// static const bool value = false;
+		static const bool value = false;
 	};
 	struct true_type {
 		static const bool value = true;
-		// typedef bool value;
-		// value = true;
 	};
 
 	template<typename> struct is_integral_base : false_type {};
@@ -45,7 +42,7 @@ namespace ft {
 	template<> struct is_integral_base<int>: true_type {};
 	template<> struct is_integral_base<short>: true_type {};
 
-	template<typename T> struct is_integral: is_integral_base< ft::remove_cv<T> > {};
+	template<typename T> struct is_integral: is_integral_base< typename ft::remove_cv<T>::type > {};
 
 }
 
