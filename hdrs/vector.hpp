@@ -14,7 +14,7 @@ namespace ft {
 	class VectorIt: public ft::RandomAccessIterator<T, VectorIt<T> > {
 		public:
 			// TYPEDEF
-			typedef VectorIt									it;
+			typedef VectorIt											it;
 			using typename ft::RandomAccessIterator<T, VectorIt<T> >::difference_type;
 			using typename ft::RandomAccessIterator<T, VectorIt<T> >::value_type;
 			using typename ft::RandomAccessIterator<T, VectorIt<T> >::pointer;
@@ -23,8 +23,9 @@ namespace ft {
 
 			// CONSTRUCTORS/DESTRUCTORS
 			VectorIt(): RandomAccessIterator<T, VectorIt<T> >() {};
+			VectorIt(const VectorIt<typename remove_cv<value_type>::type >& src) : RandomAccessIterator<T, VectorIt<T> >(&(*src)) {};
+			// VectorIt(const VectorIt& from): RandomAccessIterator<T, VectorIt<T> >(from) {};
 			VectorIt(const pointer from): RandomAccessIterator<T, VectorIt<T> >(from) {};
-			VectorIt(const it& from): RandomAccessIterator<T, VectorIt<T> >(from) {};
 			virtual ~VectorIt() {};
 
 			//operators
@@ -128,18 +129,19 @@ namespace ft {
 		//
 		//	ITERATORS
 		//
-		iterator	begin(void) {
-			return iterator(_buffer);
+		iterator	begin() {
+			return (iterator(_buffer));
 		}
-		iterator	end(void) {
-			return iterator(_buffer + _size);
+		iterator	end() {
+			return (iterator(_buffer + _size));
 		}
-		const_iterator	begin(void) {
-			return const_iterator(_buffer);
+		const_iterator	begin() const {
+			return (const_iterator(_buffer));
 		}
-		const_iterator	end(void) {
-			return const_iterator(_buffer + _size);
+		const_iterator	end() const {
+			return (const_iterator(_buffer + _size));
 		}
+
 
 
 		//

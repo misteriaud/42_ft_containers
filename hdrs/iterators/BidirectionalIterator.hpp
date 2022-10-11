@@ -4,6 +4,7 @@
 
 #include <cstddef>
 #include "IteratorUtils.hpp"
+#include "SFINAE.hpp"
 
 namespace ft {
 	template <typename T, typename It>
@@ -33,7 +34,8 @@ namespace ft {
 			virtual bool					operator!=(const It& rhs) { return !(*this == rhs); };
 			virtual reference				operator*() { if (!_elem) throw std::exception(); return (*_elem); };
 			virtual reference				operator->() { return (operator*()); };
-			virtual reference				operator*() const { if (!this->_elem) throw std::exception(); return (*this->_elem); };
+			virtual reference				operator*() const { return (*this->_elem); };
+			// virtual reference				operator*() const { if (!this->_elem) throw std::exception(); return (*this->_elem); };
 			virtual reference				operator->() const { return (operator*()); };
 
 			// Increment / decrement
