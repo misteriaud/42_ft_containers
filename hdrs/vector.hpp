@@ -279,17 +279,23 @@ namespace ft {
 		iterator	erase(iterator position) {
 			if (position == iterator(_buffer + _size - 1)) {
 				pop_back();
-				return (iterator(_buffer + _size - 1));
+				return (iterator(_buffer + _size));
 			}
 			difference_type	diff = ft::distance<iterator>(begin(), position);
+			if (diff > 0)
+				diff--;
 			manage_array(_capacity, diff, 0, 1);
-			return (iterator(_buffer + diff + 1));
+			return (iterator(_buffer + diff));
 		}
 		iterator	erase(iterator first, iterator last) {
 			difference_type	length = ft::distance<iterator>(begin(), first);
 			difference_type	to_erase = ft::distance<iterator>(first, last);
+			if (length > 0)
+				length--;
+			if (to_erase > 0)
+				to_erase--;
 			manage_array(_capacity, length, 0, to_erase);
-			return (iterator(_buffer + length + 1));
+			return (iterator(_buffer + length));
 		}
 		void swap (vector& x) {
 			const pointer	tmp_buffer = x._buffer;
@@ -350,7 +356,7 @@ namespace ft {
 					}
 			else if (insert < erase || (erase && !insert)) // ABC_ --> FGH
 				for (i = length + insert;
-					i < _size + insert - erase - 1;
+					i < _size + insert - erase;
 					i++) {
 						_alloc.destroy(_buffer + i);
 						_alloc.construct(new_buffer + i, _buffer[i - insert + erase]);
