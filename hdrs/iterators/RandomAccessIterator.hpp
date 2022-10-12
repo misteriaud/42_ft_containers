@@ -8,8 +8,10 @@
 namespace ft {
 	template <typename T>
 	class RandomAccessIterator {
-		public:
+		private:
+			typedef RandomAccessIterator<typename remove_cv<T>::type >	unconstIt;
 
+		public:
 			typedef RandomAccessIterator			it;
 			typedef T								value_type;
 			typedef ptrdiff_t						difference_type;
@@ -21,10 +23,23 @@ namespace ft {
 			RandomAccessIterator(const pointer from): _elem(from) {};
 			RandomAccessIterator(const RandomAccessIterator<typename remove_cv<T>::type>& src): _elem(&(*src)) {};
 			~RandomAccessIterator() {};
+			it&	operator=(const it& rhs) {
+				if (this == &rhs)
+					return (*this);
+				_elem = rhs._elem;
+					return (*this);
+			};
 
 			// Comp overloading
-			bool					operator==(const it& rhs) const { return (_elem == rhs._elem); };
-			bool					operator!=(const it& rhs) const { return (_elem != rhs._elem); };
+			// Here we have to use friend keyword to be able to access to the protected attribute _elem of both of the iterators
+			friend bool 		operator==(const it& lhs, const it& rhs) { return (lhs._elem == rhs._elem); };
+			friend bool 		operator!=(const it& lhs, const it& rhs) { return (lhs._elem != rhs._elem); };
+			friend bool			operator<(const it& lhs, const it& rhs) { return (lhs._elem < rhs._elem); };
+			friend bool			operator>(const it& lhs, const it& rhs) { return (lhs._elem > rhs._elem); };
+			friend bool			operator<=(const it& lhs, const it& rhs) { return (lhs._elem <= rhs._elem); };
+			friend bool			operator>=(const it& lhs, const it& rhs) { return (lhs._elem >= rhs._elem); };
+
+
 			pointer					operator->() { return &(operator*()); };
 			reference				operator*() const { return (*_elem); };
 			reference				operator->() const { return (operator*()); };
@@ -35,24 +50,38 @@ namespace ft {
 			it	operator++(int) { it tmp = *this; _elem++; return (tmp);};
 			it	operator--(int) { it tmp = *this; _elem--; return (tmp);};
 
-			// arythmetic operator
-			// a +/- n
-			it	operator+(const difference_type a) const { it temp(*this); return temp += a; };
-			it	operator-(const difference_type a) const { it temp(*this); return temp -= a; };
-
 			// TO DEFINE LATER
 			// a - b
 			difference_type	operator-(const it& rhs) const { return (_elem - rhs._elem); }
-			bool			operator<(const it& rhs) const { return (_elem < rhs._elem); };
-			bool			operator>(const it& rhs) const { return (_elem > rhs._elem); };
-			bool			operator<=(const it& rhs) const { return (_elem <= rhs._elem); };
-			bool			operator>=(const it& rhs) const { return (_elem >= rhs._elem); };
 			it&				operator+=(const difference_type diff) { _elem += diff; return (*this); };
 			it&				operator-=(const difference_type diff) { _elem -= diff; return (*this); };
 			reference		operator[](int index) { return (_elem[index]); };
 
 		private:
 			pointer	_elem;
+	};
+
+	template< typename T>
+	RandomAccessIterator<T>	operator+(const RandomAccessIterator<T>& lhs, const typename RandomAccessIterator<T>::difference_type rhs) {
+		RandomAccessIterator<T> temp(lhs);
+		return temp += rhs;
+	};
+
+	template< typename T>
+	RandomAccessIterator<T>	operator-(const RandomAccessIterator<T>& lhs, const typename RandomAccessIterator<T>::difference_type rhs) {
+		RandomAccessIterator<T> temp(lhs);
+		return temp -= rhs;
+	};
+
+	template< typename T>
+	RandomAccessIterator<T>	operator+(const typename RandomAccessIterator<T>::difference_type lhs, const RandomAccessIterator<T>& rhs) {
+		RandomAccessIterator<T> temp(rhs);
+		return temp += lhs;
+	};
+	template< typename T>
+	RandomAccessIterator<T>	operator-(const typename RandomAccessIterator<T>::difference_type lhs, const RandomAccessIterator<T>& rhs) {
+		RandomAccessIterator<T> temp(rhs);
+		return temp -= lhs;
 	};
 }
 
