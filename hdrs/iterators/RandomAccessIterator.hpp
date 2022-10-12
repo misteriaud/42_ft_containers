@@ -6,37 +6,53 @@
 #include "BidirectionalIterator.hpp"
 
 namespace ft {
-	template <typename T, typename It>
-	class RandomAccessIterator: public BidirectionalIterator<T, It> {
+	template <typename T>
+	class RandomAccessIterator {
 		public:
 
-			typedef ft::random_access_iterator_tag							iterator_category;
-			using typename ft::BidirectionalIterator<T, It>::difference_type;
-			using typename ft::BidirectionalIterator<T, It>::value_type;
-			using typename ft::BidirectionalIterator<T, It>::pointer;
-			using typename ft::BidirectionalIterator<T, It>::reference;
+			typedef RandomAccessIterator			it;
+			typedef T								value_type;
+			typedef ptrdiff_t						difference_type;
+			typedef T*								pointer;
+			typedef T&								reference;
+			typedef ft::random_access_iterator_tag	iterator_category;
 
-			RandomAccessIterator(): BidirectionalIterator<T, It>() {};
-			RandomAccessIterator(const pointer from): BidirectionalIterator<T, It>(from) {};
-			RandomAccessIterator(const It& from): BidirectionalIterator<T, It>(from) {};
-			virtual ~RandomAccessIterator() {};
+			RandomAccessIterator(): _elem(NULL) {};
+			RandomAccessIterator(const pointer from): _elem(from) {};
+			RandomAccessIterator(const RandomAccessIterator<typename remove_cv<T>::type>& src): _elem(&(*src)) {};
+			~RandomAccessIterator() {};
+
+			// Comp overloading
+			bool					operator==(const it& rhs) const { return (_elem == rhs._elem); };
+			bool					operator!=(const it& rhs) const { return (_elem != rhs._elem); };
+			pointer					operator->() { return &(operator*()); };
+			reference				operator*() const { return (*_elem); };
+			reference				operator->() const { return (operator*()); };
+
+			// Increment / decrement
+			it&	operator++() { _elem++; return (*this);};
+			it&	operator--() { _elem--; return (*this);};
+			it	operator++(int) { it tmp = *this; _elem++; return (tmp);};
+			it	operator--(int) { it tmp = *this; _elem--; return (tmp);};
 
 			// arythmetic operator
 			// a +/- n
-			virtual It	operator+(const difference_type a) const = 0;
-			virtual It	operator-(const difference_type a) const = 0;
+			it	operator+(const difference_type a) const { it temp(*this); return temp += a; };
+			it	operator-(const difference_type a) const { it temp(*this); return temp -= a; };
 
 			// TO DEFINE LATER
 			// a - b
-			virtual difference_type	operator-(const It& rhs) const = 0;
-			virtual bool			operator<(const It& rhs) const = 0;
-			virtual bool			operator>(const It& rhs) const = 0;
-			virtual bool			operator<=(const It& rhs) const = 0;
-			virtual bool			operator>=(const It& rhs) const = 0;
-			virtual It&				operator+=(const difference_type diff) = 0;
-			virtual It&				operator-=(const difference_type diff) = 0;
-			virtual reference		operator[](int index) = 0;
-			virtual const reference	operator[](int) const = 0;
+			difference_type	operator-(const it& rhs) const { return (_elem - rhs._elem); }
+			bool			operator<(const it& rhs) const { return (_elem < rhs._elem); };
+			bool			operator>(const it& rhs) const { return (_elem > rhs._elem); };
+			bool			operator<=(const it& rhs) const { return (_elem <= rhs._elem); };
+			bool			operator>=(const it& rhs) const { return (_elem >= rhs._elem); };
+			it&				operator+=(const difference_type diff) { _elem += diff; return (*this); };
+			it&				operator-=(const difference_type diff) { _elem -= diff; return (*this); };
+			reference		operator[](int index) { return (_elem[index]); };
+
+		private:
+			pointer	_elem;
 	};
 }
 

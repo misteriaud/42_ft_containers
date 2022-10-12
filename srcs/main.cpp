@@ -182,6 +182,8 @@ int main(void)
 		for(; it_bar != bar.end(); it_bar++)
 			std::cout << *it_bar << std::endl;
 
+		foo.assign(bar.begin(), --bar.end());
+
 
 
 

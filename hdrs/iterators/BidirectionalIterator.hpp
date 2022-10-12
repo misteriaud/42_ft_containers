@@ -7,10 +7,12 @@
 #include "SFINAE.hpp"
 
 namespace ft {
-	template <typename T, typename It>
-	class BidirectionalIterator {
+
+	template <typename T>
+	class BidirectionalIterator{
 
 		public:
+			typedef BidirectionalIterator			it;
 			typedef T								value_type;
 			typedef ptrdiff_t						difference_type;
 			typedef T*								pointer;
@@ -19,33 +21,30 @@ namespace ft {
 
 			BidirectionalIterator(): _elem(NULL) {};
 			BidirectionalIterator(const pointer from): _elem(from) {};
-			BidirectionalIterator(const It& from): _elem(from._elem) {};
-			virtual It&	operator=(const It& rhs) {
+			BidirectionalIterator(const BidirectionalIterator<typename remove_cv<T>::type>& src): _elem(src._elem) {};
+			virtual it&	operator=(const it& rhs) {
 				if (this == &rhs)
-					return (dynamic_cast<It&>(*this));
+					return (*this);
 				_elem = rhs._elem;
-				return (dynamic_cast<It&>(*this));
-
+					return (*this);
 			};
 			virtual ~BidirectionalIterator() {};
 
 			// Comp overloading
-			virtual bool					operator==(const It& rhs) { return (_elem == rhs._elem); };
-			virtual bool					operator!=(const It& rhs) { return !(*this == rhs); };
-			virtual reference				operator*() { if (!_elem) throw std::exception(); return (*_elem); };
-			virtual reference				operator->() { return (operator*()); };
-			virtual reference				operator*() const { return (*this->_elem); };
-			// virtual reference				operator*() const { if (!this->_elem) throw std::exception(); return (*this->_elem); };
+			virtual bool					operator==(const it& rhs) const { return (_elem == rhs._elem); };
+			virtual bool					operator!=(const it& rhs) const { return (_elem != rhs._elem); };
+			virtual pointer					operator->() { return &(operator*()); };
+			virtual reference				operator*() const { return (*_elem); };
 			virtual reference				operator->() const { return (operator*()); };
 
 			// Increment / decrement
-			virtual It&	operator++() = 0;
-			virtual It&	operator--() = 0;
-			virtual It	operator++(int) = 0;
-			virtual It	operator--(int) = 0;
+			virtual it&	operator++() { _elem++; return (*this);};
+			virtual it&	operator--() { _elem--; return (*this);};
+			virtual it	operator++(int) { it tmp = *this; _elem++; return (tmp);};
+			virtual it	operator--(int) { it tmp = *this; _elem--; return (tmp);};
 
-		protected:
-			pointer	_elem;
+			// protected:
+				pointer	_elem;
 	};
 }
 
