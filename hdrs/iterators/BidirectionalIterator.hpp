@@ -17,7 +17,7 @@ namespace ft {
 			typedef ptrdiff_t						difference_type;
 			typedef T*								pointer;
 			typedef T&								reference;
-			typedef ft::bidirectional_iterator_tag	iterator_category;
+			typedef std::bidirectional_iterator_tag	iterator_category;
 
 			BidirectionalIterator(): _elem(NULL) {};
 			BidirectionalIterator(const pointer from): _elem(from) {};

@@ -10,14 +10,14 @@ namespace ft {
 	class RandomAccessIterator {
 		private:
 			typedef RandomAccessIterator<typename remove_cv<T>::type >	unconstIt;
+			typedef RandomAccessIterator								it;
 
 		public:
-			typedef RandomAccessIterator			it;
 			typedef T								value_type;
 			typedef ptrdiff_t						difference_type;
 			typedef T*								pointer;
 			typedef T&								reference;
-			typedef ft::random_access_iterator_tag	iterator_category;
+			typedef std::random_access_iterator_tag	iterator_category;
 
 			RandomAccessIterator(): _elem(NULL) {};
 			RandomAccessIterator(const pointer from): _elem(from) {};
@@ -43,6 +43,7 @@ namespace ft {
 			pointer					operator->() { return &(operator*()); };
 			reference				operator*() const { return (*_elem); };
 			reference				operator->() const { return (operator*()); };
+			reference				operator[](difference_type index) const { return (_elem[index]); };
 
 			// Increment / decrement
 			it&	operator++() { _elem++; return (*this);};
@@ -55,7 +56,6 @@ namespace ft {
 			difference_type	operator-(const it& rhs) const { return (_elem - rhs._elem); }
 			it&				operator+=(const difference_type diff) { _elem += diff; return (*this); };
 			it&				operator-=(const difference_type diff) { _elem -= diff; return (*this); };
-			reference		operator[](int index) { return (_elem[index]); };
 
 		private:
 			pointer	_elem;

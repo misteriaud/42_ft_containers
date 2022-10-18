@@ -2,6 +2,8 @@
 #ifndef ITERATORUTILS_HPP
 # define ITERATORUTILS_HPP
 
+#include "iterator_traits.hpp"
+
 namespace ft {
 
 	struct input_iterator_tag { };
@@ -11,9 +13,9 @@ namespace ft {
 	struct random_access_iterator_tag : public bidirectional_iterator_tag { };
 
 	template< class InputIt >
-	typename std::iterator_traits<InputIt>::difference_type
+	typename ft::iterator_traits<InputIt>::difference_type
 	distance( InputIt first, InputIt last ) {
-		typename std::iterator_traits<InputIt>::difference_type i = 0;
+		typename ft::iterator_traits<InputIt>::difference_type i = 0;
 		if (first == last)
 			return (0);
 		while (first++ != last)

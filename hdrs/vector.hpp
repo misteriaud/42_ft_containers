@@ -5,6 +5,7 @@
 #include <memory>
 #include "iterators/RandomAccessIterator.hpp"
 #include "iterators/iterator_traits.hpp"
+#include "iterators/reverse_iterator.hpp"
 #include "SFINAE.hpp"
 #include <stdexcept>
 
@@ -20,16 +21,18 @@ namespace ft {
 		//
 		//	TYPES DEFINITIONS
 		//
-		typedef T									value_type;
-		typedef Allocator							allocator_type;
-		typedef std::size_t							size_type;
-		typedef std::ptrdiff_t						difference_type;
-		typedef value_type&							reference;
-		typedef const value_type&					const_reference;
-		typedef typename Allocator::pointer			pointer;
-		typedef typename Allocator::const_pointer	const_pointer;
-		typedef ft::RandomAccessIterator<T>						iterator;
-		typedef ft::RandomAccessIterator<const T>				const_iterator;
+		typedef T										value_type;
+		typedef Allocator								allocator_type;
+		typedef std::size_t								size_type;
+		typedef std::ptrdiff_t							difference_type;
+		typedef value_type&								reference;
+		typedef const value_type&						const_reference;
+		typedef typename Allocator::pointer				pointer;
+		typedef typename Allocator::const_pointer		const_pointer;
+		typedef ft::RandomAccessIterator<T>				iterator;
+		typedef ft::RandomAccessIterator<const T>		const_iterator;
+		typedef ft::reverse_iterator<iterator>			reverse_iterator;
+		typedef ft::reverse_iterator<const_iterator>	const_reverse_iterator;
 
 
 
@@ -99,6 +102,18 @@ namespace ft {
 		const_iterator	end() const {
 			return (const_iterator(_buffer + _size));
 		}
+		reverse_iterator rbegin() {
+			return (reverse_iterator(end() - 1));
+		};
+		const_reverse_iterator rbegin() const {
+			return (const_reverse_iterator(end() - 1));
+		};
+		reverse_iterator rend() {
+			return (reverse_iterator(begin() - 1));
+		};
+		const_reverse_iterator rend() const {
+			return (const_reverse_iterator(begin() - 1));
+		};
 
 
 
@@ -229,7 +244,6 @@ namespace ft {
 		}
 		template <class InputIterator>
 		typename ft::enable_if<!ft::is_integral<InputIterator>::value, void>::type
-		// void
 					insert(iterator position, InputIterator first, InputIterator last) {
 			typedef typename ft::iterator_traits<InputIterator>::iterator_category tag;
 			insert(position, first, last, tag());
@@ -344,7 +358,7 @@ namespace ft {
 				push_back(*first);
 		}
 		template <typename Iterator>
-		void	assign(Iterator first, Iterator last, ft::bidirectional_iterator_tag) {
+		void	assign(Iterator first, Iterator last, std::bidirectional_iterator_tag) {
 			// std::cout << "some iterator" << std::endl;
 			size_type 	distance = static_cast<size_type>(ft::distance(first, last));
 			size_type	i = 0;
@@ -374,10 +388,10 @@ namespace ft {
 			insert(position, temp.begin(), temp.end(), tag());
 		}
 		template <typename InputIterator>
-		void	insert(iterator position, InputIterator first, InputIterator last, ft::bidirectional_iterator_tag) {
+		void	insert(iterator position, InputIterator first, InputIterator last, typename iterator_traits<InputIterator>::iterator_category) {
 			size_type		j = 0;
 			difference_type	length = ft::distance<iterator>(begin(), position);
-			difference_type	to_insert = static_cast<difference_type>(ft::distance<iterator>(first, last));
+			difference_type	to_insert = static_cast<difference_type>(ft::distance<InputIterator>(first, last));
 			if (length > 0)
 				length--;
 			if (to_insert > 0)
