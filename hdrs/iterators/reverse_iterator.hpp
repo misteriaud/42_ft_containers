@@ -29,7 +29,7 @@ namespace ft {
 			reverse_iterator(const reverse_iterator<U>& other): _current(other.base()) {};
 			template< class U >
 			reverse_iterator& operator=(const reverse_iterator<U>& other ) {
-				if (this == &other)
+				if (_current == other.base())
 					return (*this);
 				_current = other.base();
 				return (*this);
@@ -40,13 +40,13 @@ namespace ft {
 
 
 			pointer			operator->() const { return &(operator*()); }
-			reference		operator*() const { return (*_current); }
-			reference		operator[]( difference_type index ) const { return (_current[index]); }
+			reference		operator*() const { return *(_current - 1); }
+			reference		operator[]( difference_type index ) const { return (_current[index - 1]); }
 
-			reverse_iterator& operator++() { return (--_current); }
-			reverse_iterator& operator--() { return (++_current); }
-			reverse_iterator operator++(int) { iterator_type tmp(*this); --(*this); return (tmp); }
-			reverse_iterator operator--(int) { iterator_type tmp(*this); ++(this); return (tmp); }
+			reverse_iterator& operator++() { --_current; return (*this); }
+			reverse_iterator& operator--() { ++_current; return (*this); }
+			reverse_iterator operator++(int) { reverse_iterator tmp(_current); ++(*this); return (tmp); }
+			reverse_iterator operator--(int) { reverse_iterator tmp(_current); --(*this); return (tmp); }
 
 
 			reverse_iterator operator-(difference_type n) const { reverse_iterator tmp(*this); return (tmp -= n); }
@@ -75,13 +75,15 @@ namespace ft {
 
 	template< typename T> // 1 + it
 	reverse_iterator<T>	operator+(const typename reverse_iterator<T>::difference_type lhs, const reverse_iterator<T>& rhs) {
-		reverse_iterator<T> temp(rhs);
-		return temp += lhs;
+		return (operator+(rhs, lhs));
+		// reverse_iterator<T> temp(rhs);
+		// return temp += lhs;
 	};
 	template< typename T> // 1 - it
 	reverse_iterator<T>	operator-(const typename reverse_iterator<T>::difference_type lhs, const reverse_iterator<T>& rhs) {
-		reverse_iterator<T> temp(rhs);
-		return temp -= lhs;
+		return (operator-(rhs, lhs));
+		// reverse_iterator<T> temp(rhs);
+		// return temp -= lhs;
 	};
 
 	template< class It1, class It2> // it2 - it1
