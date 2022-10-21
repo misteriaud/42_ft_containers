@@ -55,7 +55,10 @@ namespace ft {
 			// a - b
 			difference_type	operator-(const it& rhs) const { return (_elem - rhs._elem); }
 			it&				operator+=(const difference_type diff) { _elem += diff; return (*this); };
-			it&				operator-=(const difference_type diff) { _elem -= diff; return (*this); };
+			it&				operator-=(const difference_type diff) {
+				_elem -= diff;
+				return (*this);
+			};
 
 		private:
 			pointer	_elem;
