@@ -71,17 +71,11 @@ namespace ft {
 		vector&	operator=(const vector& rhs) {
 			if (this == &rhs)
 				return (*this);
-			if (_capacity < rhs._size) {
-				manage_array(rhs._size, 0);
-			}
-			for (size_type i = 0; i < rhs._size; i++) {
-				if (i < _size)
-					_buffer[i] = rhs._buffer[i];
-				else
-					_alloc.construct(_buffer + i, rhs._buffer[i]);
-			}
+			manage_array(rhs._size, 0);
+			for (size_type i = 0; i < rhs._size; i++)
+				_alloc.construct(_buffer + i, rhs._buffer[i]);
 			_size = rhs._size;
-			_capacity = rhs._capacity;
+			// _capacity = rhs._capacity;
 			return (*this);
 		}
 
@@ -465,6 +459,11 @@ namespace ft {
 	template <class T, class Alloc>
 	bool operator>= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
 		return !(operator<(lhs, rhs));
+	}
+
+	template <class T, class Alloc>
+	void swap(vector<T,Alloc>& lhs, vector<T,Alloc>& rhs) {
+		lhs.swap(rhs);
 	}
 }
 
