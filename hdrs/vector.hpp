@@ -7,7 +7,8 @@
 #include "iterators/iterator_traits.hpp"
 #include "iterators/reverse_iterator.hpp"
 #include "SFINAE.hpp"
-#include <stdexcept>
+#include "lexicographical_compare.hpp"
+#include "equal.hpp"
 
 namespace ft {
 
@@ -346,7 +347,6 @@ namespace ft {
 		// SPECIALIZATION
 		template <typename InputIterator>
 		void	assign(InputIterator first, InputIterator last, std::input_iterator_tag) {
-			// std::cout << "be careful with InputIterator" << std::endl;
 			clear();
 			for (; first != last; first++)
 				push_back(*first);
@@ -399,22 +399,7 @@ namespace ft {
 
 	template <class T, class Alloc>
 	bool operator== (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
-		if (lhs.size() != rhs.size())
-			return false;
-
-		typedef typename vector<T, Alloc>::const_iterator	It;
-		It	it1 = lhs.begin();
-		It	it2 = rhs.begin();
-		while(it1 != lhs.end() && it2 != rhs.end()) {
-			if (*it1 != *it2)
-				return false;
-			it1++;
-			it2++;
-		}
-		if (it1 == lhs.end() && it2 == rhs.end())
-			return true;
-		return false;
-
+		return (equal(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
 	}
 
 	template <class T, class Alloc>
@@ -424,25 +409,7 @@ namespace ft {
 
 	template <class T, class Alloc>
 	bool operator<  (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
-		typedef typename vector<T, Alloc>::const_iterator	It;
-		It it1 = lhs.begin();
-		It it2 = rhs.begin();
-		while (it1 != lhs.end())
-		{
-			if (it2 == rhs.end() || *it2 < *it1) return false;
-			else if (*it1 < *it2) return true;
-			++it1; ++it2;
-		}
-		return (it2 != rhs.end());
-		// while(it1 != lhs.end() && it2 != rhs.end()) {
-		// 	if (*it1 > *it2)
-		// 		return false;
-		// 	it1++;
-		// 	it2++;
-		// }
-		// if (it2 < rhs.end())
-		// 	return true;
-		// return false;
+		return (lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
 	}
 
 	template <class T, class Alloc>
