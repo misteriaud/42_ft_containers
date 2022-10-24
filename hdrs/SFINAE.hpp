@@ -4,7 +4,6 @@
 
 namespace ft {
 
-
 	// REMOVE POSSIBLE Const, Volatile, Const Volatile
 	template< class T > struct remove_cv                   { typedef T type; };
 	template< class T > struct remove_cv<const T>          { typedef T type; };
@@ -29,12 +28,8 @@ namespace ft {
 
 
 	// IS_INTEGRAL
-	struct false_type {
-		static const bool value = false;
-	};
-	struct true_type {
-		static const bool value = true;
-	};
+	struct false_type { static const bool value = false; };
+	struct true_type { static const bool value = true; };
 
 	template<typename> struct is_integral_base : false_type {};
 
