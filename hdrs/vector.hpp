@@ -142,12 +142,12 @@ namespace ft {
 			return (_buffer[n]);
 		}
 		reference		at(size_type n) {
-			if (n < 0 || n >= _size)
+			if (n + 1 < 1 || n >= _size)
 				throw std::out_of_range("out of bound request");
 			return (_buffer[n]);
 		}
 		const_reference at (size_type n) const {
-			if (n < 0 || n >= _size)
+			if (n + 1 < 1 || n >= _size)
 				throw std::out_of_range("out of bound request");
 			return (_buffer[n]);
 		}

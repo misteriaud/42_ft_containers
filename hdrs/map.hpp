@@ -21,18 +21,31 @@ namespace ft {
 		typedef T										mapped_type;
 		typedef pair<const key_type, const mapped_type>	value_type;
 		typedef Compare									key_compare;
-		typedef
 		typedef Allocator								allocator_type;
-		typedef std::size_t								size_type;
-		typedef std::ptrdiff_t							difference_type;
-		typedef value_type&								reference;
-		typedef const value_type&						const_reference;
+		typedef allocator_type::reference				reference;
+		typedef allocator_type::const_reference			const_reference;
 		typedef typename Allocator::pointer				pointer;
 		typedef typename Allocator::const_pointer		const_pointer;
-		typedef ft::RandomAccessIterator<T>				iterator;
-		typedef ft::RandomAccessIterator<const T>		const_iterator;
+		typedef ft::BidirectionalIterator<T>			iterator;
+		typedef ft::BidirectionalIterator<const T>		const_iterator;
 		typedef ft::reverse_iterator<iterator>			reverse_iterator;
 		typedef ft::reverse_iterator<const_iterator>	const_reverse_iterator;
+		typedef std::ptrdiff_t							difference_type;
+		typedef std::size_t								size_type;
+
+		//
+		// FUNCTION OBJECT
+		//
+		class value_compare: public binary_function<value_type, value_type, bool> {
+			protected:
+				Compare comp;
+				value_compare (Compare c) : comp(c) {}  // constructed with map's comparison object
+			public:
+				typedef bool		result_type;
+				typedef value_type	first_argument_type;
+				typedef value_type	second_argument_type;
+				bool operator() (const value_type& x, const value_type& y) const { return comp(x.first, y.first); }
+		};
 	};
 }
 
