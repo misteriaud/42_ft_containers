@@ -14,6 +14,8 @@ typedef enum {
 #define NULL_NODE Node<T>::NIL()
 #define IS_NODE(node) (node != Node<T>::NIL())
 
+namespace ft {
+
 template<typename T>
 class Node {
 	public:
@@ -119,7 +121,11 @@ class Node {
 		t_color				color;
 };
 
-template<typename T, typename Allocator = std::allocator<T> >
+template<
+	typename T,
+	typename Compare = std::less<T>,
+	typename Allocator = std::allocator<T>
+	>
 class RBTree {
 	public:
 		typedef	T											value_type;
@@ -430,7 +436,7 @@ class RBTree {
 		void	print(pointer focus = NULL) {
 			#ifdef PRINT
 				static int uuid;
-				std::stack<pointer>	to_print;
+				ft::stack<pointer>	to_print;
 				if (!IS_NODE(_root))
 					return ;
 				_root->print_label(uuid, focus);
@@ -456,7 +462,7 @@ class RBTree {
 		pointer				_min;
 		pointer				_max;
 		size_type			_size;
-		std::stack<pointer>	_available_mem;
+		ft::stack<pointer>	_available_mem;
 
 		pointer copy_subtree(const pointer src, const pointer p = NULL_NODE) {
 			if(!IS_NODE(src))
@@ -487,5 +493,6 @@ class RBTree {
 			_available_mem.push(node);
 		}
 };
+}
 
 #endif

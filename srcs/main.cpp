@@ -5,11 +5,13 @@
 #include <iterator>
 #include "../hdrs/colors.h"
 
-#if 1
-# include "../hdrs/vector.hpp"
+#if 0
+// # include "../hdrs/vector.hpp"
+# include <vector>
 # define NS ft
 #else
 # include <vector>
+# include <map>
 # define NS std
 #endif
 
@@ -43,6 +45,8 @@ std::ostream& operator<< (std::ostream& out, const BaseTest& character)
 
 int main(void)
 {
+
+	std::map<int> test;
 	// {
 	// 	NS::vector<size_t>	test;
 
