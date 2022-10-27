@@ -278,7 +278,7 @@ namespace ft {
 		}
 
 	private:
-		Allocator		_alloc;
+		allocator_type	_alloc;
 		T*				_buffer;
 		size_type		_capacity;
 		size_type		_size;
