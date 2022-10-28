@@ -3,6 +3,7 @@
 # define PAIR_HPP
 
 namespace ft {
+
 	template<typename T1, typename T2>
 	struct pair {
 		typedef T1	first_type;
@@ -26,7 +27,7 @@ namespace ft {
 		//	OPERATORS
 		//
 		pair& operator= (const pair& rhs) {
-			if (this == &pr)
+			if (this == &rhs)
 				return (*this);
 			first = rhs.first;
 			second = rhs.second;

@@ -3,20 +3,24 @@
 # define RBTree_HPP
 
 #include <iostream>
-#include <stack>
+#include <stack.hpp>
 #include <memory>
+// #include <get_key>
 
 typedef enum {
 	RED,
 	BLACK
 }		t_color;
 
-#define NULL_NODE Node<T>::NIL()
-#define IS_NODE(node) (node != Node<T>::NIL())
+#define NULL_NODE Node<T, Compare>::NIL()
+#define IS_NODE(node) (node != Node<T, Compare>::NIL())
 
 namespace ft {
 
-template<typename T>
+template<
+	typename T,
+	typename Compare
+	>
 class Node {
 	public:
 		typedef	T			value_type;
@@ -94,10 +98,10 @@ class Node {
 
 		bool		operator==(const reference rhs) { return value == rhs.value; }
 		bool		operator!=(const reference rhs) { return value != rhs.value; }
-		bool		operator<(const reference rhs) { return value < rhs.value; }
-		bool		operator>(const reference rhs) { return value > rhs.value; }
-
+		bool		operator<(const reference rhs) { return less(value, rhs.value); }
+		bool		operator>(const reference rhs) { return !(less(value, rhs.value)); }
 		value_type	operator*() { return value; }
+
 		Node&		operator=(const Node& rhs) {
 			if (this == &rhs)
 				return (*this);
@@ -119,6 +123,13 @@ class Node {
 		pointer				right;
 		value_type			value;
 		t_color				color;
+
+	private:
+
+		static bool less(const value_type& a, const value_type& b) {
+			static Compare	func;
+			return (func(a, b));
+		}
 };
 
 template<
@@ -129,9 +140,9 @@ template<
 class RBTree {
 	public:
 		typedef	T											value_type;
-		typedef typename Allocator::rebind<Node<T>>::other	allocator_type;
+		typedef typename Allocator::template rebind<Node<T, Compare> >::other	allocator_type;
 		typedef std::size_t									size_type;
-		typedef Node<T>*									pointer;
+		typedef Node<T, Compare>*									pointer;
 		typedef RBTree&										reference;
 		typedef const RBTree&								const_reference;
 
@@ -189,15 +200,15 @@ class RBTree {
 
 			while(IS_NODE(temp)) {
 				y = temp;
-				if(**temp == value)
-					throw alreadyExist();
+				// if(**temp == value)
+				// 	throw alreadyExist();
 				if(value < **temp)
 					temp = temp->left;
 				else
 					temp = temp->right;
 			}
 
-			pointer	new_node = create_node(Node(value, RED));
+			pointer	new_node = create_node(Node<T, Compare>(value, RED));
 			new_node->parent = y;
 
 			if(!IS_NODE(y))
@@ -467,7 +478,7 @@ class RBTree {
 		pointer copy_subtree(const pointer src, const pointer p = NULL_NODE) {
 			if(!IS_NODE(src))
 				return (NULL_NODE);
-			pointer new_node = create_node(Node(src->value, src->color));
+			pointer new_node = create_node(Node<T, Compare>(src->value, src->color));
 			new_node->parent = p;
 			if(IS_NODE(src->left))
 				new_node->left = copy_subtree(src->left, new_node);
@@ -477,7 +488,7 @@ class RBTree {
 		}
 
 		// MEMORY MANAGEMENT
-		pointer	create_node(const Node<T>& ref) {
+		pointer	create_node(const Node<T, Compare>& ref) {
 			pointer new_node;
 			if (!_available_mem.empty()) {
 				new_node = _available_mem.top();

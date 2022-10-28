@@ -27,10 +27,10 @@ namespace ft {
 	};
 
 
-	// IS_INTEGRAL
 	struct false_type { static const bool value = false; };
 	struct true_type { static const bool value = true; };
 
+	// IS_INTEGRAL
 	template<typename> struct is_integral_base : false_type {};
 
 	template<> struct is_integral_base<bool>: true_type {};
