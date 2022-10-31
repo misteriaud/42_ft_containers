@@ -101,8 +101,8 @@ class Node {
 			}
 		}
 
-		bool		operator==(const reference rhs) { return value == rhs.value; }
-		bool		operator!=(const reference rhs) { return value != rhs.value; }
+		bool		operator==(const_reference rhs) { return value == rhs.value; }
+		bool		operator!=(const_reference rhs) { return value != rhs.value; }
 		value_type&	operator*() { return value; }
 
 		Node&		operator=(const Node& rhs) {
@@ -189,30 +189,27 @@ class RBTree {
 			}
 			return (IS_NODE(curr) ? curr : NULL);
 		}
-		void	find_and_replace(T to_find, T to_replace) {
-			pointer curr = find(to_find);
-			if (!curr)
-				return ;
-			curr->value = to_replace;
-		}
-
 
 		//
 		// INSERTION
 		//
-		pointer insert(const T& value) {
+		pointer insert(const T& value, const pointer hint = NULL_NODE) {
 			pointer y = NULL_NODE;
 			pointer temp = _root;
 
-			while(IS_NODE(temp)) {
-				y = temp;
-				if(SAME_KEY(**temp, value))
-					return (temp);
-				if(_comp(value, **temp))
-					temp = temp->left;
-				else
-					temp = temp->right;
+			if (!hint || !IS_NODE(hint) || !(_comp(**hint, value) && _comp(value, **(hint->next())))) {
+				while(IS_NODE(temp)) {
+					y = temp;
+					if(SAME_KEY(**temp, value))
+						return (temp);
+					if(_comp(value, **temp))
+						temp = temp->left;
+					else
+						temp = temp->right;
+				}
 			}
+			else
+				y = hint->right;
 
 			pointer	new_node = create_node(Node<T>(value, RED));
 			new_node->parent = y;
@@ -473,7 +470,7 @@ class RBTree {
 			return (_max);
 		}
 		bool	empty() const {
-			return (!!_size);
+			return (!_size);
 		}
 		size_type	size() const {
 			return (_size);

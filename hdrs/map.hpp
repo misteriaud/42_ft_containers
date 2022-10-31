@@ -119,12 +119,32 @@ namespace ft {
 			}
 
 
+			//
+			// MODIFIERS
+			//
+			// single element (1)
+			pair<iterator,bool> insert(const value_type& val) {
+				size_type	last_size = size();
+				Node<value_type>* ptr = _rb_tree.insert(val);
+				ft::pair<iterator, bool> result = ft::make_pair<iterator, bool>(iterator(ptr), true);
 
+				if (size() == last_size)
+					result.second = false;
 
+				return (result);
+			}
+			// with hint (2)
+			iterator insert (iterator position, const value_type& val) {
 
+				Node<value_type>* ptr = _rb_tree.insert(val, position._elem);
 
-			void	insert(const Key& key, const T& value) {
-				_rb_tree.insert(ft::make_pair<Key, T>(key, value));
+				return (iterator(ptr));
+			}
+			// range (3)
+			template <class InputIterator>
+			void insert (InputIterator first, InputIterator last) {
+				for (; first != last; first++)
+					_rb_tree.insert(*first);
 			}
 
 		private:
