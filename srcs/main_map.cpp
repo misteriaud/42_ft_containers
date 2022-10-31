@@ -10,7 +10,9 @@ int main()
 	my_map.insert(7, "coucou");
 	my_map.insert(8, "cfeoucou");
 	my_map.insert(2, "yooo");
-
+	std::string	&str_ref = my_map[1];
+	std::cout << str_ref << std::endl;
+	str_ref = "Moi c'est max";
 
 	ft::map<int, std::string>	my_copy_map(my_map.begin(), my_map.end());
 	for (ft::map<int, std::string>::iterator it = my_copy_map.begin(); it != my_copy_map.end(); it++)

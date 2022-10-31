@@ -23,7 +23,7 @@ namespace ft {
 			//
 			typedef Key										key_type;
 			typedef T										mapped_type;
-			typedef pair<const key_type, const mapped_type>	value_type;
+			typedef pair<const key_type, mapped_type>		value_type;
 			typedef Compare									key_compare;
 			typedef Alloc									allocator_type;
 			typedef typename Alloc::reference				reference;
@@ -98,6 +98,26 @@ namespace ft {
 			// const_reverse_iterator rend() const {
 			// 	return (const_reverse_iterator(_buffer));
 			// };
+
+
+			//
+			// CAPACITY
+			//
+			bool empty() const {
+				return (_rb_tree.empty());
+			}
+			size_type size() const {
+				return (_rb_tree.size());
+			}
+
+
+			//
+			// ELEMENT ACCESS
+			//
+			mapped_type& operator[] (const key_type& k) {
+				return (**(_rb_tree.insert(ft::make_pair<Key, T>(k, mapped_type())))).second;
+			}
+
 
 
 

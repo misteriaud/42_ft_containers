@@ -200,14 +200,14 @@ class RBTree {
 		//
 		// INSERTION
 		//
-		void insert(T value) {
+		pointer insert(const T& value) {
 			pointer y = NULL_NODE;
 			pointer temp = _root;
 
 			while(IS_NODE(temp)) {
 				y = temp;
 				if(SAME_KEY(**temp, value))
-					throw alreadyExist();
+					return (temp);
 				if(_comp(value, **temp))
 					temp = temp->left;
 				else
@@ -229,6 +229,7 @@ class RBTree {
 			if (!IS_NODE(_max) || _comp(**_max, **new_node))
 				_max = new_node;
 			_size++;
+			return (new_node);
 		}
 		void insertion_fixup(pointer z) {
 			while(z->parent->color == RED) {
@@ -393,7 +394,7 @@ class RBTree {
 		void clear() {
 			pointer curr = _min;
 			pointer tmp = NULL_NODE;
-			if (!_size)
+			if (empty())
 				return ;
 			while (IS_NODE(_root->left) || IS_NODE(_root->right)) {
 				if (IS_NODE(curr->left))
@@ -470,6 +471,12 @@ class RBTree {
 		}
 		pointer	max() const {
 			return (_max);
+		}
+		bool	empty() const {
+			return (!!_size);
+		}
+		size_type	size() const {
+			return (_size);
 		}
 
 		// EXCEPTION
