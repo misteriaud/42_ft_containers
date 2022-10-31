@@ -5,6 +5,7 @@
 #include <cstddef>
 #include "IteratorUtils.hpp"
 #include "../SFINAE.hpp"
+#include "../RBTree.hpp"
 
 namespace ft {
 
@@ -17,34 +18,37 @@ namespace ft {
 			typedef ptrdiff_t						difference_type;
 			typedef T*								pointer;
 			typedef T&								reference;
+			typedef Node<value_type>*				node_pointer;
+			typedef Node<value_type>&				node_reference;
 			typedef std::bidirectional_iterator_tag	iterator_category;
 
 			BidirectionalIterator(): _elem(NULL) {};
-			BidirectionalIterator(const pointer from): _elem(from) {};
+			BidirectionalIterator(const node_pointer from): _elem(from) {};
 			BidirectionalIterator(const BidirectionalIterator<typename remove_cv<T>::type>& src): _elem(src._elem) {};
-			virtual it&	operator=(const it& rhs) {
+			it&	operator=(const it& rhs) {
 				if (this == &rhs)
 					return (*this);
 				_elem = rhs._elem;
 					return (*this);
 			};
-			virtual ~BidirectionalIterator() {};
+			~BidirectionalIterator() {};
 
 			// Comp overloading
-			virtual bool					operator==(const it& rhs) const { return (_elem == rhs._elem); };
-			virtual bool					operator!=(const it& rhs) const { return (_elem != rhs._elem); };
-			virtual pointer					operator->() { return &(operator*()); };
-			virtual reference				operator*() const { return (*_elem); };
-			virtual reference				operator->() const { return (operator*()); };
+			bool					operator==(const it& rhs) const { return (_elem == rhs._elem); };
+			bool					operator!=(const it& rhs) const { return (_elem != rhs._elem); };
+			node_pointer			operator->() { return _elem; };
+			// node_pointer			operator->() { return &(operator*()); };
+			reference				operator*() const { return (**_elem); };
+			reference				operator->() const { return (operator*()); };
 
 			// Increment / decrement
-			virtual it&	operator++() { _elem++; return (*this);};
-			virtual it&	operator--() { _elem--; return (*this);};
-			virtual it	operator++(int) { it tmp = *this; _elem++; return (tmp);};
-			virtual it	operator--(int) { it tmp = *this; _elem--; return (tmp);};
+			it&	operator++() { _elem = _elem->next(); return (*this);};
+			it&	operator--() { _elem = _elem->previous(); return (*this);};
+			it	operator++(int) { it tmp = *this; _elem = _elem->next(); return (tmp);};
+			it	operator--(int) { it tmp = *this; _elem = _elem->previous(); return (tmp);};
 
 			// protected:
-				pointer	_elem;
+			node_pointer	_elem;
 	};
 }
 

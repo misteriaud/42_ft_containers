@@ -103,7 +103,7 @@ class Node {
 
 		bool		operator==(const reference rhs) { return value == rhs.value; }
 		bool		operator!=(const reference rhs) { return value != rhs.value; }
-		value_type	operator*() { return value; }
+		value_type&	operator*() { return value; }
 
 		Node&		operator=(const Node& rhs) {
 			if (this == &rhs)
@@ -463,6 +463,13 @@ class RBTree {
 			#else
 				(void)focus;
 			#endif
+		}
+
+		pointer	min() const {
+			return (_min);
+		}
+		pointer	max() const {
+			return (_max);
 		}
 
 		// EXCEPTION
