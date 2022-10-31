@@ -54,13 +54,29 @@ namespace ft {
 			//
 			// Constructors
 			//
-			map() {};
+			// empty (1)
+			explicit map (const key_compare& comp = key_compare(),
+						const allocator_type& alloc = allocator_type())
+						: _comp(comp), _alloc(alloc), _rb_tree(alloc, value_compare(comp)) {};
+			// range (2)
+			template <class InputIterator>
+			map (InputIterator first, InputIterator last,
+				const key_compare& comp = key_compare(),
+				const allocator_type& alloc = allocator_type())
+				: _comp(comp), _alloc(alloc), _rb_tree(alloc, value_compare(comp)) {
+					for (; first != last; first++)
+						_rb_tree.insert(*first);
+				}
+			// copy (3)
+			map (const map& from): _comp(from._comp), _alloc(from._alloc), _rb_tree(from._rb_tree) {};
 
 			void	insert(const Key& key, const T& value) {
 				_rb_tree.insert(ft::make_pair<Key, T>(key, value));
 			}
 
 		private:
+			key_compare										_comp;
+			allocator_type									_alloc;
 			ft::RBTree<value_type, value_compare, Alloc>	_rb_tree;
 	};
 }

@@ -7,19 +7,19 @@
 #include <memory>
 // #include <get_key>
 
-typedef enum {
+typedef enum e_color {
 	RED,
 	BLACK
 }		t_color;
 
-#define NULL_NODE Node<T, Compare>::NIL()
-#define IS_NODE(node) (node != Node<T, Compare>::NIL())
+#define NULL_NODE Node<T>::NIL()
+#define IS_NODE(node) (node != Node<T>::NIL())
+#define SAME_KEY(a_value, b_value) (!_comp(a_value, b_value) && !_comp(b_value, a_value))
 
 namespace ft {
 
 template<
-	typename T,
-	typename Compare
+	typename T
 	>
 class Node {
 	public:
@@ -28,9 +28,14 @@ class Node {
 		typedef Node&		reference;
 		typedef const Node&	const_reference;
 
-		Node(value_type value = value_type(), t_color color = RED, const pointer NIL = NULL_NODE)
+		Node(
+			value_type value = value_type(),
+			t_color color = RED,
+			const pointer NIL = NULL_NODE
+		)
 			: parent(NULL), left(NIL), right(NIL), value(value), color(color) {};
-		Node(const_reference from): parent(from.parent), left(from.left), right(from.right), value(from.value), color(from.color) {};
+		Node(const_reference from):
+			parent(from.parent), left(from.left), right(from.right), value(from.value), color(from.color) {};
 		~Node() {
 		};
 
@@ -98,8 +103,6 @@ class Node {
 
 		bool		operator==(const reference rhs) { return value == rhs.value; }
 		bool		operator!=(const reference rhs) { return value != rhs.value; }
-		bool		operator<(const reference rhs) { return less(value, rhs.value); }
-		bool		operator>(const reference rhs) { return !(less(value, rhs.value)); }
 		value_type	operator*() { return value; }
 
 		Node&		operator=(const Node& rhs) {
@@ -123,13 +126,6 @@ class Node {
 		pointer				right;
 		value_type			value;
 		t_color				color;
-
-	private:
-
-		static bool less(const value_type& a, const value_type& b) {
-			static Compare	func;
-			return (func(a, b));
-		}
 };
 
 template<
@@ -140,14 +136,17 @@ template<
 class RBTree {
 	public:
 		typedef	T											value_type;
-		typedef typename Allocator::template rebind<Node<T, Compare> >::other	allocator_type;
+		typedef typename Allocator::template rebind<Node<T> >::other	allocator_type;
 		typedef std::size_t									size_type;
-		typedef Node<T, Compare>*									pointer;
+		typedef Node<T>*									pointer;
 		typedef RBTree&										reference;
 		typedef const RBTree&								const_reference;
+		typedef Compare										compare_type;
 
-		RBTree(const allocator_type& alloc = allocator_type()): _alloc(alloc), _root(NULL_NODE), _min(_root), _max(_root), _size(0) {};
-		RBTree(const_reference from) { *this = from; }
+		RBTree(const allocator_type& alloc = allocator_type(),
+				const compare_type& comp = compare_type())
+			: _alloc(alloc), _comp(comp), _root(NULL_NODE), _min(_root), _max(_root), _size(0) {};
+		RBTree(const_reference from): _size(0) { operator=(from); };
 		~RBTree() {
 			clear();
 			while(!_available_mem.empty()) {
@@ -155,11 +154,12 @@ class RBTree {
 				_available_mem.pop();
 			}
 		};
-		reference	operator=(const reference rhs) {
+		reference	operator=(const_reference rhs) {
 			if (this == &rhs)
 				return (*this);
 			clear();
 			_alloc = rhs._alloc;
+			_comp = rhs._comp;
 			_root = copy_subtree(rhs._root);
 			_min = _root->min();
 			_max = _root->max();
@@ -172,8 +172,8 @@ class RBTree {
 		//
 		template<typename Ret>
 		Ret	forEach(Ret (func)(T)) {
-			pointer curr = _min();
-			while (curr)
+			pointer curr = _min;
+			while (IS_NODE(curr))
 			{
 				func(**curr);
 				curr = curr->next();
@@ -181,13 +181,19 @@ class RBTree {
 		}
 		pointer	find(T value) {
 			pointer curr = _root;
-			while (IS_NODE(curr) && **curr != value) {
-				if (value < **curr)
+			while (IS_NODE(curr) && !SAME_KEY(**curr, value)) {
+				if (_comp(value, **curr))
 					curr = curr->left;
 				else
 					curr = curr->right;
 			}
-			return (!IS_NODE(curr) ? NULL : curr);
+			return (IS_NODE(curr) ? curr : NULL);
+		}
+		void	find_and_replace(T to_find, T to_replace) {
+			pointer curr = find(to_find);
+			if (!curr)
+				return ;
+			curr->value = to_replace;
 		}
 
 
@@ -200,27 +206,27 @@ class RBTree {
 
 			while(IS_NODE(temp)) {
 				y = temp;
-				// if(**temp == value)
-				// 	throw alreadyExist();
-				if(value < **temp)
+				if(SAME_KEY(**temp, value))
+					throw alreadyExist();
+				if(_comp(value, **temp))
 					temp = temp->left;
 				else
 					temp = temp->right;
 			}
 
-			pointer	new_node = create_node(Node<T, Compare>(value, RED));
+			pointer	new_node = create_node(Node<T>(value, RED));
 			new_node->parent = y;
 
 			if(!IS_NODE(y))
 				_root = new_node;
-			else if(*new_node < *y)
+			else if(_comp(**new_node, **y))
 				y->left = new_node;
 			else
 				y->right = new_node;
 			insertion_fixup(new_node);
-			if (!IS_NODE(_min) || *new_node < *_min)
+			if (!IS_NODE(_min) || _comp(**new_node, **_min))
 				_min = new_node;
-			if (!IS_NODE(_max) || *new_node > *_max)
+			if (!IS_NODE(_max) || _comp(**_max, **new_node))
 				_max = new_node;
 			_size++;
 		}
@@ -469,16 +475,18 @@ class RBTree {
 
 	private:
 		allocator_type		_alloc;
+		compare_type	_comp;
 		pointer				_root;
 		pointer				_min;
 		pointer				_max;
 		size_type			_size;
 		ft::stack<pointer>	_available_mem;
 
+
 		pointer copy_subtree(const pointer src, const pointer p = NULL_NODE) {
 			if(!IS_NODE(src))
 				return (NULL_NODE);
-			pointer new_node = create_node(Node<T, Compare>(src->value, src->color));
+			pointer new_node = create_node(Node<T>(src->value, src->color));
 			new_node->parent = p;
 			if(IS_NODE(src->left))
 				new_node->left = copy_subtree(src->left, new_node);
@@ -488,7 +496,7 @@ class RBTree {
 		}
 
 		// MEMORY MANAGEMENT
-		pointer	create_node(const Node<T, Compare>& ref) {
+		pointer	create_node(const Node<T>& ref) {
 			pointer new_node;
 			if (!_available_mem.empty()) {
 				new_node = _available_mem.top();
