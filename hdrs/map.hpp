@@ -72,7 +72,7 @@ namespace ft {
 				}
 			// copy (3)
 			map (const map& from): _comp(from._comp), _alloc(from._alloc), _tree_alloc(from._tree_alloc), _rb_tree(_tree_alloc.allocate(1)) {
-				_tree_alloc.construct(_rb_tree, from._rb_tree);
+				_tree_alloc.construct(_rb_tree, *from._rb_tree);
 			};
 			~map() {
 				_tree_alloc.destroy(_rb_tree);
@@ -166,13 +166,22 @@ namespace ft {
 					_rb_tree->remove(first._elem);
 				}
 			}
-			// void swap (map& x) {
-			// 	key_compare										_comp_temp = _comp;
-			// 	allocator_type									_alloc_temp = _alloc;
-			// 	ft::RBTree<value_type, value_compare, Alloc>*	_rb_tree_temp = &;
+			void swap (map& x) {
+				key_compare		_comp_temp = _comp;
+				allocator_type	_alloc_temp = _alloc;
+				allocator_type	_tree_alloc_temp = _tree_alloc;
+				tree_type*		_rb_tree_temp = _rb_tree;
 
+				_comp = x._comp;
+				_alloc = x._alloc;
+				_tree_alloc = x._tree_alloc;
+				_rb_tree = x._rb_tree;
 
-			// }
+				x._comp = _comp_temp;
+				x._alloc = _alloc_temp;
+				x._tree_alloc = _tree_alloc_temp;
+				x._rb_tree = _rb_tree_temp;
+			}
 
 		private:
 			typedef ft::RBTree<value_type, value_compare, Alloc>			tree_type;
@@ -181,7 +190,7 @@ namespace ft {
 			key_compare			_comp;
 			allocator_type		_alloc;
 			tree_allocator_type _tree_alloc;
-			tree_type*				_rb_tree;
+			tree_type*			_rb_tree;
 	};
 }
 

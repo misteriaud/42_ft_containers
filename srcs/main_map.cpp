@@ -31,6 +31,8 @@ int main()
 
 	ft::vector<ft::pair<int, std::string> > my_vec;
 
+	ft::map<int, std::string>	my_copy_map(my_map);
+
 	my_vec.push_back(PAIR(1, "un"));
 	my_vec.push_back(PAIR(2, "deux"));
 	my_vec.push_back(PAIR(3, "trois"));
@@ -40,13 +42,20 @@ int main()
 
 	my_map.insert(my_vec.begin(), my_vec.end());
 
-
+	std::cout << "\nAvant echange:\n";
 	print_map(my_map);
+	print_map(my_copy_map);
 
-	for (iterator ite = my_map.begin(); ite != my_map.end(); ite++)
-		my_map.erase(ite);
-	// std::cout << (my_map.erase(8) ? "true" : "false") << std::endl;
+	iterator temp = my_map.begin();
+	my_map.swap(my_copy_map);
+
+	std::cout << "\nApres echange:\n";
 	print_map(my_map);
+	print_map(my_copy_map);
+
+	std::cout << (*temp).first << ", " << (*temp).second << std::endl;
+
+
 
 
 	return 0;
