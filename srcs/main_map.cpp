@@ -5,6 +5,16 @@
 
 #define PAIR(a, b) (ft::make_pair<int, std::string>(a, b))
 
+template <typename T1, typename T2>
+void 	print_map(ft::map<T1, T2>& to_print) {
+
+	typedef typename ft::map<T1, T2>::iterator iterator;
+
+	std::cout << std::endl << "Le map: \n";
+	for (iterator it = to_print.begin(); it != to_print.end(); it++)
+		std::cout << (*it).first << ", " << (*it).second << std::endl;
+}
+
 int main()
 {
 	typedef typename ft::map<int, std::string>::iterator iterator;
@@ -13,24 +23,11 @@ int main()
 	// ft::map<int, std::string>	my_copy_map;
 
 	my_map.insert(PAIR(7, "coucou"));
-	ret = my_map.insert(PAIR(8, "cfeoucou"));
-	std::cout << ret.first->value.first << ", " << ret.second << std::endl;
-	my_map.insert(PAIR(2, "yooo"));
-	std::string	&str_ref = my_map[1];
-	std::cout << str_ref << std::endl;
-	str_ref = "Moi c'est max";
-	ret = my_map.insert(PAIR(85, "le dernier"));
-	std::cout << ret.first->value.first << ", " << ret.second << std::endl;
-	ret = my_map.insert(PAIR(80, "cfeoucou"));
-	std::cout << ret.first->value.first << ", " << ret.second << std::endl;
+	my_map.insert(PAIR(8, "cfeoucou"));
+	my_map.insert(PAIR(85, "le dernier"));
+	my_map.insert(PAIR(80, "cfeoucou"));
 
-	iterator test = my_map.insert(ret.first, PAIR(81, "insert with hint"));
-	std::cout << (*test).second << std::endl;
-
-	ft::map<int, std::string>	my_copy_map(my_map.begin(), my_map.end());
-	for (ft::map<int, std::string>::iterator it = my_copy_map.begin(); it != my_copy_map.end(); it++)
-		std::cout << (*it).first << ", " << (*it).second << std::endl;
-
+	print_map(my_map);
 
 	ft::vector<ft::pair<int, std::string> > my_vec;
 
@@ -43,9 +40,13 @@ int main()
 
 	my_map.insert(my_vec.begin(), my_vec.end());
 
-	std::cout << std::endl << "Le map: \n";
-	for (ft::map<int, std::string>::iterator it = my_map.begin(); it != my_map.end(); it++)
-		std::cout << (*it).first << ", " << (*it).second << std::endl;
+
+	print_map(my_map);
+
+	for (iterator ite = my_map.begin(); ite != my_map.end(); ite++)
+		my_map.erase(ite);
+	// std::cout << (my_map.erase(8) ? "true" : "false") << std::endl;
+	print_map(my_map);
 
 
 	return 0;

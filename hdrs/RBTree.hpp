@@ -41,6 +41,8 @@ class Node {
 
 		pointer min() {
 			pointer curr = this;
+			if (!IS_NODE(curr))
+				return (curr);
 			while(IS_NODE(curr->left))
 				curr = curr->left;
 			return (curr);
@@ -48,6 +50,8 @@ class Node {
 
 		pointer max() {
 			pointer curr = this;
+			if (!IS_NODE(curr))
+				return (curr);
 			while(IS_NODE(curr->right))
 				curr = curr->right;
 			return (curr);
@@ -276,10 +280,9 @@ class RBTree {
 		//
 		// DELETION
 		//
-		void rb_delete(T value) {
-			pointer z = find(value);
-			if (!z)
-				return;
+		size_type remove(const pointer z) {
+			if (!z || !IS_NODE(z))
+				return (0);
 			pointer	y = z;
 			pointer	x;
 			t_color	y_orignal_color = y->color;
@@ -290,11 +293,11 @@ class RBTree {
 				_max = z->previous();
 			if(!IS_NODE(z->left)) {
 				x = z->right;
-				rb_transplant(z, z->right);
+				transplant(z, z->right);
 			}
 			else if(!IS_NODE(z->right)) {
 				x = z->left;
-				rb_transplant(z, z->left);
+				transplant(z, z->left);
 			}
 			else {
 				y = z->right->min();
@@ -304,22 +307,23 @@ class RBTree {
 					x->parent = z;
 				}
 				else {
-					rb_transplant(y, y->right);
+					transplant(y, y->right);
 					y->right = z->right;
 					y->right->parent = y;
 				}
-				rb_transplant(z, y);
+				transplant(z, y);
 				y->left = z->left;
 				y->left->parent = y;
 				y->color = z->color;
 			}
 			if(y_orignal_color == BLACK)
-				rb_delete_fixup(x);
+				remove_fixup(x);
 			release_node(z);
 			_size--;
+			return (1);
 		}
 
-		void rb_transplant(pointer u, pointer v) {
+		void transplant(pointer u, pointer v) {
 			if(!IS_NODE(u->parent))
 				_root = v;
 			else if(u == u->parent->left)
@@ -329,7 +333,7 @@ class RBTree {
 			v->parent = u->parent;
 		}
 
-		void rb_delete_fixup(pointer x) {
+		void remove_fixup(pointer x) {
 			while(x != _root && x->color == BLACK) {
 				if(x == x->parent->left) {
 					pointer w = x->parent->right;
