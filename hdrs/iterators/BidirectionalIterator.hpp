@@ -18,13 +18,17 @@ namespace ft {
 			typedef ptrdiff_t						difference_type;
 			typedef T*								pointer;
 			typedef T&								reference;
-			typedef Node<value_type>*				node_pointer;
-			typedef Node<value_type>&				node_reference;
+			typedef Node<value_type>				node_type;
+			typedef typename ft::conditional<ft::is_const<T>::value, const Node<typename remove_cv<value_type>::type >* , Node<value_type>* >::type node_pointer;
+			// typedef typename ft::conditional<ft::is_const<T>::value, typename ft::add_const<node_type>::type, node_type>::type* node_pointer;
+			// typedef Node<value_type>*				node_pointer;
 			typedef std::bidirectional_iterator_tag	iterator_category;
 
 			BidirectionalIterator(): _elem(NULL) {};
-			BidirectionalIterator(const node_pointer from): _elem(from) {};
-			BidirectionalIterator(const BidirectionalIterator<typename remove_cv<T>::type>& src): _elem(src._elem) {};
+			BidirectionalIterator(const node_pointer src): _elem(src) {};
+			// BidirectionalIterator(const Node<typename remove_cv<value_type>::type>* from): _elem(from) {};
+			// BidirectionalIterator(const BidirectionalIterator<typename remove_cv<T>::type>& src): _elem(src._elem) {};
+			BidirectionalIterator(const BidirectionalIterator< typename remove_cv<T>::type>& src): _elem(src._elem) {};
 			it&	operator=(const it& rhs) {
 				if (this == &rhs)
 					return (*this);
@@ -36,10 +40,9 @@ namespace ft {
 			// Comp overloading
 			bool					operator==(const it& rhs) const { return (_elem == rhs._elem); };
 			bool					operator!=(const it& rhs) const { return (_elem != rhs._elem); };
-			node_pointer			operator->() { return _elem; };
-			// node_pointer			operator->() { return &(operator*()); };
-			reference				operator*() const { return (**_elem); };
-			reference				operator->() const { return (operator*()); };
+			pointer					operator->() const { return &(_elem->value); };
+			reference				operator*() const { return (_elem->value); };
+			// reference				operator->() const { return (_elem->value); };
 
 			// Increment / decrement
 			it&	operator++() { _elem = _elem->next(); return (*this);};

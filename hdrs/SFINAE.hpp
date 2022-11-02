@@ -39,6 +39,24 @@ namespace ft {
 
 	template<typename T> struct is_integral: is_integral_base< typename ft::remove_cv<T>::type > {};
 
+
+	// CONDITIONAL
+	template<bool B, class T, class F>
+	struct conditional { typedef T type; };
+
+	template<class T, class F>
+	struct conditional<false, T, F> { typedef F type; };
+
+	// IS CONST
+	template<class T> struct is_const          : false_type {};
+	template<class T> struct is_const<const T> : true_type {};
+
+	template<class T> struct add_cv { typedef const volatile T type; };
+
+	template<class T> struct add_const { typedef const T type; };
+
+	template<class T> struct add_volatile { typedef volatile T type; };
+
 }
 
 #endif

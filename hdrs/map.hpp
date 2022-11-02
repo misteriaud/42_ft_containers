@@ -23,7 +23,7 @@ namespace ft {
 			//
 			typedef Key										key_type;
 			typedef T										mapped_type;
-			typedef pair<const key_type, mapped_type>		value_type;
+			typedef ft::pair<const key_type, mapped_type>		value_type;
 			typedef Compare									key_compare;
 			typedef Alloc									allocator_type;
 			typedef typename Alloc::reference				reference;
@@ -41,10 +41,11 @@ namespace ft {
 			// FUNCTION OBJECT
 			//
 			class value_compare {
+					friend class map;
 				protected:
 					Compare comp;
+					value_compare (Compare c) : comp(c) {}  // constructed with map's comparison object
 				public:
-					value_compare (Compare c = Compare()) : comp(c) {}  // constructed with map's comparison object
 					typedef bool		result_type;
 					typedef value_type	first_argument_type;
 					typedef value_type	second_argument_type;
@@ -58,7 +59,7 @@ namespace ft {
 			explicit map (const key_compare& comp = key_compare(),
 						const allocator_type& alloc = allocator_type())
 						: _comp(comp), _alloc(alloc), _tree_alloc(alloc), _rb_tree(_tree_alloc.allocate(1)) {
-							_tree_alloc.construct(_rb_tree, tree_type(alloc, value_compare(comp)));
+							_tree_alloc.construct(_rb_tree, tree_type(value_comp(), alloc));
 						}
 			// range (2)
 			template <class InputIterator>
@@ -66,9 +67,9 @@ namespace ft {
 				const key_compare& comp = key_compare(),
 				const allocator_type& alloc = allocator_type())
 				: _comp(comp), _alloc(alloc), _tree_alloc(alloc), _rb_tree(_tree_alloc.allocate(1)) {
-					_tree_alloc.construct(_rb_tree, tree_type(alloc, value_compare(comp)));
+					_tree_alloc.construct(_rb_tree, tree_type(value_comp(), alloc));
 					for (; first != last; first++)
-						_rb_tree.insert(*first);
+						_rb_tree->insert(*first);
 				}
 			// copy (3)
 			map (const map& from): _comp(from._comp), _alloc(from._alloc), _tree_alloc(from._tree_alloc), _rb_tree(_tree_alloc.allocate(1)) {
@@ -117,7 +118,9 @@ namespace ft {
 			size_type size() const {
 				return (_rb_tree->size());
 			}
-
+			size_type max_size() const {
+				return (_rb_tree->max_size());
+			}
 
 			//
 			// ELEMENT ACCESS
@@ -131,7 +134,7 @@ namespace ft {
 			// MODIFIERS
 			//
 			// single element (1)
-			pair<iterator,bool> insert(const value_type& val) {
+			ft::pair<iterator,bool> insert(const value_type& val) {
 				size_type	last_size = size();
 				Node<value_type>* ptr = _rb_tree->insert(val);
 				ft::pair<iterator, bool> result = ft::make_pair<iterator, bool>(iterator(ptr), true);
@@ -181,6 +184,70 @@ namespace ft {
 				x._alloc = _alloc_temp;
 				x._tree_alloc = _tree_alloc_temp;
 				x._rb_tree = _rb_tree_temp;
+			}
+			void clear() {
+				_rb_tree->clear();
+			}
+
+
+			//
+			// OBSERVERS
+			//
+			key_compare key_comp() const {
+				return (_comp);
+			}
+			value_compare value_comp() const {
+				return (value_compare(_comp));
+			}
+
+			//
+			// OPERATIONS
+			//
+			iterator find (const key_type& k) {
+				value_type	to_find = ft::make_pair<key_type, mapped_type>(k, mapped_type());
+				return (iterator(_rb_tree->find(to_find)));
+			}
+			const_iterator find (const key_type& k) const {
+				value_type	to_find = ft::make_pair<key_type, mapped_type>(k, mapped_type());
+				return (const_iterator(_rb_tree->find(to_find)));
+			}
+			size_type count (const key_type& k) const {
+				value_type	to_find = ft::make_pair<key_type, mapped_type>(k, mapped_type());
+				if (_rb_tree->find(to_find) == Node<value_type>::NIL())
+					return (0);
+				return (1);
+			}
+			iterator lower_bound (const key_type& k) {
+				value_type	to_find = ft::make_pair<key_type, mapped_type>(k, mapped_type());
+				return (iterator(_rb_tree->lower_bound(to_find)));
+			}
+			const_iterator lower_bound (const key_type& k) const {
+				value_type	to_find = ft::make_pair<key_type, mapped_type>(k, mapped_type());
+				return (const_iterator(_rb_tree->lower_bound(to_find)));
+			}
+			iterator upper_bound (const key_type& k) {
+				value_type	to_find = ft::make_pair<key_type, mapped_type>(k, mapped_type());
+				return (iterator(_rb_tree->upper_bound(to_find)));
+			}
+			const_iterator upper_bound (const key_type& k) const {
+				value_type	to_find = ft::make_pair<key_type, mapped_type>(k, mapped_type());
+				return (const_iterator(_rb_tree->upper_bound(to_find)));
+			}
+			ft::pair<iterator,iterator>	equal_range (const key_type& k) {
+				iterator	result = find(k);
+				return ft::make_pair<iterator, iterator>(result, result);
+			}
+			ft::pair<const_iterator,const_iterator> equal_range (const key_type& k) const {
+				const_iterator	result = find(k);
+				return ft::make_pair<const_iterator, const_iterator>(result, result);
+			}
+
+
+			//
+			// ALLOCATOR
+			//
+			allocator_type get_allocator() const {
+				return (_alloc);
 			}
 
 		private:

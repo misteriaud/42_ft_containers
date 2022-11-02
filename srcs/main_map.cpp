@@ -12,12 +12,13 @@ void 	print_map(ft::map<T1, T2>& to_print) {
 
 	std::cout << std::endl << "Le map: \n";
 	for (iterator it = to_print.begin(); it != to_print.end(); it++)
-		std::cout << (*it).first << ", " << (*it).second << std::endl;
+		std::cout << it->first << ", " << it->second << std::endl;
 }
 
 int main()
 {
-	typedef typename ft::map<int, std::string>::iterator iterator;
+	typedef ft::map<int, std::string>::iterator iterator;
+	typedef ft::map<int, std::string>::const_iterator const_iterator;
 	ft::map<int, std::string>	my_map;
 	ft::pair<iterator, bool > ret;
 	// ft::map<int, std::string>	my_copy_map;
@@ -25,9 +26,12 @@ int main()
 	my_map.insert(PAIR(7, "coucou"));
 	my_map.insert(PAIR(8, "cfeoucou"));
 	my_map.insert(PAIR(85, "le dernier"));
+	const_iterator it = my_map.begin();
 	my_map.insert(PAIR(80, "cfeoucou"));
 
 	print_map(my_map);
+
+	std::cout << "it: " << it->first << ", " << it->second << std::endl;
 
 	ft::vector<ft::pair<int, std::string> > my_vec;
 
@@ -54,6 +58,12 @@ int main()
 	print_map(my_copy_map);
 
 	std::cout << (*temp).first << ", " << (*temp).second << std::endl;
+
+	std::cout << "==================\n";
+
+	for (iterator i = my_copy_map.find(13); i != my_copy_map.end(); i++)
+		std::cout << i->first << ", " << i->second << std::endl;
+
 
 
 

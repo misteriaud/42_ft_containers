@@ -25,6 +25,7 @@ class Node {
 	public:
 		typedef	T			value_type;
 		typedef Node*		pointer;
+		typedef const Node* const_pointer;
 		typedef Node&		reference;
 		typedef const Node&	const_reference;
 
@@ -36,8 +37,7 @@ class Node {
 			: parent(NULL), left(NIL), right(NIL), value(value), color(color) {};
 		Node(const_reference from):
 			parent(from.parent), left(from.left), right(from.right), value(from.value), color(from.color) {};
-		~Node() {
-		};
+		~Node() {};
 
 		pointer min() {
 			pointer curr = this;
@@ -57,8 +57,8 @@ class Node {
 			return (curr);
 		}
 
-		pointer	next() {
-			pointer	curr = this;
+		pointer	next() const {
+			const_pointer curr = this;
 			if (IS_NODE(right))
 				return right->min();
 			pointer tmp_parent = parent;
@@ -69,8 +69,8 @@ class Node {
 			return (tmp_parent);
 		}
 
-		pointer	previous() {
-			pointer	curr = this;
+		pointer	previous() const {
+			const_pointer	curr = this;
 			if (IS_NODE(left))
 				return right->max();
 			pointer tmp_parent = parent;
@@ -147,10 +147,9 @@ class RBTree {
 		typedef const RBTree&								const_reference;
 		typedef Compare										compare_type;
 
-		RBTree(const allocator_type& alloc = allocator_type(),
-				const compare_type& comp = compare_type())
+		RBTree(const compare_type& comp, const allocator_type& alloc = allocator_type())
 			: _alloc(alloc), _comp(comp), _root(NULL_NODE), _min(_root), _max(_root), _size(0) {};
-		RBTree(const_reference from): _size(0) { operator=(from); };
+		RBTree(const_reference from): _comp(from._comp), _size(0) { operator=(from); };
 		~RBTree() {
 			clear();
 			while(!_available_mem.empty()) {
@@ -191,7 +190,34 @@ class RBTree {
 				else
 					curr = curr->right;
 			}
-			return (IS_NODE(curr) ? curr : NULL);
+			return (curr);
+			// return (IS_NODE(curr) ? curr : NULL);
+		}
+		pointer lower_bound(T value) {
+			pointer curr = _root;
+			pointer prev = NULL_NODE;
+			while (IS_NODE(curr) && !SAME_KEY(**curr, value)) {
+				prev = curr;
+				if (_comp(value, **curr))
+					curr = curr->left;
+				else
+					curr = curr->right;
+			}
+			if (SAME_KEY(**prev, value))
+				return (prev);
+			return (prev->next());
+		}
+		pointer upper_bound(T value) {
+			pointer curr = _root;
+			pointer prev = NULL_NODE;
+			while (IS_NODE(curr) && !SAME_KEY(**curr, value)) {
+				prev = curr;
+				if (_comp(value, **curr))
+					curr = curr->left;
+				else
+					curr = curr->right;
+			}
+			return (prev->next());
 		}
 
 		//
@@ -281,7 +307,7 @@ class RBTree {
 		// DELETION
 		//
 		size_type remove(const pointer z) {
-			if (!z || !IS_NODE(z))
+			if (!IS_NODE(z))
 				return (0);
 			pointer	y = z;
 			pointer	x;
@@ -478,6 +504,9 @@ class RBTree {
 		}
 		size_type	size() const {
 			return (_size);
+		}
+		size_type	max_size() const {
+			return _alloc.max_size();
 		}
 
 		// EXCEPTION
