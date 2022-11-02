@@ -96,13 +96,13 @@ namespace ft {
 				return (iterator(_rb_tree->min()));
 			}
 			iterator	end() {
-				return (iterator(Node<value_type>::NIL()));
+				return (iterator(_rb_tree->sentinel()));
 			}
 			const_iterator	begin() const {
 				return (const_iterator(_rb_tree->min()));
 			}
 			const_iterator	end() const {
-				return (const_iterator(Node<value_type>::NIL()));
+				return (const_iterator(_rb_tree->sentinel()));
 			}
 			reverse_iterator rbegin() {
 				return (reverse_iterator(_rb_tree->max()));
@@ -222,7 +222,7 @@ namespace ft {
 			}
 			size_type count (const key_type& k) const {
 				value_type	to_find = ft::make_pair<key_type, mapped_type>(k, mapped_type());
-				if (_rb_tree->find(to_find) == Node<value_type>::NIL())
+				if (_rb_tree->find(to_find) == _rb_tree->sentinel())
 					return (0);
 				return (1);
 			}

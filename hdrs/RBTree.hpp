@@ -11,9 +11,11 @@ typedef enum e_color {
 	BLACK
 }		t_color;
 
-#define NULL_NODE Node<T>::NIL()
-#define IS_NODE(node) (node && node != Node<T>::NIL())
+#define NULL_NODE _sentinel
+#define IS_NODE(node) (node && node != _sentinel)
 #define SAME_KEY(a_value, b_value) (!_comp(a_value, b_value) && !_comp(b_value, a_value))
+#define MIN _sentinel->left
+#define MAX _sentinel->right
 
 namespace ft {
 
@@ -31,11 +33,11 @@ class Node {
 		Node(
 			value_type value = value_type(),
 			t_color color = RED,
-			const pointer NIL = NULL_NODE
+			const pointer sentinel = NULL
 		)
-			: parent(NULL), left(NIL), right(NIL), value(value), color(color) {};
+			: parent(NULL), left(sentinel), right(sentinel), value(value), color(color), _sentinel(sentinel) {};
 		Node(const_reference from):
-			parent(from.parent), left(from.left), right(from.right), value(from.value), color(from.color) {};
+			parent(from.parent), left(from.left), right(from.right), value(from.value), color(from.color), _sentinel(from._sentinel) {};
 		~Node() {};
 
 		pointer min() {
@@ -57,9 +59,9 @@ class Node {
 		}
 
 		pointer	next() const {
-			if (!IS_NODE(this))
-				return (NULL_NODE);
 			const_pointer curr = this;
+			if (!IS_NODE(curr))
+				return (right);
 			if (IS_NODE(right))
 				return right->min();
 			pointer tmp_parent = parent;
@@ -71,9 +73,9 @@ class Node {
 		}
 
 		pointer	previous() const {
-			if (!IS_NODE(this))
-				return (NULL_NODE);
 			const_pointer	curr = this;
+			if (!IS_NODE(curr))
+				return (left);
 			if (IS_NODE(left))
 				return right->max();
 			pointer tmp_parent = parent;
@@ -99,16 +101,12 @@ class Node {
 			return (*this);
 		}
 
-		static pointer NIL() {
-			static Node	sentinel(T(), BLACK, NULL);
-			return &sentinel;
-		};
-
 		pointer				parent;
 		pointer				left;
 		pointer				right;
 		value_type			value;
 		t_color				color;
+		pointer				_sentinel;
 };
 
 template<
@@ -121,30 +119,40 @@ class RBTree {
 		typedef	T											value_type;
 		typedef typename Allocator::template rebind<Node<T> >::other	allocator_type;
 		typedef std::size_t									size_type;
-		typedef Node<T>*									pointer;
+		typedef Node<T>										node_type;
+		typedef node_type*									pointer;
 		typedef RBTree&										reference;
 		typedef const RBTree&								const_reference;
 		typedef Compare										compare_type;
 
 		RBTree(const compare_type& comp, const allocator_type& alloc = allocator_type())
-			: _alloc(alloc), _comp(comp), _root(NULL_NODE), _min(_root), _max(_root), _size(0) {};
-		RBTree(const_reference from): _comp(from._comp), _size(0) { operator=(from); };
+		: _alloc(alloc), _comp(comp), _root(NULL), _size(0), _sentinel(_alloc.allocate(1)) {
+			_alloc.construct(_sentinel, Node<T>(T(), BLACK));
+			_sentinel->_sentinel = _sentinel;
+			_root = _sentinel;
+		};
+		RBTree(const_reference from): _comp(from._comp), _size(0), _sentinel(_alloc.allocate(1)) {
+			_alloc.construct(_sentinel, Node<T>(T(), BLACK));
+			_sentinel->_sentinel = _sentinel;
+			operator=(from);
+		};
 		~RBTree() {
 			clear();
 			while(!_available_mem.empty()) {
 				_alloc.deallocate(_available_mem.top(), 1);
 				_available_mem.pop();
 			}
+			_alloc.destroy(_sentinel);
+			_alloc.deallocate(_sentinel, 1);
 		};
 		reference	operator=(const_reference rhs) {
 			if (this == &rhs)
 				return (*this);
 			clear();
-			// _alloc = rhs._alloc;
 			_comp = rhs._comp;
 			_root = copy_subtree(rhs._root);
-			_min = _root->min();
-			_max = _root->max();
+			MIN = _root->min();
+			MAX = _root->max();
 			_size = rhs._size;
 			return (*this);
 		}
@@ -152,15 +160,6 @@ class RBTree {
 		//
 		// SEARCH AND TRAVERSAL
 		//
-		template<typename Ret>
-		Ret	forEach(Ret (func)(T)) {
-			pointer curr = _min;
-			while (IS_NODE(curr))
-			{
-				func(**curr);
-				curr = curr->next();
-			}
-		}
 		pointer	find(T value) {
 			pointer curr = _root;
 			while (IS_NODE(curr) && !SAME_KEY(**curr, value)) {
@@ -176,10 +175,10 @@ class RBTree {
 			pointer curr = _root;
 			pointer prev = NULL_NODE;
 
-			if (!_size || _comp(**_max, value))
+			if (!_size || _comp(**MAX, value))
 				return (NULL_NODE);
-			else if (_comp(value, **_min))
-				return (_min);
+			else if (_comp(value, **MIN))
+				return (MIN);
 			while (IS_NODE(curr) && !SAME_KEY(**prev, value)) {
 				prev = curr;
 				if (_comp(value, **curr))
@@ -194,10 +193,10 @@ class RBTree {
 		pointer upper_bound(T value) {
 			pointer curr = _root;
 			pointer prev = NULL_NODE;
-			if (!_size || _comp(**_max, value))
+			if (!_size || _comp(**MAX, value))
 				return (NULL_NODE);
-			else if (_comp(value, **_min))
-				return (_min);
+			else if (_comp(value, **MIN))
+				return (MIN);
 			while (IS_NODE(curr) && !SAME_KEY(**prev, value)) {
 				prev = curr;
 				if (_comp(value, **curr))
@@ -211,7 +210,7 @@ class RBTree {
 		//
 		// INSERTION
 		//
-		pointer insert(const T& value, const pointer hint = NULL_NODE) {
+		pointer insert(const T& value, const pointer hint = NULL) {
 			pointer y = NULL_NODE;
 			pointer temp = _root;
 
@@ -229,7 +228,7 @@ class RBTree {
 			else
 				y = hint->right;
 
-			pointer	new_node = create_node(Node<T>(value, RED));
+			pointer	new_node = create_node(Node<T>(value, RED, NULL_NODE));
 			new_node->parent = y;
 
 			if(!IS_NODE(y))
@@ -239,10 +238,10 @@ class RBTree {
 			else
 				y->right = new_node;
 			insertion_fixup(new_node);
-			if (!IS_NODE(_min) || _comp(**new_node, **_min))
-				_min = new_node;
-			if (!IS_NODE(_max) || _comp(**_max, **new_node))
-				_max = new_node;
+			if (!IS_NODE(MIN) || _comp(**new_node, **MIN))
+				MIN = new_node;
+			if (!IS_NODE(MAX) || _comp(**MAX, **new_node))
+				MAX = new_node;
 			_size++;
 			return (new_node);
 		}
@@ -301,10 +300,10 @@ class RBTree {
 			pointer	x;
 			t_color	y_orignal_color = y->color;
 
-			if (z == _min)
-				_min = z->next();
-			if (z == _max)
-				_max = z->previous();
+			if (z == MIN)
+				MIN = z->next();
+			if (z == MAX)
+				MAX = z->previous();
 			if(!IS_NODE(z->left)) {
 				x = z->right;
 				transplant(z, z->right);
@@ -407,7 +406,7 @@ class RBTree {
 
 
 		void clear() {
-			pointer curr = _min;
+			pointer curr = MIN;
 			pointer tmp = NULL_NODE;
 			if (empty())
 				return ;
@@ -427,9 +426,9 @@ class RBTree {
 				}
 			}
 			release_node(curr);
-			_root = NULL_NODE;
-			_min = NULL_NODE;
-			_max = NULL_NODE;
+			_root = _sentinel;
+			MIN = _root;
+			MAX = _root;
 			_size = 0;
 		}
 
@@ -469,10 +468,10 @@ class RBTree {
 		}
 
 		pointer	min() const {
-			return (_min);
+			return (MIN);
 		}
 		pointer	max() const {
-			return (_max);
+			return (MAX);
 		}
 		bool	empty() const {
 			return (!_size);
@@ -482,6 +481,9 @@ class RBTree {
 		}
 		size_type	max_size() const {
 			return _alloc.max_size();
+		}
+		node_type*	sentinel() {
+			return _sentinel;
 		}
 
 		// EXCEPTION
@@ -494,22 +496,23 @@ class RBTree {
 
 	private:
 		allocator_type		_alloc;
-		compare_type	_comp;
+		compare_type		_comp;
 		pointer				_root;
-		pointer				_min;
-		pointer				_max;
 		size_type			_size;
 		ft::stack<pointer>	_available_mem;
+		pointer				_sentinel;
 
 
-		pointer copy_subtree(const pointer src, const pointer p = NULL_NODE) {
-			if(!IS_NODE(src))
+		pointer copy_subtree(const pointer src, pointer p = NULL) {
+			if (!p)
+				p = NULL_NODE;
+			if(src == src->_sentinel)
 				return (NULL_NODE);
-			pointer new_node = create_node(Node<T>(src->value, src->color));
+			pointer new_node = create_node(Node<T>(src->value, src->color, NULL_NODE));
 			new_node->parent = p;
-			if(IS_NODE(src->left))
+			if(src->left != src->_sentinel)
 				new_node->left = copy_subtree(src->left, new_node);
-			if(IS_NODE(src->right))
+			if(src->right != src->_sentinel)
 				new_node->right = copy_subtree(src->right, new_node);
 			return (new_node);
 		}
