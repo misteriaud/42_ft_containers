@@ -5,7 +5,6 @@
 #include <iostream>
 #include <stack.hpp>
 #include <memory>
-// #include <get_key>
 
 typedef enum e_color {
 	RED,
@@ -13,7 +12,7 @@ typedef enum e_color {
 }		t_color;
 
 #define NULL_NODE Node<T>::NIL()
-#define IS_NODE(node) (node != Node<T>::NIL())
+#define IS_NODE(node) (node && node != Node<T>::NIL())
 #define SAME_KEY(a_value, b_value) (!_comp(a_value, b_value) && !_comp(b_value, a_value))
 
 namespace ft {
@@ -58,6 +57,8 @@ class Node {
 		}
 
 		pointer	next() const {
+			if (!IS_NODE(this))
+				return (NULL_NODE);
 			const_pointer curr = this;
 			if (IS_NODE(right))
 				return right->min();
@@ -70,6 +71,8 @@ class Node {
 		}
 
 		pointer	previous() const {
+			if (!IS_NODE(this))
+				return (NULL_NODE);
 			const_pointer	curr = this;
 			if (IS_NODE(left))
 				return right->max();
@@ -79,30 +82,6 @@ class Node {
 				tmp_parent = tmp_parent->parent;
 			}
 			return (tmp_parent);
-		}
-
-		void	print_label(unsigned int uuid, pointer focus) {
-			std::cout << "\t" << uuid << reinterpret_cast<long long>(this) << " [label=<";
-			if (this == focus)
-				std::cout << "<U>" << value << "</U>";
-			else
-				std::cout << value;
-			std::cout << ">, color=" << (color == RED ? "\"red\"];\n" : "\"black\"];\n");
-			if (IS_NODE(left))
-				left->print_label(uuid, focus);
-			if (IS_NODE(right))
-				right->print_label(uuid, focus);
-		}
-
-		void	print_childs(unsigned int uuid) {
-			if (IS_NODE(left)) {
-				left->print_childs(uuid);
-				std::cout << "\t" << uuid << reinterpret_cast<long long>(this) << " -> " << uuid <<reinterpret_cast<long long>(left) << ";" << std::endl;
-			}
-			if (IS_NODE(right)) {
-				std::cout << "\t" << uuid << reinterpret_cast<long long>(this) << " -> " << uuid <<reinterpret_cast<long long>(right) << ";" << std::endl;
-				right->print_childs(uuid);
-			}
 		}
 
 		bool		operator==(const_reference rhs) { return value == rhs.value; }
@@ -161,7 +140,7 @@ class RBTree {
 			if (this == &rhs)
 				return (*this);
 			clear();
-			_alloc = rhs._alloc;
+			// _alloc = rhs._alloc;
 			_comp = rhs._comp;
 			_root = copy_subtree(rhs._root);
 			_min = _root->min();
@@ -196,7 +175,12 @@ class RBTree {
 		pointer lower_bound(T value) {
 			pointer curr = _root;
 			pointer prev = NULL_NODE;
-			while (IS_NODE(curr) && !SAME_KEY(**curr, value)) {
+
+			if (!_size || _comp(**_max, value))
+				return (NULL_NODE);
+			else if (_comp(value, **_min))
+				return (_min);
+			while (IS_NODE(curr) && !SAME_KEY(**prev, value)) {
 				prev = curr;
 				if (_comp(value, **curr))
 					curr = curr->left;
@@ -210,7 +194,11 @@ class RBTree {
 		pointer upper_bound(T value) {
 			pointer curr = _root;
 			pointer prev = NULL_NODE;
-			while (IS_NODE(curr) && !SAME_KEY(**curr, value)) {
+			if (!_size || _comp(**_max, value))
+				return (NULL_NODE);
+			else if (_comp(value, **_min))
+				return (_min);
+			while (IS_NODE(curr) && !SAME_KEY(**prev, value)) {
 				prev = curr;
 				if (_comp(value, **curr))
 					curr = curr->left;
@@ -439,6 +427,9 @@ class RBTree {
 				}
 			}
 			release_node(curr);
+			_root = NULL_NODE;
+			_min = NULL_NODE;
+			_max = NULL_NODE;
 			_size = 0;
 		}
 
@@ -475,22 +466,6 @@ class RBTree {
 				x->parent->left = y;
 			y->right = x;
 			x->parent = y;
-		}
-
-		// PRINT
-		void	print(pointer focus = NULL) {
-			#ifdef PRINT
-				static int uuid;
-				ft::stack<pointer>	to_print;
-				if (!IS_NODE(_root))
-					return ;
-				_root->print_label(uuid, focus);
-				std::cout << std::endl;
-				_root->print_childs(uuid);
-				uuid++;
-			#else
-				(void)focus;
-			#endif
 		}
 
 		pointer	min() const {

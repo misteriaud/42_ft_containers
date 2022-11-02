@@ -79,6 +79,15 @@ namespace ft {
 				_tree_alloc.destroy(_rb_tree);
 				_tree_alloc.deallocate(_rb_tree, 1);
 			};
+			map& operator= (const map& rhs) {
+				if (this == &rhs)
+					return (*this);
+				_comp = rhs._comp;
+				// _alloc = rhs._alloc;
+				// _tree_alloc = rhs._tree_alloc;
+				*_rb_tree = *rhs._rb_tree;
+				return (*this);
+			}
 
 			//
 			// Iterators
@@ -95,18 +104,18 @@ namespace ft {
 			const_iterator	end() const {
 				return (const_iterator(Node<value_type>::NIL()));
 			}
-			// reverse_iterator rbegin() {
-			// 	return (reverse_iterator(_buffer + _size));
-			// };
-			// const_reverse_iterator rbegin() const {
-			// 	return (const_reverse_iterator(_buffer + _size));
-			// };
-			// reverse_iterator rend() {
-			// 	return (reverse_iterator(_buffer));
-			// };
-			// const_reverse_iterator rend() const {
-			// 	return (const_reverse_iterator(_buffer));
-			// };
+			reverse_iterator rbegin() {
+				return (reverse_iterator(_rb_tree->max()));
+			};
+			const_reverse_iterator rbegin() const {
+				return (const_reverse_iterator(_rb_tree->max()));
+			};
+			reverse_iterator rend() {
+				return (reverse_iterator(_rb_tree->min()));
+			};
+			const_reverse_iterator rend() const {
+				return (const_reverse_iterator(_rb_tree->min()));
+			};
 
 
 			//
@@ -234,12 +243,12 @@ namespace ft {
 				return (const_iterator(_rb_tree->upper_bound(to_find)));
 			}
 			ft::pair<iterator,iterator>	equal_range (const key_type& k) {
-				iterator	result = find(k);
-				return ft::make_pair<iterator, iterator>(result, result);
+				// iterator	result = lower_bound(k);
+				return ft::make_pair<iterator, iterator>(lower_bound(k), upper_bound(k));
 			}
 			ft::pair<const_iterator,const_iterator> equal_range (const key_type& k) const {
-				const_iterator	result = find(k);
-				return ft::make_pair<const_iterator, const_iterator>(result, result);
+				// const_iterator	result = find(k);
+				return ft::make_pair<const_iterator, const_iterator>(lower_bound(k), upper_bound(k));
 			}
 
 
