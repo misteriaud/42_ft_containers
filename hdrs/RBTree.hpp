@@ -61,7 +61,7 @@ class Node {
 		pointer	next() const {
 			const_pointer curr = this;
 			if (!IS_NODE(curr))
-				return (right);
+				return (left);
 			if (IS_NODE(right))
 				return right->min();
 			pointer tmp_parent = parent;
@@ -75,7 +75,7 @@ class Node {
 		pointer	previous() const {
 			const_pointer	curr = this;
 			if (!IS_NODE(curr))
-				return (left);
+				return (right);
 			if (IS_NODE(left))
 				return right->max();
 			pointer tmp_parent = parent;
