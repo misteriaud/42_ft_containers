@@ -16,6 +16,7 @@ typedef enum e_color {
 #define SAME_KEY(a_value, b_value) (!_comp(a_value, b_value) && !_comp(b_value, a_value))
 #define MIN _sentinel->left
 #define MAX _sentinel->right
+#define ROOT _sentinel->parent
 
 namespace ft {
 
@@ -90,6 +91,13 @@ class Node {
 			return (tmp_parent);
 		}
 
+		void	init_sentinel() {
+			_sentinel = this;
+			parent = this;
+			left = this;
+			right = this;
+		}
+
 		bool		operator==(const_reference rhs) { return value == rhs.value; }
 		bool		operator!=(const_reference rhs) { return value != rhs.value; }
 		value_type&	operator*() { return value; }
@@ -130,14 +138,13 @@ class RBTree {
 		typedef Compare										compare_type;
 
 		RBTree(const compare_type& comp, const allocator_type& alloc = allocator_type())
-		: _alloc(alloc), _comp(comp), _root(NULL), _size(0), _sentinel(_alloc.allocate(1)) {
+		: _alloc(alloc), _comp(comp), _size(0), _sentinel(_alloc.allocate(1)) {
 			_alloc.construct(_sentinel, Node<T>(T(), BLACK));
-			_sentinel->_sentinel = _sentinel;
-			_root = _sentinel;
+			_sentinel->init_sentinel();
 		};
 		RBTree(const_reference from): _comp(from._comp), _size(0), _sentinel(_alloc.allocate(1)) {
 			_alloc.construct(_sentinel, Node<T>(T(), BLACK));
-			_sentinel->_sentinel = _sentinel;
+			_sentinel->init_sentinel();
 			operator=(from);
 		};
 		~RBTree() {
@@ -154,9 +161,9 @@ class RBTree {
 				return (*this);
 			clear();
 			_comp = rhs._comp;
-			_root = copy_subtree(rhs._root);
-			MIN = _root->min();
-			MAX = _root->max();
+			ROOT = copy_subtree(rhs.ROOT);
+			MIN = ROOT->min();
+			MAX = ROOT->max();
 			_size = rhs._size;
 			return (*this);
 		}
@@ -165,7 +172,7 @@ class RBTree {
 		// SEARCH AND TRAVERSAL
 		//
 		pointer	find(T value) {
-			pointer curr = _root;
+			pointer curr = ROOT;
 			while (IS_NODE(curr) && !SAME_KEY(**curr, value)) {
 				if (_comp(value, **curr))
 					curr = curr->left;
@@ -176,7 +183,7 @@ class RBTree {
 			// return (IS_NODE(curr) ? curr : NULL);
 		}
 		pointer lower_bound(T value) {
-			pointer curr = _root;
+			pointer curr = ROOT;
 			pointer prev = NULL_NODE;
 
 			if (!_size || _comp(**MAX, value))
@@ -195,7 +202,7 @@ class RBTree {
 			return (prev->next());
 		}
 		pointer upper_bound(T value) {
-			pointer curr = _root;
+			pointer curr = ROOT;
 			pointer prev = NULL_NODE;
 			if (!_size || _comp(**MAX, value))
 				return (NULL_NODE);
@@ -216,7 +223,7 @@ class RBTree {
 		//
 		pointer insert(const T& value, const pointer hint = NULL) {
 			pointer y = NULL_NODE;
-			pointer temp = _root;
+			pointer temp = ROOT;
 
 			if (!hint || !IS_NODE(hint) || !(_comp(**hint, value) && _comp(value, **(hint->next())))) {
 				while(IS_NODE(temp)) {
@@ -236,7 +243,7 @@ class RBTree {
 			new_node->parent = y;
 
 			if(!IS_NODE(y))
-				_root = new_node;
+				ROOT = new_node;
 			else if(_comp(**new_node, **y))
 				y->left = new_node;
 			else
@@ -290,7 +297,7 @@ class RBTree {
 					}
 				}
 			}
-			_root->color = BLACK;
+			ROOT->color = BLACK;
 		}
 
 
@@ -351,10 +358,8 @@ class RBTree {
 		 * @param v the branch to be move
 		 */
 		void transplant(pointer u, pointer v) {
-			if(!IS_NODE(u->parent)) {
-				_root = v;
-				_sentinel->parent = _root;
-			}
+			if(!IS_NODE(u->parent))
+				ROOT = v;
 			else if(u == u->parent->left)
 				u->parent->left = v;
 			else
@@ -363,7 +368,7 @@ class RBTree {
 		}
 
 		void remove_fixup(pointer x) {
-			while(IS_NODE(x) && x != _root && x->color == BLACK) {
+			while(IS_NODE(x) && x != ROOT && x->color == BLACK) {
 				if(x == x->parent->left) {
 					pointer w = x->parent->right;
 					if(w->color == RED) {
@@ -387,7 +392,7 @@ class RBTree {
 						x->parent->color = BLACK;
 						w->right->color = BLACK;
 						left_rotate(x->parent);
-						x = _root;
+						x = ROOT;
 					}
 				}
 				else {
@@ -413,7 +418,7 @@ class RBTree {
 						x->parent->color = BLACK;
 						w->left->color = BLACK;
 						right_rotate(x->parent);
-						x = _root;
+						x = ROOT;
 					}
 				}
 			}
@@ -426,7 +431,7 @@ class RBTree {
 			pointer tmp = NULL_NODE;
 			if (empty())
 				return ;
-			while (IS_NODE(_root->left) || IS_NODE(_root->right)) {
+			while (IS_NODE(ROOT->left) || IS_NODE(ROOT->right)) {
 				if (IS_NODE(curr->left))
 					curr = curr->left;
 				else if (IS_NODE(curr->right))
@@ -442,9 +447,7 @@ class RBTree {
 				}
 			}
 			release_node(curr);
-			_root = _sentinel;
-			MIN = _root;
-			MAX = _root;
+			_sentinel->init_sentinel();
 			_size = 0;
 		}
 
@@ -458,7 +461,7 @@ class RBTree {
 				y->left->parent = x;
 			y->parent = x->parent;
 			if (!IS_NODE(x->parent))
-				_root = y;
+				ROOT = y;
 			else if (x == x->parent->left)
 				x->parent->left = y;
 			else
@@ -474,7 +477,7 @@ class RBTree {
 				y->right->parent = x;
 			y->parent = x->parent;
 			if (!IS_NODE(x->parent))
-				_root = y;
+				ROOT = y;
 			else if (x == x->parent->right)
 				x->parent->right = y;
 			else
@@ -513,7 +516,6 @@ class RBTree {
 	private:
 		allocator_type		_alloc;
 		compare_type		_comp;
-		pointer				_root;
 		size_type			_size;
 		ft::stack<pointer>	_available_mem;
 		pointer				_sentinel;
@@ -523,7 +525,7 @@ class RBTree {
 			if (!p)
 				p = NULL_NODE;
 			if(src == src->_sentinel)
-				return (NULL_NODE);
+				return (_sentinel);
 			pointer new_node = create_node(Node<T>(src->value, src->color, NULL_NODE));
 			new_node->parent = p;
 			if(src->left != src->_sentinel)
