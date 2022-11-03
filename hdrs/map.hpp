@@ -174,7 +174,9 @@ namespace ft {
 				return (_rb_tree->remove(z));
 			}
 			void erase (iterator first, iterator last) {
-				for (; first != last; first++) {
+				iterator next = first;
+				for (; first != last; first = next) {
+					++next;
 					_rb_tree->remove(first._elem);
 				}
 			}

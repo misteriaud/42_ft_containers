@@ -60,6 +60,8 @@ class Node {
 
 		pointer	next() const {
 			const_pointer curr = this;
+			if (curr == MAX)
+				return (_sentinel);
 			if (!IS_NODE(curr))
 				return (left);
 			if (IS_NODE(right))
@@ -74,10 +76,12 @@ class Node {
 
 		pointer	previous() const {
 			const_pointer	curr = this;
+			if (curr == MIN)
+				return (NULL);
 			if (!IS_NODE(curr))
 				return (right);
 			if (IS_NODE(left))
-				return right->max();
+				return left->max();
 			pointer tmp_parent = parent;
 			while (IS_NODE(tmp_parent) && curr == tmp_parent->left) {
 				curr = tmp_parent;
@@ -300,6 +304,9 @@ class RBTree {
 			pointer	x;
 			t_color	y_orignal_color = y->color;
 
+			// std::cout << z->value.first << std::endl;
+			// std::cout << "(actual min):" << MIN->value.first << std::endl;
+
 			if (z == MIN)
 				MIN = z->next();
 			if (z == MAX)
@@ -333,12 +340,21 @@ class RBTree {
 				remove_fixup(x);
 			release_node(z);
 			_size--;
+			// std::cout << "(after min):" << MIN->value.first << std::endl;
 			return (1);
 		}
 
+		/**
+		 * @brief Transplant one branch at the place of an old node
+		 *
+		 * @param u the Node to be replace
+		 * @param v the branch to be move
+		 */
 		void transplant(pointer u, pointer v) {
-			if(!IS_NODE(u->parent))
+			if(!IS_NODE(u->parent)) {
 				_root = v;
+				_sentinel->parent = _root;
+			}
 			else if(u == u->parent->left)
 				u->parent->left = v;
 			else
@@ -347,7 +363,7 @@ class RBTree {
 		}
 
 		void remove_fixup(pointer x) {
-			while(x != _root && x->color == BLACK) {
+			while(IS_NODE(x) && x != _root && x->color == BLACK) {
 				if(x == x->parent->left) {
 					pointer w = x->parent->right;
 					if(w->color == RED) {
