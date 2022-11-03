@@ -358,13 +358,16 @@ class RBTree {
 		 * @param v the branch to be move
 		 */
 		void transplant(pointer u, pointer v) {
-			if(!IS_NODE(u->parent))
+			// if(u == ROOT || u->parent == _sentinel)
+			// if(!IS_NODE(u->parent))
+			if(u == ROOT)
 				ROOT = v;
 			else if(u == u->parent->left)
 				u->parent->left = v;
 			else
 				u->parent->right = v;
-			v->parent = u->parent;
+			if (IS_NODE(v))
+				v->parent = u->parent;
 		}
 
 		void remove_fixup(pointer x) {
