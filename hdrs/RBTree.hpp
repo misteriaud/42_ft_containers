@@ -6,10 +6,6 @@
 #include <stack.hpp>
 #include <memory>
 
-// typedef bool t_color;
-// #define RED 0
-// #define BLACK 1
-
 typedef enum e_color {
 	RED,
 	BLACK
@@ -219,7 +215,6 @@ class RBTree {
 					curr = curr->right;
 			}
 			return (curr);
-			// return (IS_NODE(curr) ? curr : NULL);
 		}
 		pointer lower_bound(T value) {
 			pointer curr = ROOT;
@@ -350,9 +345,6 @@ class RBTree {
 			pointer	x;
 			t_color	y_orignal_color = y->color;
 
-			// std::cout << z->value.first << std::endl;
-			// std::cout << "(actual min):" << MIN->value.first << std::endl;
-
 			if (z == MIN)
 				MIN = z->next();
 			if (z == MAX)
@@ -386,7 +378,6 @@ class RBTree {
 				remove_fixup(x);
 			release_node(z);
 			_size--;
-			// std::cout << "(after min):" << MIN->value.first << std::endl;
 			return (1);
 		}
 
