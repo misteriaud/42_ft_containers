@@ -36,72 +36,106 @@ class Node {
 			t_color color = RED,
 			const pointer sentinel = NULL
 		)
-			: parent(NULL), left(sentinel), right(sentinel), value(value), color(color), _sentinel(sentinel) {};
+			: value(value), color(color), parent(NULL), left(sentinel), right(sentinel), _sentinel(sentinel) {};
 		Node(const_reference from):
-			parent(from.parent), left(from.left), right(from.right), value(from.value), color(from.color), _sentinel(from._sentinel) {};
+			value(from.value), color(from.color), parent(from.parent), left(from.left), right(from.right), _sentinel(from._sentinel) {};
 		~Node() {};
 
-		pointer min() {
-			pointer curr = this;
-			if (!IS_NODE(curr))
-				return (curr);
-			while(IS_NODE(curr->left))
-				curr = curr->left;
-			return (curr);
-		}
-
-		pointer max() {
-			pointer curr = this;
-			if (!IS_NODE(curr))
-				return (curr);
-			while(IS_NODE(curr->right))
-				curr = curr->right;
-			return (curr);
-		}
-
+		// getters
 		pointer	next() const {
 			const_pointer curr = this;
 			if (curr == MAX)
 				return (_sentinel);
-			if (!IS_NODE(curr))
+			if (!curr->is_node())
 				return (left);
-			if (IS_NODE(right))
+			if (right->is_node())
 				return right->min();
 			pointer tmp_parent = parent;
-			while (IS_NODE(tmp_parent) && curr == tmp_parent->right) {
+			while (tmp_parent->is_node() && curr == tmp_parent->right) {
 				curr = tmp_parent;
 				tmp_parent = tmp_parent->parent;
 			}
 			return (tmp_parent);
 		}
-
 		pointer	previous() const {
 			const_pointer	curr = this;
 			if (curr == MIN)
 				return (NULL);
-			if (!IS_NODE(curr))
+			if (!curr->is_node())
 				return (right);
-			if (IS_NODE(left))
+			if (left->is_node())
 				return left->max();
 			pointer tmp_parent = parent;
-			while (IS_NODE(tmp_parent) && curr == tmp_parent->left) {
+			while (tmp_parent->is_node() && curr == tmp_parent->left) {
 				curr = tmp_parent;
 				tmp_parent = tmp_parent->parent;
 			}
 			return (tmp_parent);
 		}
+		pointer min() {
+			pointer curr = this;
+			if (curr == _sentinel)
+				return (curr);
+			while(curr->left != _sentinel)
+				curr = curr->left;
+			return (curr);
+		}
+		pointer max() {
+			pointer curr = this;
+			if (curr == _sentinel)
+				return (curr);
+			while(curr->right != _sentinel)
+				curr = curr->right;
+			return (curr);
+		}
 
+		// setters
+		pointer set_left(const pointer new_left) {
+			if (is_node())
+				left = new_left;
+			return (left);
+		}
+		pointer set_right(const pointer new_right) {
+			if (is_node())
+				right = new_right;
+			return (right);
+		}
+		pointer set_parent(const pointer new_parent) {
+			if (is_node())
+				parent = new_parent;
+			return (parent);
+		}
+		pointer	set_min(const pointer new_min) {
+			if (!is_node()) {
+				left = new_min;
+			}
+			return (left);
+		}
+		pointer	set_max(const pointer new_max) {
+			if (!is_node()) {
+				right = new_max;
+			}
+			return (right);
+		}
+		pointer	set_root(const pointer new_root) {
+			if (!is_node()) {
+				parent = new_root;
+			}
+			return (parent);
+		}
+
+		// sentinel
 		void	init_sentinel() {
 			_sentinel = this;
 			parent = this;
 			left = this;
 			right = this;
 		}
-
+		inline bool	is_node() const { return (this != _sentinel); }
+		// operators
 		bool		operator==(const_reference rhs) { return value == rhs.value; }
 		bool		operator!=(const_reference rhs) { return value != rhs.value; }
 		value_type&	operator*() { return value; }
-
 		Node&		operator=(const Node& rhs) {
 			if (this == &rhs)
 				return (*this);
@@ -113,12 +147,13 @@ class Node {
 			return (*this);
 		}
 
+		value_type			value;
+		t_color				color;
 		pointer				parent;
 		pointer				left;
 		pointer				right;
-		value_type			value;
-		t_color				color;
 		pointer				_sentinel;
+
 };
 
 template<
@@ -240,14 +275,14 @@ class RBTree {
 				y = hint->right;
 
 			pointer	new_node = create_node(Node<T>(value, RED, NULL_NODE));
-			new_node->parent = y;
+			new_node->set_parent(y);
 
 			if(!IS_NODE(y))
 				ROOT = new_node;
 			else if(_comp(**new_node, **y))
-				y->left = new_node;
+				y->set_left(new_node);
 			else
-				y->right = new_node;
+				y->set_right(new_node);
 			insertion_fixup(new_node);
 			if (!IS_NODE(MIN) || _comp(**new_node, **MIN))
 				MIN = new_node;
@@ -331,16 +366,16 @@ class RBTree {
 				y_orignal_color = y->color;
 				x = y->right;
 				if(y->parent == z) {
-					x->parent = z;
+					x->set_parent(y);
 				}
 				else {
 					transplant(y, y->right);
-					y->right = z->right;
-					y->right->parent = y;
+					y->set_right(z->right);
+					y->right->set_parent(y);
 				}
 				transplant(z, y);
-				y->left = z->left;
-				y->left->parent = y;
+				y->set_left(z->left);
+				y->left->set_parent(y);
 				y->color = z->color;
 			}
 			if(y_orignal_color == BLACK)
@@ -363,11 +398,11 @@ class RBTree {
 			if(u == ROOT)
 				ROOT = v;
 			else if(u == u->parent->left)
-				u->parent->left = v;
+				u->parent->set_left(v);
 			else
-				u->parent->right = v;
+				u->parent->set_right(v);
 			if (IS_NODE(v))
-				v->parent = u->parent;
+				v->set_parent(u->parent);
 		}
 
 		void remove_fixup(pointer x) {
@@ -443,9 +478,9 @@ class RBTree {
 					tmp = curr;
 					curr = curr->parent;
 					if (tmp == curr->left)
-						curr->left = NULL_NODE;
+						curr->set_left(NULL_NODE);
 					else
-						curr->right = NULL_NODE;
+						curr->set_right(NULL_NODE);
 					release_node(tmp);
 				}
 			}
@@ -459,34 +494,34 @@ class RBTree {
 		//
 		void	left_rotate(const pointer x) {
 			pointer y = x->right;
-			x->right = y->left;
+			x->set_right(y->left);
 			if (IS_NODE(y->left))
-				y->left->parent = x;
-			y->parent = x->parent;
+				y->left->set_parent(x);
+			y->set_parent(x->parent);
 			if (!IS_NODE(x->parent))
 				ROOT = y;
 			else if (x == x->parent->left)
-				x->parent->left = y;
+				x->parent->set_left(y);
 			else
-				x->parent->right = y;
-			y->left = x;
-			x->parent = y;
+				x->parent->set_right(y);
+			y->set_left(x);
+			x->set_parent(y);
 		}
 
 		void	right_rotate(const pointer x) {
 			pointer y = x->left;
-			x->left = y->right;
+			x->set_left(y->right);
 			if (IS_NODE(y->right))
-				y->right->parent = x;
-			y->parent = x->parent;
+				y->right->set_parent(x);
+			y->set_parent(x->parent);
 			if (!IS_NODE(x->parent))
 				ROOT = y;
 			else if (x == x->parent->right)
-				x->parent->right = y;
+				x->parent->set_right(y);
 			else
-				x->parent->left = y;
-			y->right = x;
-			x->parent = y;
+				x->parent->set_left(y);
+			y->set_right(x);
+			x->set_parent(y);
 		}
 
 		pointer	min() const {
@@ -530,11 +565,11 @@ class RBTree {
 			if(src == src->_sentinel)
 				return (_sentinel);
 			pointer new_node = create_node(Node<T>(src->value, src->color, NULL_NODE));
-			new_node->parent = p;
+			new_node->set_parent(p);
 			if(src->left != src->_sentinel)
-				new_node->left = copy_subtree(src->left, new_node);
+				new_node->set_left(copy_subtree(src->left, new_node));
 			if(src->right != src->_sentinel)
-				new_node->right = copy_subtree(src->right, new_node);
+				new_node->set_right(copy_subtree(src->right, new_node));
 			return (new_node);
 		}
 
