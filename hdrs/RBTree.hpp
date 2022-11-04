@@ -6,6 +6,10 @@
 #include <stack.hpp>
 #include <memory>
 
+// typedef bool t_color;
+// #define RED 0
+// #define BLACK 1
+
 typedef enum e_color {
 	RED,
 	BLACK

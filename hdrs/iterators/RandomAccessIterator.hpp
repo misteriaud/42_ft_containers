@@ -2,8 +2,9 @@
 #ifndef RANDOMACCESSITERATOR_HPP
 # define RANDOMACCESSITERATOR_HPP
 
+#include <cstddef>
 #include "IteratorUtils.hpp"
-#include "BidirectionalIterator.hpp"
+#include "../SFINAE.hpp"
 
 namespace ft {
 	template <typename T>

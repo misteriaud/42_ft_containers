@@ -40,7 +40,10 @@ namespace ft {
 
 
 			pointer			operator->() const { return &(operator*()); }
-			reference		operator*() const { return *(_current - 1); }
+			reference		operator*() const {
+				It tmp = _current;
+				return *(--tmp);
+			}
 			reference		operator[]( difference_type index ) const { return (_current[-index - 1]); }
 
 			reverse_iterator& operator++() { --_current; return (*this); }

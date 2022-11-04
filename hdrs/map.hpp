@@ -8,6 +8,8 @@
 #include "iterators/BidirectionalIterator.hpp"
 #include "iterators/reverse_iterator.hpp"
 #include "RBTree.hpp"
+#include "equal.hpp"
+#include "lexicographical_compare.hpp"
 
 namespace ft {
 
@@ -105,10 +107,10 @@ namespace ft {
 				return (const_iterator(_rb_tree->sentinel()));
 			}
 			reverse_iterator rbegin() {
-				return (reverse_iterator(_rb_tree->max()));
+				return (reverse_iterator(_rb_tree->sentinel()));
 			};
 			const_reverse_iterator rbegin() const {
-				return (const_reverse_iterator(_rb_tree->max()));
+				return (const_reverse_iterator(_rb_tree->sentinel()));
 			};
 			reverse_iterator rend() {
 				return (reverse_iterator(_rb_tree->min()));
@@ -270,6 +272,43 @@ namespace ft {
 			tree_allocator_type _tree_alloc;
 			tree_type*			_rb_tree;
 	};
+
+	template <class Key, class T, class Compare, class Alloc>
+	bool operator== ( const map<Key,T,Compare,Alloc>& lhs, const map<Key,T,Compare,Alloc>& rhs ) {
+		if (lhs.size() != rhs.size())
+			return (false);
+		return (equal(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
+	}
+
+	template <class Key, class T, class Compare, class Alloc>
+	bool operator!= ( const map<Key,T,Compare,Alloc>& lhs, const map<Key,T,Compare,Alloc>& rhs ) {
+		return !(operator==(lhs, rhs));
+	}
+
+	template <class Key, class T, class Compare, class Alloc>
+	bool operator<  ( const map<Key,T,Compare,Alloc>& lhs, const map<Key,T,Compare,Alloc>& rhs ) {
+		return (lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
+	}
+
+	template <class Key, class T, class Compare, class Alloc>
+	bool operator<= ( const map<Key,T,Compare,Alloc>& lhs, const map<Key,T,Compare,Alloc>& rhs ) {
+		return !(operator<(rhs, lhs));
+	}
+
+	template <class Key, class T, class Compare, class Alloc>
+	bool operator>  ( const map<Key,T,Compare,Alloc>& lhs, const map<Key,T,Compare,Alloc>& rhs ) {
+		return (operator<(rhs, lhs));
+	}
+
+	template <class Key, class T, class Compare, class Alloc>
+	bool operator>= ( const map<Key,T,Compare,Alloc>& lhs, const map<Key,T,Compare,Alloc>& rhs ) {
+		return !(operator<(lhs, rhs));
+	}
+
+	template <class Key, class T, class Compare, class Alloc>
+	void swap (map<Key,T,Compare,Alloc>& x, map<Key,T,Compare,Alloc>& y) {
+		x.swap(y);
+	}
 }
 
 #endif
