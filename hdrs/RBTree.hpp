@@ -12,7 +12,8 @@ typedef enum e_color {
 }		t_color;
 
 #define NULL_NODE _sentinel
-#define IS_NODE(node) (node && node != _sentinel)
+// #define IS_NODE(node) (node && node != _sentinel)
+#define IS_NODE(node) (node && node->is_node())
 #define SAME_KEY(a_value, b_value) (!_comp(a_value, b_value) && !_comp(b_value, a_value))
 #define MIN _sentinel->left
 #define MAX _sentinel->right
@@ -39,27 +40,36 @@ class Node {
 			: parent(NULL), left(sentinel), right(sentinel), value(value), color(color), _sentinel(sentinel) {};
 		Node(const_reference from):
 			parent(from.parent), left(from.left), right(from.right), value(from.value), color(from.color), _sentinel(from._sentinel) {};
-		~Node() {};
+		virtual ~Node() {};
 
-		pointer min() {
-			pointer curr = this;
-			if (!IS_NODE(curr))
-				return (curr);
+		virtual pointer min() {
+			pointer	curr = this;
 			while(IS_NODE(curr->left))
 				curr = curr->left;
 			return (curr);
 		}
-
-		pointer max() {
+		virtual pointer max() {
 			pointer curr = this;
-			if (!IS_NODE(curr))
-				return (curr);
 			while(IS_NODE(curr->right))
 				curr = curr->right;
 			return (curr);
 		}
-
-		pointer	next() const {
+		virtual pointer	previous() const {
+			const_pointer	curr = this;
+			if (curr == MIN)
+				return (NULL);
+			if (!IS_NODE(curr))
+				return (right);
+			if (IS_NODE(left))
+				return left->max();
+			pointer tmp_parent = parent;
+			while (IS_NODE(tmp_parent) && curr == tmp_parent->left) {
+				curr = tmp_parent;
+				tmp_parent = tmp_parent->parent;
+			}
+			return (tmp_parent);
+		}
+		virtual pointer	next() const {
 			const_pointer curr = this;
 			if (curr == MAX)
 				return (_sentinel);
@@ -75,32 +85,12 @@ class Node {
 			return (tmp_parent);
 		}
 
-		pointer	previous() const {
-			const_pointer	curr = this;
-			if (curr == MIN)
-				return (NULL);
-			if (!IS_NODE(curr))
-				return (right);
-			if (IS_NODE(left))
-				return left->max();
-			pointer tmp_parent = parent;
-			while (IS_NODE(tmp_parent) && curr == tmp_parent->left) {
-				curr = tmp_parent;
-				tmp_parent = tmp_parent->parent;
-			}
-			return (tmp_parent);
-		}
-
-		void	init_sentinel() {
-			_sentinel = this;
-			parent = this;
-			left = this;
-			right = this;
-		}
 
 		bool		operator==(const_reference rhs) { return value == rhs.value; }
 		bool		operator!=(const_reference rhs) { return value != rhs.value; }
 		value_type&	operator*() { return value; }
+
+		virtual bool	is_node() const { return true; }
 
 		Node&		operator=(const Node& rhs) {
 			if (this == &rhs)
@@ -122,6 +112,52 @@ class Node {
 };
 
 template<
+	typename T
+	>
+class Sentinel: public Node<T> {
+	public:
+		using typename Node<T>::value_type;
+		using typename Node<T>::pointer;
+		using typename Node<T>::const_pointer;
+		using typename Node<T>::reference;
+		using typename Node<T>::const_reference;
+
+		Sentinel() {
+			this->color = BLACK;
+			// init_sentinel();
+		};
+		virtual ~Sentinel() {};
+
+		virtual pointer	root() const {
+			return (this->parent);
+		}
+		virtual pointer	min() const {
+			return (this->left);
+		}
+		virtual pointer	max() const {
+			return (this->right);
+		}
+		virtual pointer previous() const {
+			return (this->right);
+		}
+		virtual pointer next() const {
+			return (this->left);
+		}
+
+		void	init_sentinel() {
+			this->_sentinel = this;
+			this->parent = this;
+			this->left = this;
+			this->right = this;
+		}
+
+		// GETTERS
+
+		virtual bool	is_node() const { return false; }
+};
+
+
+template<
 	typename T,
 	typename Compare = std::less<T>,
 	typename Allocator = std::allocator<T>
@@ -139,12 +175,12 @@ class RBTree {
 
 		RBTree(const compare_type& comp, const allocator_type& alloc = allocator_type())
 		: _alloc(alloc), _comp(comp), _size(0), _sentinel(_alloc.allocate(1)) {
-			_alloc.construct(_sentinel, Node<T>(T(), BLACK));
-			_sentinel->init_sentinel();
+			_alloc.construct(_sentinel, Sentinel<T>());
+			// _sentinel->init_sentinel();
 		};
 		RBTree(const_reference from): _comp(from._comp), _size(0), _sentinel(_alloc.allocate(1)) {
-			_alloc.construct(_sentinel, Node<T>(T(), BLACK));
-			_sentinel->init_sentinel();
+			_alloc.construct(_sentinel, Sentinel<T>());
+			// _sentinel->init_sentinel();
 			operator=(from);
 		};
 		~RBTree() {
@@ -450,7 +486,7 @@ class RBTree {
 				}
 			}
 			release_node(curr);
-			_sentinel->init_sentinel();
+			static_cast<ft::Sentinel<T>* >(_sentinel)->init_sentinel();
 			_size = 0;
 		}
 
