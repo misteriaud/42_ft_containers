@@ -217,39 +217,26 @@ class RBTree {
 			return (curr);
 		}
 		pointer lower_bound(T value) {
-			pointer curr = ROOT;
-			pointer prev = NULL_NODE;
+			pointer curr = MIN;
 
 			if (!_size || _comp(**MAX, value))
 				return (NULL_NODE);
-			else if (_comp(value, **MIN))
+			if (_comp(value, **MIN))
 				return (MIN);
-			while (IS_NODE(curr) && !SAME_KEY(**prev, value)) {
-				prev = curr;
-				if (_comp(value, **curr))
-					curr = curr->left;
-				else
-					curr = curr->right;
-			}
-			if (SAME_KEY(**prev, value))
-				return (prev);
-			return (prev->next());
+			while(IS_NODE(curr) && _comp(**curr, value))
+				curr = curr->next();
+			return (curr);
 		}
 		pointer upper_bound(T value) {
-			pointer curr = ROOT;
-			pointer prev = NULL_NODE;
+			pointer curr = MIN;
+
 			if (!_size || _comp(**MAX, value))
 				return (NULL_NODE);
-			else if (_comp(value, **MIN))
+			if (_comp(value, **MIN))
 				return (MIN);
-			while (IS_NODE(curr) && !SAME_KEY(**prev, value)) {
-				prev = curr;
-				if (_comp(value, **curr))
-					curr = curr->left;
-				else
-					curr = curr->right;
-			}
-			return (prev->next());
+			while(IS_NODE(curr) && (_comp(**curr, value) || SAME_KEY(**curr, value)))
+				curr = curr->next();
+			return (curr);
 		}
 
 		//
