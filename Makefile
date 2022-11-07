@@ -1,5 +1,5 @@
 NAME = ex00
-SRCS = $(addprefix srcs/, main_42.cpp)
+SRCS = $(addprefix srcs/, main_map.cpp)
 OBJS = ${SRCS:.cpp=.o}
 FLAGS = -Wall -Wextra -Werror -std=c++98 -g
 HDRS = hdrs

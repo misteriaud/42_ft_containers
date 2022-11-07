@@ -2,6 +2,8 @@
 #ifndef SFINAE_HPP
 # define SFINAE_HPP
 
+#include "pair.hpp"
+
 namespace ft {
 
 	// REMOVE POSSIBLE Const, Volatile, Const Volatile
@@ -56,6 +58,14 @@ namespace ft {
 	template<class T> struct add_const { typedef const T type; };
 
 	template<class T> struct add_volatile { typedef volatile T type; };
+
+
+	// IS PAIR
+	template <typename T>
+	struct is_pair : false_type { };
+
+	template <typename T1, typename T2>
+	struct is_pair<ft::pair<T1,T2> > : true_type { };
 
 }
 

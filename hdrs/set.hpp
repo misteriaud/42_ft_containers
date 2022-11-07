@@ -23,7 +23,7 @@ namespace ft {
 			//	TYPES DEFINITIONS
 			//
 			typedef T										key_type;
-			typedef T		value_type;
+			typedef const T									value_type;
 			typedef Compare									key_compare;
 			typedef Compare 								value_compare;
 			typedef Alloc									allocator_type;
@@ -225,42 +225,42 @@ namespace ft {
 			tree_type*			_rb_tree;
 	};
 
-	// template <class Key, class T, class Compare, class Alloc>
-	// bool operator== ( const set<Key,T,Compare,Alloc>& lhs, const set<Key,T,Compare,Alloc>& rhs ) {
-	// 	if (lhs.size() != rhs.size())
-	// 		return (false);
-	// 	return (equal(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
-	// }
+	template <class T, class Compare, class Alloc>
+	bool operator== ( const set<T,Compare,Alloc>& lhs, const set<T,Compare,Alloc>& rhs ) {
+		if (lhs.size() != rhs.size())
+			return (false);
+		return (equal(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
+	}
 
-	// template <class Key, class T, class Compare, class Alloc>
-	// bool operator!= ( const set<Key,T,Compare,Alloc>& lhs, const set<Key,T,Compare,Alloc>& rhs ) {
-	// 	return !(operator==(lhs, rhs));
-	// }
+	template <class T, class Compare, class Alloc>
+	bool operator!= ( const set<T,Compare,Alloc>& lhs, const set<T,Compare,Alloc>& rhs ) {
+		return !(operator==(lhs, rhs));
+	}
 
-	// template <class Key, class T, class Compare, class Alloc>
-	// bool operator<  ( const set<Key,T,Compare,Alloc>& lhs, const set<Key,T,Compare,Alloc>& rhs ) {
-	// 	return (lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
-	// }
+	template <class T, class Compare, class Alloc>
+	bool operator<  ( const set<T,Compare,Alloc>& lhs, const set<T,Compare,Alloc>& rhs ) {
+		return (lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
+	}
 
-	// template <class Key, class T, class Compare, class Alloc>
-	// bool operator<= ( const set<Key,T,Compare,Alloc>& lhs, const set<Key,T,Compare,Alloc>& rhs ) {
-	// 	return !(operator<(rhs, lhs));
-	// }
+	template <class T, class Compare, class Alloc>
+	bool operator<= ( const set<T,Compare,Alloc>& lhs, const set<T,Compare,Alloc>& rhs ) {
+		return !(operator<(rhs, lhs));
+	}
 
-	// template <class Key, class T, class Compare, class Alloc>
-	// bool operator>  ( const set<Key,T,Compare,Alloc>& lhs, const set<Key,T,Compare,Alloc>& rhs ) {
-	// 	return (operator<(rhs, lhs));
-	// }
+	template <class T, class Compare, class Alloc>
+	bool operator>  ( const set<T,Compare,Alloc>& lhs, const set<T,Compare,Alloc>& rhs ) {
+		return (operator<(rhs, lhs));
+	}
 
-	// template <class Key, class T, class Compare, class Alloc>
-	// bool operator>= ( const set<Key,T,Compare,Alloc>& lhs, const set<Key,T,Compare,Alloc>& rhs ) {
-	// 	return !(operator<(lhs, rhs));
-	// }
+	template <class T, class Compare, class Alloc>
+	bool operator>= ( const set<T,Compare,Alloc>& lhs, const set<T,Compare,Alloc>& rhs ) {
+		return !(operator<(lhs, rhs));
+	}
 
-	// template <class Key, class T, class Compare, class Alloc>
-	// void swap (set<Key,T,Compare,Alloc>& x, set<Key,T,Compare,Alloc>& y) {
-	// 	x.swap(y);
-	// }
+	template <class T, class Compare, class Alloc>
+	void swap (set<T,Compare,Alloc>& x, set<T,Compare,Alloc>& y) {
+		x.swap(y);
+	}
 }
 
 #endif

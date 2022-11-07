@@ -19,7 +19,8 @@ namespace ft {
 			typedef T*								pointer;
 			typedef T&								reference;
 			typedef Node<value_type>				node_type;
-			typedef typename ft::conditional<ft::is_const<T>::value, const Node<typename remove_cv<value_type>::type >* , Node<value_type>* >::type node_pointer;
+			typedef typename ft::conditional<ft::is_const<T>::value, const Node<typename remove_cv<value_type>::type >* , Node<value_type>* >::type pair_node_pointer;
+			typedef typename ft::conditional<ft::is_pair<typename remove_const<value_type>::type >::value, pair_node_pointer, node_type*>::type node_pointer;
 			typedef std::bidirectional_iterator_tag	iterator_category;
 
 			BidirectionalIterator(): _elem(NULL) {};
