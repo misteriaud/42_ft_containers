@@ -1,10 +1,14 @@
-NAME = ex00
-SRCS = $(addprefix srcs/, main.cpp)
+NAME = unit_test
+VECTORS_SRCS = $(addprefix vector/, \
+	constructor.cpp \
+	assign.cpp \
+	iterator.cpp )
+
+SRCS = $(addprefix srcs/, main.cpp common.cpp $(VECTORS_SRCS))
 OBJS = ${SRCS:.cpp=.o}
-FLAGS = -Wall -Wextra -Werror -std=c++98 -g
-HDRS = hdrs
-# $(addprefix hdrs/, vector.hpp)
-CC = c++
+FLAGS = -Wall -Wextra -Werror -g
+HDRS = ../hdrs
+CC = g++
 
 all: ${NAME} Makefile
 
