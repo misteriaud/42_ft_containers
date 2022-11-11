@@ -1,33 +1,32 @@
 #include "../../hdrs/common.hpp"
 
-TEMPLATE_PRODUCT_TEST_CASE("Vector iterator", "[vector]", (std::vector, ft::vector), (int, std::string, std::vector<int>, ft::vector<std::string>)) {
+TEMPLATE_PRODUCT_TEST_CASE("Vector iterator", "[vector][iterator]", CONTAINER_TYPES, VALUE_TYPES) {
 
 	typedef typename TestType::value_type 						value_type;
+	typedef typename std::vector<value_type>					std_vec;
 	typedef typename TestType::iterator							iterator;
 	typedef typename TestType::const_iterator					const_iterator;
 	// typedef typename TestType::reverse_iterator					reverse_iterator;
 	typedef typename std::vector<value_type>::iterator			std_iterator;
 	typedef typename std::vector<value_type>::reverse_iterator	std_r_iterator;
 
-	std::vector<value_type>	range;
-	for (size_t i = 0; i < REF_SIZE; i++)
-		range.push_back(mocking_value<value_type>());
+	std_vec ref = generate_vec<value_type>();
 
-	std_iterator	range_begin = range.begin();
-	std_iterator	range_end = range.end();
+	std_iterator	ref_begin = ref.begin();
+	std_iterator	ref_end = ref.end();
 
-	TestType	vec(range_begin, range_end);
+	TestType	vec(ref_begin, ref_end);
 
 	SECTION("same begin && end it") {
-		REQUIRE(*range_begin == *vec.begin());
-		REQUIRE(*(--range_end) == *(--vec.end()));
+		REQUIRE(*ref_begin == *vec.begin());
+		REQUIRE(*(--ref_end) == *(--vec.end()));
 	}
 
-	std_r_iterator	range_rbegin = range.rbegin();
-	std_r_iterator	range_rend = range.rend();
+	std_r_iterator	ref_rbegin = ref.rbegin();
+	std_r_iterator	ref_rend = ref.rend();
 	SECTION("same reverse_begin && reverse_end it") {
-		REQUIRE(*range_rbegin == *vec.rbegin());
-		REQUIRE(*(--range_rend) == *(--vec.rend()));
+		REQUIRE(*ref_rbegin == *vec.rbegin());
+		REQUIRE(*(--ref_rend) == *(--vec.rend()));
 	}
 
 	SECTION("constructor") {
@@ -60,25 +59,99 @@ TEMPLATE_PRODUCT_TEST_CASE("Vector iterator", "[vector]", (std::vector, ft::vect
 
 	SECTION("mutable operator *it = a") {
 		value_type tmp = mocking_value<value_type>();
-		*range_begin = tmp;
+		*ref_begin = tmp;
 		*vec.begin() = tmp;
 
-		REQUIRE(*range_begin == *vec.begin());
-	}
-	SECTION("++it && it++ && --it && it--") {
-		std_iterator range_tmp = ++(++(--(++(++range_begin))));
-		iterator tmp = ++(++(--(++(++vec.begin()))));
-
-		REQUIRE(*range_tmp == *tmp);
-		range_tmp++;
-		range_tmp--;
-		range_tmp--;
-		range_tmp++;
-		tmp++;
-		tmp--;
-		tmp--;
-		tmp++;
-		REQUIRE(*range_tmp == *tmp);
+		REQUIRE(*ref_begin == *vec.begin());
 	}
 
+	std_iterator ref_tmp = ++(++(--(++(++ref_begin))));
+	iterator tmp = ++(++(--(++(++vec.begin()))));
+
+	SECTION("++it && --it") {
+		REQUIRE(*ref_tmp == *tmp);
+	}
+	SECTION("it++ && it--") {
+		ref_tmp++;
+		ref_tmp--;
+		ref_tmp--;
+		ref_tmp++;
+		REQUIRE(*ref_tmp == *tmp);
+	}
+	SECTION("*it++ && *it--") {
+		REQUIRE(*ref_tmp == *tmp);
+		REQUIRE(*ref_tmp++ == *tmp++);
+		REQUIRE(*ref_tmp-- == *tmp--);
+		REQUIRE(*ref_tmp == *tmp);
+	}
+
+	ref_tmp = ref.begin() + REF_SIZE / 2;
+	tmp = vec.begin() + REF_SIZE / 2;
+
+	SECTION("it + n && n + it && it - n  && it - it2") {
+		ref_tmp = ref_tmp + 15;
+		tmp = tmp + 15;
+		REQUIRE(*ref_tmp == *tmp);
+	}
+
+	SECTION("n + it") {
+		ref_tmp = 30 + ref_tmp;
+		tmp = 30 + tmp;
+		REQUIRE(*ref_tmp == *tmp);
+	}
+
+	SECTION("it - n") {
+		ref_tmp = ref_tmp - 5;
+		tmp = tmp - 5;
+		REQUIRE(*ref_tmp == *tmp);
+	}
+
+	SECTION("it - it2") {
+		auto ref_diff = ref_tmp - ref.begin();
+		auto diff = tmp - vec.begin();
+		REQUIRE(ref_diff == diff); // it - it2
+	}
+
+	SECTION("it += n") {
+		ref_tmp += 30;
+		tmp += 30;
+		REQUIRE(*ref_tmp == *tmp);
+	}
+
+	SECTION("it -= n") {
+		ref_tmp -= 30;
+		tmp -= 30;
+		REQUIRE(*ref_tmp == *tmp);
+	}
+
+	SECTION("it < it2 && it > it2") {
+		REQUIRE((tmp > vec.begin()) == (ref_tmp > ref.begin()));
+		REQUIRE((tmp > vec.end()) == (ref_tmp > ref.end()));
+		REQUIRE((tmp < vec.begin()) == (ref_tmp < ref.begin()));
+		REQUIRE((tmp < vec.end()) == (ref_tmp < ref.end()));
+
+		// with equal it
+		REQUIRE((vec.begin() > vec.begin()) == (ref.begin() > ref.begin()));
+		REQUIRE((vec.end() > vec.end()) == (ref.end() > ref.end()));
+		REQUIRE((vec.begin() < vec.begin()) == (ref.begin() < ref.begin()));
+		REQUIRE((vec.end() < vec.end()) == (ref.end() < ref.end()));
+	}
+	SECTION("it <= it2 && it >= it2") {
+		REQUIRE((tmp >= vec.begin()) == (ref_tmp >= ref.begin()));
+		REQUIRE((tmp >= vec.end()) == (ref_tmp >= ref.end()));
+		REQUIRE((tmp <= vec.begin()) == (ref_tmp <= ref.begin()));
+		REQUIRE((tmp <= vec.end()) == (ref_tmp <= ref.end()));
+
+		// with equal it
+		REQUIRE((vec.begin() >= vec.begin()) == (ref.begin() >= ref.begin()));
+		REQUIRE((vec.end() >= vec.end()) == (ref.end() >= ref.end()));
+		REQUIRE((vec.begin() <= vec.begin()) == (ref.begin() <= ref.begin()));
+		REQUIRE((vec.end() <= vec.end()) == (ref.end() <= ref.end()));
+	}
+
+	SECTION("it[n]") {
+		REQUIRE(tmp[0] == ref_tmp[0]);
+		REQUIRE(tmp[-100] == ref_tmp[-100]);
+		REQUIRE(tmp[100] == ref_tmp[100]);
+	}
 }

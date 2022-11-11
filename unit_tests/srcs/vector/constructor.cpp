@@ -2,13 +2,13 @@
 
 #define FILE_PATH "./unit_test"
 
-TEMPLATE_PRODUCT_TEST_CASE("Vector constructors", "[vector]", (std::vector, ft::vector), (int, std::string, std::vector<int>, ft::vector<std::string>)) {
+TEMPLATE_PRODUCT_TEST_CASE("Vector constructors", "[vector][constructor]", CONTAINER_TYPES, VALUE_TYPES) {
 
 	srand (time(NULL));
 
 	typedef typename TestType::value_type 				value_type;
+	typedef typename std::vector<value_type>			std_vec;
 	typedef typename std::vector<value_type>::iterator	std_iterator;
-	// typedef typename TestType::iterator 				iterator;
 
 	SECTION("default constructor") {
 		TestType	vec;
@@ -34,10 +34,7 @@ TEMPLATE_PRODUCT_TEST_CASE("Vector constructors", "[vector]", (std::vector, ft::
 		REQUIRE(vec.capacity() >= 1000);
 	}
 
-
-	std::vector<value_type>	range;
-	for (size_t i = 0; i < REF_SIZE; i++)
-		range.push_back(mocking_value<value_type>());
+	std_vec range = generate_vec<value_type>();
 
 	std_iterator	range_begin = range.begin();
 	std_iterator	range_end = range.end();
@@ -45,17 +42,21 @@ TEMPLATE_PRODUCT_TEST_CASE("Vector constructors", "[vector]", (std::vector, ft::
 	SECTION("range constructor begin-end") {
 		TestType	vec(range_begin, range_end);
 
-		REQUIRE(ft::equal(range_begin, range_end, vec.begin(), vec.end()) == true);
+		REQUIRE_THAT(vec, VectorEqual<TestType>(range));
 	}
 	SECTION("range constructor somwhere-end") {
-		TestType	vec(++(++range_begin), range_end);
+		++(++(range_begin));
+		std_vec		ref(range_begin, range_end);
+		TestType	vec(range_begin, range_end);
 
-		REQUIRE(ft::equal(range_begin, range_end, vec.begin(), vec.end()) == true);
+		REQUIRE_THAT(vec, VectorEqual<TestType>(ref));
 	}
 	SECTION("range constructor somwhere-end") {
-		TestType	vec(++(++range_begin), --(--(--range_end)));
+		--(--(range_end));
+		std_vec		ref(range_begin, range_end);
+		TestType	vec(range_begin, range_end);
 
-		REQUIRE(ft::equal(range_begin, range_end, vec.begin(), vec.end()) == true);
+		REQUIRE_THAT(vec, VectorEqual<TestType>(ref));
 	}
 	SECTION("range with strict input_iterator") {
 		typedef std::istream_iterator<char>	is_iterator;

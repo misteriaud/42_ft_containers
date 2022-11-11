@@ -1,6 +1,6 @@
 #include "../../hdrs/common.hpp"
 
-TEMPLATE_PRODUCT_TEST_CASE("Vector assignement operator", "[vector][constructor]", (std::vector, ft::vector), (int, std::string, std::vector<int>, ft::vector<std::string>)) {
+TEMPLATE_PRODUCT_TEST_CASE("Vector assignement operator", "[vector]", CONTAINER_TYPES, VALUE_TYPES) {
 
 	typedef typename TestType::value_type 				value_type;
 	// typedef typename std::vector<value_type>::iterator	std_iterator;

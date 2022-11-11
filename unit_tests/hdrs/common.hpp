@@ -2,6 +2,15 @@
 #ifndef COMMON_HPP_123
 # define COMMON_HPP_123
 
+#ifdef DEBUG
+# define CONTAINER_TYPES (std::vector, ft::vector)
+#else
+# define CONTAINER_TYPES (ft::vector)
+#endif
+
+#define VALUE_TYPES (int, std::string)
+// #define VALUE_TYPES (int, std::string, std::vector<int>, ft::vector<std::string>)
+
 #include "catch.hpp"
 
 //CONFIG
@@ -58,5 +67,42 @@ T	mocking_value() {
 
 	return (result);
 }
+
+template <typename T>
+std::vector<T>	generate_vec(){
+	std::vector<T>	range;
+	for (size_t i = 0; i < REF_SIZE; i++)
+		range.push_back(mocking_value<T>());
+	return range;
+}
+
+// MATCHER
+template<typename VectorType>
+class VectorEqual : public Catch::MatcherBase<VectorType> {
+public:
+	typedef typename VectorType::value_type		ValueType;
+	typedef typename VectorType::allocator_type	AllocComp;
+
+
+	VectorEqual(std::vector<ValueType, AllocComp> const &comparator) : m_comparator( comparator ) {}
+
+	bool match(VectorType const &v) const override{
+		// !TBD: This currently works if all elements can be compared using !=
+		// - a more general approach would be via a compare template that defaults
+		// to using !=. but could be specialised for, e.g. std::vector<T, Alloc> etc
+		// - then just call that directly
+		if (m_comparator.size() != v.size())
+			return false;
+		for (std::size_t i = 0; i < v.size(); ++i)
+			if (m_comparator[i] != v[i])
+				return false;
+		return true;
+	}
+	std::string describe() const {
+		// return "ft::vector is equal to std::vector\n";
+		return "Equals: " + ::Catch::Detail::stringify( m_comparator );
+	}
+	std::vector<ValueType, AllocComp> const& m_comparator;
+};
 
 #endif

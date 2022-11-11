@@ -6,7 +6,7 @@ VECTORS_SRCS = $(addprefix vector/, \
 
 SRCS = $(addprefix srcs/, main.cpp common.cpp $(VECTORS_SRCS))
 OBJS = ${SRCS:.cpp=.o}
-FLAGS = -Wall -Wextra -Werror -g
+FLAGS = -Wall -Wextra -Werror -D DEBUG -g
 HDRS = ../hdrs
 CC = g++
 
