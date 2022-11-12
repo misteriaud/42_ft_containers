@@ -19,7 +19,7 @@ TEMPLATE_PRODUCT_TEST_CASE("Vector constructors", "[vector][constructor]", CONTA
 
 	SECTION("fill constructor w/ n < 0") {
 		TestType*	vec = NULL;
-		CHECK_THROWS(vec = new TestType(-100));
+		REQUIRE_THROWS(vec = new TestType(-100));
 	}
 	SECTION("fill constructor w/ n == 0") {
 		TestType	vec(0);
@@ -34,7 +34,7 @@ TEMPLATE_PRODUCT_TEST_CASE("Vector constructors", "[vector][constructor]", CONTA
 		REQUIRE(vec.capacity() >= 1000);
 	}
 
-	std_vec range = generate_vec<value_type>();
+	std_vec range = Custom::generate_vec<value_type>();
 
 	std_iterator	range_begin = range.begin();
 	std_iterator	range_end = range.end();
@@ -42,21 +42,21 @@ TEMPLATE_PRODUCT_TEST_CASE("Vector constructors", "[vector][constructor]", CONTA
 	SECTION("range constructor begin-end") {
 		TestType	vec(range_begin, range_end);
 
-		REQUIRE_THAT(vec, VectorEqual<TestType>(range));
+		REQUIRE_THAT(vec, Custom::VectorEqual<TestType>(range));
 	}
 	SECTION("range constructor somwhere-end") {
 		++(++(range_begin));
 		std_vec		ref(range_begin, range_end);
 		TestType	vec(range_begin, range_end);
 
-		REQUIRE_THAT(vec, VectorEqual<TestType>(ref));
+		REQUIRE_THAT(vec, Custom::VectorEqual<TestType>(ref));
 	}
 	SECTION("range constructor somwhere-end") {
 		--(--(range_end));
 		std_vec		ref(range_begin, range_end);
 		TestType	vec(range_begin, range_end);
 
-		REQUIRE_THAT(vec, VectorEqual<TestType>(ref));
+		REQUIRE_THAT(vec, Custom::VectorEqual<TestType>(ref));
 	}
 	SECTION("range with strict input_iterator") {
 		typedef std::istream_iterator<char>	is_iterator;
@@ -70,7 +70,7 @@ TEMPLATE_PRODUCT_TEST_CASE("Vector constructors", "[vector][constructor]", CONTA
 		file.close();
 		file.open(FILE_PATH);
 		my_it = is_iterator(file);
-		REQUIRE(ft::equal(my_it, is_iterator(), vec.begin(), vec.end()) == true);
+		REQUIRE(Custom::equal(my_it, is_iterator(), vec.begin(), vec.end()) == true);
 		file.close();
 	}
 
@@ -79,6 +79,6 @@ TEMPLATE_PRODUCT_TEST_CASE("Vector constructors", "[vector][constructor]", CONTA
 		TestType	origin_vec(++(++range_begin), --(--(--range_end)));
 		TestType	copy_vec(origin_vec);
 
-		REQUIRE(same_vec(origin_vec, copy_vec) == true);
+		REQUIRE(Custom::same_vec(origin_vec, copy_vec) == true);
 	}
 }

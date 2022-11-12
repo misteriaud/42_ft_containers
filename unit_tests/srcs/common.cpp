@@ -1,7 +1,7 @@
 #include "../hdrs/common.hpp"
 
 template <>
-std::string mocking_value<std::string>() {
+std::string Custom::mocking_value<std::string>() {
 	size_t string_size = rand() % 50;
 	std::string result;
 
