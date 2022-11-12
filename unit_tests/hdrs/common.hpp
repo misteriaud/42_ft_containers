@@ -3,15 +3,12 @@
 # define COMMON_HPP_123
 
 #ifdef DEBUG
-# define CONTAINER_TYPES (std::vector, ft::vector)
+# define CONTAINER_TYPE std::vector
 #else
-# define CONTAINER_TYPES (ft::vector)
+# define CONTAINER_TYPE ft::vector
 #endif
 
-#define VALUE_TYPES (int, std::string)
-// #define VALUE_TYPES (int, std::string, std::vector<int>, ft::vector<std::string>)
-
-#include "catch.hpp"
+#define VALUE_TYPE std::string
 
 //CONFIG
 #define REF_SIZE 500
@@ -20,7 +17,6 @@
 // INCLUDE OF CONTAINERS
 #include <vector.hpp>
 #include <vector>
-
 // INCLUDE OF REQUIRED LIBS
 #include <string>
 #include <fstream>
@@ -28,6 +24,21 @@
 
 #include <stdlib.h>     /* srand, rand */
 #include <time.h>       /* time */
+
+typedef VALUE_TYPE													TestValueType;
+
+typedef typename CONTAINER_TYPE<TestValueType>						TestContainerType;
+typedef typename TestContainerType::iterator						TestIt;
+typedef typename TestContainerType::const_iterator					TestConstIt;
+typedef typename TestContainerType::const_reverse_iterator			TestConstRevIt;
+
+
+typedef typename std::vector<TestValueType>							StdVec;
+typedef typename std::vector<TestValueType>::iterator				StdVecIt;
+typedef typename std::vector<TestValueType>::const_iterator			StdVecConstIt;
+typedef typename std::vector<TestValueType>::const_reverse_iterator	StdVecConstRevIt;
+
+#include "catch.hpp"
 
 namespace Custom {
 
@@ -80,8 +91,9 @@ namespace Custom {
 //
 //	GENERATOR
 //
-	template <typename T, typename Custom::enable_if<!Custom::is_vector<T>::value, int>::type =0>
-	T mocking_value() {
+	template <typename T>
+	typename Custom::enable_if<!Custom::is_vector<T>::value, T>::type
+	mocking_value() {
 		return (rand() % 500);
 	}
 
@@ -89,8 +101,9 @@ namespace Custom {
 	std::string mocking_value<std::string>();
 
 
-	template <typename T, typename Custom::enable_if<Custom::is_vector<T>::value, int>::type =0>
-	T	mocking_value() {
+	template <typename T>
+	typename Custom::enable_if<Custom::is_vector<T>::value, T>::type
+	mocking_value() {
 		size_t	vector_size = 10;
 		T		result;
 
@@ -121,7 +134,7 @@ namespace Custom {
 
 		VectorEqual(std::vector<ValueType, AllocComp> const &comparator) : m_comparator( comparator ) {}
 
-		bool match(VectorType const &v) const override{
+		bool match(VectorType const &v) const {
 			// !TBD: This currently works if all elements can be compared using !=
 			// - a more general approach would be via a compare template that defaults
 			// to using !=. but could be specialised for, e.g. std::vector<T, Alloc> etc
@@ -134,8 +147,8 @@ namespace Custom {
 			return true;
 		}
 		std::string describe() const {
-			// return "ft::vector is equal to std::vector\n";
-			return "Equals: " + ::Catch::Detail::stringify( m_comparator );
+			return "ft::vector is equal to std::vector\n";
+			// return "Equals: " + ::Catch::Detail::stringify( m_comparator );
 		}
 		std::vector<ValueType, AllocComp> const& m_comparator;
 	};

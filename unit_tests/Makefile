@@ -8,8 +8,8 @@ VECTORS_SRCS = $(addprefix vector/, \
 SRCS = $(addprefix srcs/, main.cpp common.cpp $(VECTORS_SRCS))
 OBJS = ${SRCS:.cpp=.o}
 # https://github.com/tsduck/tsduck/issues/205
-FLAGS = -Wall -Wextra -Werror -Wno-deprecated-copy \
--D DEBUG
+FLAGS = -Wall -Wextra -Werror -std=c++98
+# -D DEBUG
 # HDRS = ft_container
 HDRS = ../hdrs
 CC = g++

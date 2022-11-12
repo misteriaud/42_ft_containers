@@ -2,61 +2,56 @@
 
 #define FILE_PATH "./unit_test"
 
-TEMPLATE_PRODUCT_TEST_CASE("Vector constructors", "[vector][constructor]", CONTAINER_TYPES, VALUE_TYPES) {
+TEST_CASE("Vector constructors", "[vector][constructor]") {
 
 	srand (time(NULL));
 
-	typedef typename TestType::value_type 				value_type;
-	typedef typename std::vector<value_type>			std_vec;
-	typedef typename std::vector<value_type>::iterator	std_iterator;
 
 	SECTION("default constructor") {
-		TestType	vec;
+		TestContainerType	vec;
 
 		REQUIRE(vec.size() == 0);
-		REQUIRE(vec.capacity() >= 0);
 	}
 
 	SECTION("fill constructor w/ n < 0") {
-		TestType*	vec = NULL;
-		REQUIRE_THROWS(vec = new TestType(-100));
+		TestContainerType*	vec = NULL;
+		REQUIRE_THROWS(vec = new TestContainerType(-100));
 	}
 	SECTION("fill constructor w/ n == 0") {
-		TestType	vec(0);
+		TestContainerType	vec(0);
 
 		REQUIRE(vec.size() == 0);
-		REQUIRE(vec.capacity() >= 0);
 	}
 	SECTION("fill constructor w/ n > 0") {
-		TestType	vec(1000);
+		TestContainerType	vec(1000);
 
 		REQUIRE(vec.size() == 1000);
 		REQUIRE(vec.capacity() >= 1000);
 	}
 
-	std_vec range = Custom::generate_vec<value_type>();
+	StdVec range = Custom::generate_vec<TestValueType>();
 
-	std_iterator	range_begin = range.begin();
-	std_iterator	range_end = range.end();
+	StdVecIt	range_begin = range.begin();
+	StdVecIt	range_end = range.end();
 
 	SECTION("range constructor begin-end") {
-		TestType	vec(range_begin, range_end);
+		TestContainerType	vec(range_begin, range_end);
 
-		REQUIRE_THAT(vec, Custom::VectorEqual<TestType>(range));
+		REQUIRE_THAT(vec, Custom::VectorEqual<TestContainerType>(range));
 	}
 	SECTION("range constructor somwhere-end") {
 		++(++(range_begin));
-		std_vec		ref(range_begin, range_end);
-		TestType	vec(range_begin, range_end);
+		StdVec		ref(range_begin, range_end);
+		TestContainerType	vec(range_begin, range_end);
 
-		REQUIRE_THAT(vec, Custom::VectorEqual<TestType>(ref));
+		REQUIRE_THAT(vec, Custom::VectorEqual<TestContainerType>(ref));
 	}
 	SECTION("range constructor somwhere-end") {
 		--(--(range_end));
-		std_vec		ref(range_begin, range_end);
-		TestType	vec(range_begin, range_end);
+		StdVec		ref(range_begin, range_end);
+		TestContainerType	vec(range_begin, range_end);
 
-		REQUIRE_THAT(vec, Custom::VectorEqual<TestType>(ref));
+		REQUIRE_THAT(vec, Custom::VectorEqual<TestContainerType>(ref));
 	}
 	SECTION("range with strict input_iterator") {
 		typedef std::istream_iterator<char>	is_iterator;
@@ -76,8 +71,8 @@ TEMPLATE_PRODUCT_TEST_CASE("Vector constructors", "[vector][constructor]", CONTA
 
 
 	SECTION("copy constructor") {
-		TestType	origin_vec(++(++range_begin), --(--(--range_end)));
-		TestType	copy_vec(origin_vec);
+		TestContainerType	origin_vec(++(++range_begin), --(--(--range_end)));
+		TestContainerType	copy_vec(origin_vec);
 
 		REQUIRE(Custom::same_vec(origin_vec, copy_vec) == true);
 	}

@@ -1,20 +1,9 @@
 #include "../../hdrs/common.hpp"
 
-TEMPLATE_PRODUCT_TEST_CASE("Vector iterator", "[vector][iterator]", CONTAINER_TYPES, VALUE_TYPES) {
+TEST_CASE("Vector iterator", "[vector][iterator]") {
 
-	typedef typename TestType::value_type 						value_type;
-	typedef typename std::vector<value_type>					std_vec;
-
-	typedef typename TestType::iterator							iterator;
-
-	typedef typename TestType::const_iterator					const_iterator;
-	typedef typename std::vector<value_type>::const_iterator	const_std_iterator;
-
-	typedef typename TestType::const_reverse_iterator					const_r_iterator;
-	typedef typename std::vector<value_type>::const_reverse_iterator	const_r_std_iterator;
-
-	std_vec ref = Custom::generate_vec<value_type>();
-	TestType	vec(ref.begin(), ref.end());
+	StdVec ref = Custom::generate_vec<TestValueType>();
+	TestContainerType	vec(ref.begin(), ref.end());
 
 	SECTION("same begin && end it") {
 		REQUIRE(*ref.begin() == *vec.begin());
@@ -27,12 +16,12 @@ TEMPLATE_PRODUCT_TEST_CASE("Vector iterator", "[vector][iterator]", CONTAINER_TY
 	}
 
 	SECTION("constructor") {
-		iterator	it = vec.begin();
+		TestIt	it = vec.begin();
 
-		iterator	temp; // default constructor
+		TestIt	temp; // default constructor
 		(void)temp;
 
-		iterator	it2(it);
+		TestIt	it2(it);
 		REQUIRE(*it == *it2); // copy constructor
 
 		it++;
@@ -40,12 +29,12 @@ TEMPLATE_PRODUCT_TEST_CASE("Vector iterator", "[vector][iterator]", CONTAINER_TY
 		it2 = it;
 		REQUIRE(*it == *it2); // assignement
 
-		const_iterator	const_it(it);
+		TestConstIt	const_it(it);
 		REQUIRE(*const_it == *it); // construct iterator from const_iterator
 	}
 
 	SECTION("operator==() && operator!=()") {
-		iterator	it;
+		TestIt	it;
 		it = vec.begin();
 
 		REQUIRE((it == vec.begin()) == true);
@@ -55,18 +44,18 @@ TEMPLATE_PRODUCT_TEST_CASE("Vector iterator", "[vector][iterator]", CONTAINER_TY
 	}
 
 	SECTION("mutable operator *it = a") {
-		value_type tmp = Custom::mocking_value<value_type>();
+		TestValueType tmp = Custom::mocking_value<TestValueType>();
 		*ref.begin() = tmp;
 		*vec.begin() = tmp;
 
 		REQUIRE(*ref.begin() == *vec.begin());
 	}
 
-	const_std_iterator ref_tmp = ++(++(--(++(++ref.begin()))));
-	const_iterator tmp = ++(++(--(++(++vec.begin()))));
+	StdVecConstIt	ref_tmp = ++(++(--(++(++ref.begin()))));
+	TestConstIt		 tmp = ++(++(--(++(++vec.begin()))));
 
-	const_r_std_iterator r_ref_tmp = ++(++(--(++(++ref.rbegin()))));
-	const_r_iterator r_tmp = ++(++(--(++(++vec.rbegin()))));
+	StdVecConstRevIt	r_ref_tmp = ++(++(--(++(++ref.rbegin()))));
+	TestConstRevIt		r_tmp = ++(++(--(++(++vec.rbegin()))));
 
 	SECTION("++it && --it") {
 		REQUIRE(*ref_tmp == *tmp);
@@ -138,12 +127,12 @@ TEMPLATE_PRODUCT_TEST_CASE("Vector iterator", "[vector][iterator]", CONTAINER_TY
 	}
 
 	SECTION("it - it2") {
-		auto ref_diff = ref_tmp - ref.begin();
-		auto diff = tmp - vec.begin();
+		size_t ref_diff = ref_tmp - ref.begin();
+		size_t diff = tmp - vec.begin();
 		REQUIRE(ref_diff == diff); // it - it2
 
-		auto r_ref_diff = r_ref_tmp - ref.rbegin();
-		auto r_diff = r_tmp - vec.rbegin();
+		size_t r_ref_diff = r_ref_tmp - ref.rbegin();
+		size_t r_diff = r_tmp - vec.rbegin();
 		REQUIRE(r_ref_diff == r_diff); // it - it2
 	}
 
