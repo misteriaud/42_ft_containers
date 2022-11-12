@@ -1,7 +1,5 @@
 #include "../../hdrs/common.hpp"
 
-#define FILE_PATH "./unit_test"
-
 TEST_CASE("Vector constructors", "[vector][constructor]") {
 
 	srand (time(NULL));

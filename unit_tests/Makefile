@@ -4,11 +4,12 @@ VECTORS_SRCS = $(addprefix vector/, \
 	assign.cpp \
 	iterator.cpp \
 	capacity.cpp \
-	element_access.cpp )
+	element_access.cpp \
+	modifier.cpp)
 SRCS = $(addprefix srcs/, main.cpp common.cpp $(VECTORS_SRCS))
 OBJS = ${SRCS:.cpp=.o}
 # https://github.com/tsduck/tsduck/issues/205
-FLAGS = -Wall -Wextra -Werror -std=c++98
+FLAGS = -Wall -Wextra -Werror -std=c++98 -g
 # -D DEBUG
 # HDRS = ft_container
 HDRS = ../hdrs

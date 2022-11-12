@@ -13,6 +13,7 @@
 //CONFIG
 #define REF_SIZE 500
 #define RANGE 500
+#define FILE_PATH "./unit_test"
 
 // INCLUDE OF CONTAINERS
 #include <vector.hpp>
@@ -147,8 +148,12 @@ namespace Custom {
 			return true;
 		}
 		std::string describe() const {
-			return "ft::vector is equal to std::vector\n";
-			// return "Equals: " + ::Catch::Detail::stringify( m_comparator );
+			std::ostringstream ss;
+			ss << "Equality between ft::vector && std::vector: \n";
+
+			for (StdVecConstIt it = m_comparator.begin(); it != m_comparator.end(); it++)
+				ss << *it << std::endl;
+			return ss.str();
 		}
 		std::vector<ValueType, AllocComp> const& m_comparator;
 	};
