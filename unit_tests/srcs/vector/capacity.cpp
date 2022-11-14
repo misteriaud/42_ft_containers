@@ -25,9 +25,11 @@ TEST_CASE("Vector capacity", "[vector][capacity]") {
 		vec.resize(ref.size());
 		REQUIRE_THAT(vec, Custom::VectorEqual<TestContainerType>(ref));
 
-		REQUIRE_THROWS(ref.resize(ref.max_size() * 2)); // IF STUCK HERE -> MAY BE CAUSED BY SLOW IMPLEMENTATION OF RESIZE
+	}
+	SECTION("resize(n) with  n > max_size() - IF STUCK HERE -> MAY BE CAUSED BY SLOW IMPLEMENTATION OF RESIZE") {
 		REQUIRE_THROWS(vec.resize(vec.max_size() * 2)); // IF STUCK HERE -> MAY BE CAUSED BY SLOW IMPLEMENTATION OF RESIZE
 	}
+
 	SECTION("empty()") {
 		TestContainerType tmp_vec;
 		REQUIRE(tmp_vec.empty());

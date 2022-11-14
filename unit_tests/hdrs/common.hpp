@@ -149,10 +149,11 @@ namespace Custom {
 		}
 		std::string describe() const {
 			std::ostringstream ss;
-			ss << "Equality between ft::vector && std::vector: \n";
+			ss << "\nEquality between ft::vector && std::vector: \n{ ";
 
 			for (StdVecConstIt it = m_comparator.begin(); it != m_comparator.end(); it++)
-				ss << *it << std::endl;
+				ss << "\"" << *it << "\", ";
+			ss << " }" << std::endl;
 			return ss.str();
 		}
 		std::vector<ValueType, AllocComp> const& m_comparator;
