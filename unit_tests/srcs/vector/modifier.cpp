@@ -155,8 +155,8 @@ TEST_CASE("Vector modifiers", "[vector][modifier]") {
 
 			tmp.insert(tmp.end(), first, last);
 			vec.insert(vec.end(), first, last);
-
 		}
+		// std::cout << vec;
 		REQUIRE_THAT(vec, Custom::VectorEqual<TestContainerType>(tmp));
 	}
 

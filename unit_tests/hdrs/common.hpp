@@ -8,7 +8,7 @@
 # define CONTAINER_TYPE ft::vector
 #endif
 
-#define VALUE_TYPE int
+#define VALUE_TYPE std::string
 // #define VALUE_TYPE std::vector<int>
 
 //CONFIG
@@ -40,8 +40,8 @@ typedef std::vector<TestValueType>::iterator				StdVecIt;
 typedef std::vector<TestValueType>::const_iterator			StdVecConstIt;
 typedef std::vector<TestValueType>::const_reverse_iterator	StdVecConstRevIt;
 
-#include "outstream_operators.hpp"
 #include "catch.hpp"
+#include "outstream_operators.hpp"
 
 namespace Custom {
 
@@ -154,7 +154,8 @@ namespace Custom {
 			ss << "\nEquality between ft::vector && std::vector: \n";
 
 			// IF YOU GET A COMPILATION ERROR HERE, NEED TO IMPLEMENT : `std::ostream& operator<< (std::ostream& out, const YourType& rhs)`
-			ss << m_comparator;
+			ss << Catch::StringMaker<std::vector<ValueType> >::convert(m_comparator);
+			// ss << m_comparator;
 			return ss.str();
 		}
 		std::vector<ValueType, AllocComp> const& m_comparator;
