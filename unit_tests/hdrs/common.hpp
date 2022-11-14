@@ -8,7 +8,8 @@
 # define CONTAINER_TYPE ft::vector
 #endif
 
-#define VALUE_TYPE std::string
+#define VALUE_TYPE int
+// #define VALUE_TYPE std::vector<int>
 
 //CONFIG
 #define REF_SIZE 500
@@ -29,7 +30,7 @@
 typedef VALUE_TYPE													TestValueType;
 
 typedef CONTAINER_TYPE<TestValueType>						TestContainerType;
-typedef TestContainerType::iterator						TestIt;
+typedef TestContainerType::iterator							TestIt;
 typedef TestContainerType::const_iterator					TestConstIt;
 typedef TestContainerType::const_reverse_iterator			TestConstRevIt;
 
@@ -39,6 +40,7 @@ typedef std::vector<TestValueType>::iterator				StdVecIt;
 typedef std::vector<TestValueType>::const_iterator			StdVecConstIt;
 typedef std::vector<TestValueType>::const_reverse_iterator	StdVecConstRevIt;
 
+#include "outstream_operators.hpp"
 #include "catch.hpp"
 
 namespace Custom {
@@ -149,11 +151,10 @@ namespace Custom {
 		}
 		std::string describe() const {
 			std::ostringstream ss;
-			ss << "\nEquality between ft::vector && std::vector: \n{ ";
+			ss << "\nEquality between ft::vector && std::vector: \n";
 
-			for (StdVecConstIt it = m_comparator.begin(); it != m_comparator.end(); it++)
-				ss << "\"" << *it << "\", ";
-			ss << " }" << std::endl;
+			// IF YOU GET A COMPILATION ERROR HERE, NEED TO IMPLEMENT : `std::ostream& operator<< (std::ostream& out, const YourType& rhs)`
+			ss << m_comparator;
 			return ss.str();
 		}
 		std::vector<ValueType, AllocComp> const& m_comparator;

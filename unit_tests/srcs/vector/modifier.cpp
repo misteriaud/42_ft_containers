@@ -1,7 +1,5 @@
 #include "../../hdrs/common.hpp"
 
-#include <iostream>
-
 TEST_CASE("Vector modifiers", "[vector][modifier]") {
 
 	StdVec 				ref = Custom::generate_vec<TestValueType>();
@@ -215,16 +213,16 @@ TEST_CASE("Vector modifiers", "[vector][modifier]") {
 		TestIt				it2;
 		TestContainerType	tmp_test_vec;
 
+		tmp_val = Custom::mocking_value<TestValueType>();
+
 		vec.assign(ref.begin(), ref.end());
-		tmp_test_vec.insert(tmp_test_vec.begin(), 10, "Sample string");
+		tmp_test_vec.insert(tmp_test_vec.begin(), 10, tmp_val);
 		it2 = tmp_test_vec.begin();
 		it = vec.begin();
 
 		tmp_test_vec.swap(vec);
 		REQUIRE(it == tmp_test_vec.begin());
 		REQUIRE(it2 == vec.begin());
-		std::cout << tmp_test_vec.size() << std::endl;
-		std::cout << vec.size() << std::endl;
 	}
 
 	SECTION("clear()") {
@@ -232,5 +230,4 @@ TEST_CASE("Vector modifiers", "[vector][modifier]") {
 		vec.clear();
 		REQUIRE((vec.size() == 0 && vec.empty()));
 	}
-
 }
