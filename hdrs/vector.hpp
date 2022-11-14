@@ -121,14 +121,17 @@ namespace ft {
 			return _alloc.max_size();
 		}
 		void		resize(size_type n, value_type val = value_type()) {
-			while (_size < n)
-				push_back(val);
-			while (_size > n)
-				pop_back();
+			if (n > _size)
+				insert(end(), n - _size, val);
+			if (n < _size)
+				erase(end() - (_size - n), end());
 		};
 		size_type	capacity(void) const { return (_capacity); }
 		bool		empty() const { return (!_size); }
-		void		reserve(size_type n) { return (manage_array(n, _size)); }
+		void		reserve(size_type n) {
+			if (n > _capacity)
+				return (manage_array(n, _size));
+		}
 
 
 
@@ -358,13 +361,11 @@ namespace ft {
 			size_type	i = 0;
 			// std::cout << "distance: " << distance << std::endl;
 			if (distance < 1)
-				return ;
+				return (clear());
 			if (distance > _capacity) {
 				manage_array(distance, 0);
-				for (; i < distance; i++) {
-					_alloc.construct(_buffer + i, *first);
-					first++;
-				}
+				for (; first != last; first++)
+					_alloc.construct(_buffer + i++, *first);
 			}
 			else {
 				clear();
