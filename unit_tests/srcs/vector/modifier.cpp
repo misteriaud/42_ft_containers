@@ -5,6 +5,7 @@
 TEST_CASE("Vector modifiers", "[vector][modifier]") {
 
 	StdVec 				ref = Custom::generate_vec<TestValueType>();
+	StdVec				tmp;
 	TestContainerType	vec;
 	TestValueType		tmp_val = Custom::mocking_value<TestValueType>();
 
@@ -49,6 +50,7 @@ TEST_CASE("Vector modifiers", "[vector][modifier]") {
 		TestIt		it = vec.begin();
 
 		REQUIRE_THROWS(vec.assign(-5, tmp_val));
+
 		{
 			tmp.assign(REF_SIZE, tmp_val);
 			vec.assign(REF_SIZE, tmp_val);
@@ -70,9 +72,8 @@ TEST_CASE("Vector modifiers", "[vector][modifier]") {
 		}
 	}
 
-	SECTION("push_back()") {
+	SECTION("push_back() && pop_back()") {
 		ref.clear();
-		vec.clear();
 		for (size_t i = 0; i < REF_SIZE + 100; i++)
 		{
 			tmp_val = Custom::mocking_value<TestValueType>();
@@ -80,8 +81,7 @@ TEST_CASE("Vector modifiers", "[vector][modifier]") {
 			vec.push_back(tmp_val);
 		}
 		REQUIRE_THAT(vec, Custom::VectorEqual<TestContainerType>(ref));
-	}
-	SECTION("pop_back()") {
+
 		for (size_t i = 0; i < REF_SIZE; i++)
 		{
 			ref.pop_back();
@@ -94,9 +94,6 @@ TEST_CASE("Vector modifiers", "[vector][modifier]") {
 	TestConstIt		it;
 
 	SECTION("insert(position, val)") {
-		StdVec		tmp;
-
-		vec.clear();
 		for (size_t i = 0; i < REF_SIZE; i++)
 		{
 			// std::cout << i << std::endl;
@@ -121,10 +118,8 @@ TEST_CASE("Vector modifiers", "[vector][modifier]") {
 		REQUIRE_THAT(vec, Custom::VectorEqual<TestContainerType>(tmp));
 	}
 	SECTION("insert(position, n, val)") {
-		StdVec		tmp;
 		size_t		n;
 
-		vec.clear();
 		for (size_t i = 0; i < REF_SIZE; i++)
 		{
 			tmp_val = Custom::mocking_value<TestValueType>();
@@ -144,16 +139,13 @@ TEST_CASE("Vector modifiers", "[vector][modifier]") {
 		}
 		REQUIRE_THAT(vec, Custom::VectorEqual<TestContainerType>(tmp));
 	}
+
 	SECTION("insert(position, first, last)") {
-		StdVec			tmp;
-		size_t			n;
 		StdVecConstIt	first;
 		StdVecConstIt	last;
 
 
-		vec.clear();
-		ref.clear();
-		for (size_t i = 0; i < REF_SIZE / 10; i++)
+		for (size_t i = 0; i < REF_SIZE; i++)
 		{
 			ref = Custom::generate_vec<TestValueType>();
 			first = ref.begin();
@@ -168,6 +160,77 @@ TEST_CASE("Vector modifiers", "[vector][modifier]") {
 
 		}
 		REQUIRE_THAT(vec, Custom::VectorEqual<TestContainerType>(tmp));
+	}
+
+	SECTION("erase(position)") {
+		tmp.assign(ref.begin(), ref.end());
+		vec.assign(ref.begin(), ref.end());
+		for (size_t i = 0; i < REF_SIZE / 10; i++) {
+			if (i % 3 == 0) {
+				std_it = tmp.erase(tmp.begin());
+				it = vec.erase(vec.begin());
+			}
+			else if (i % 3 == 1) {
+				std_it = tmp.erase(tmp.begin() + tmp.size() / 2);
+				it = vec.erase(vec.begin() + vec.size() / 2);
+			}
+			else {
+				std_it = tmp.erase(tmp.end() - 2);
+				it = vec.erase(vec.end() - 2);
+			}
+			if (std_it == tmp.end())
+				REQUIRE(it == vec.end());
+			else
+				REQUIRE(*std_it == *it);
+		}
+		REQUIRE_THAT(vec, Custom::VectorEqual<TestContainerType>(tmp));
+	}
+	SECTION("erase(first, last)") {
+		size_t	begin_offset;
+		size_t	end_offset;
+
+		tmp.assign(ref.begin(), ref.end());
+		vec.assign(ref.begin(), ref.end());
+		for (size_t i = 0; i < REF_SIZE / 100; i++)
+		{
+			begin_offset = tmp.size() / 10;
+			end_offset = tmp.size() / 10;
+			if (i % 2 == 0)
+				begin_offset += tmp.size() / 3;
+			if (i % 3 == 0)
+				end_offset += tmp.size() / 3;
+
+			std_it = tmp.erase(tmp.begin() + begin_offset, tmp.end() - end_offset);
+			it = vec.erase(vec.begin() + begin_offset, vec.end() - end_offset);
+
+			if (std_it == tmp.end())
+				REQUIRE(it == vec.end());
+			else
+				REQUIRE(*std_it == *it);
+		}
+		REQUIRE_THAT(vec, Custom::VectorEqual<TestContainerType>(tmp));
+	}
+
+	SECTION("swap(a)") {
+		TestIt				it2;
+		TestContainerType	tmp_test_vec;
+
+		vec.assign(ref.begin(), ref.end());
+		tmp_test_vec.insert(tmp_test_vec.begin(), 10, "Sample string");
+		it2 = tmp_test_vec.begin();
+		it = vec.begin();
+
+		tmp_test_vec.swap(vec);
+		REQUIRE(it == tmp_test_vec.begin());
+		REQUIRE(it2 == vec.begin());
+		std::cout << tmp_test_vec.size() << std::endl;
+		std::cout << vec.size() << std::endl;
+	}
+
+	SECTION("clear()") {
+		vec.assign(ref.begin(), ref.end());
+		vec.clear();
+		REQUIRE((vec.size() == 0 && vec.empty()));
 	}
 
 }
