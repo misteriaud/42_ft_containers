@@ -28,16 +28,16 @@
 
 typedef VALUE_TYPE													TestValueType;
 
-typedef typename CONTAINER_TYPE<TestValueType>						TestContainerType;
-typedef typename TestContainerType::iterator						TestIt;
-typedef typename TestContainerType::const_iterator					TestConstIt;
-typedef typename TestContainerType::const_reverse_iterator			TestConstRevIt;
+typedef CONTAINER_TYPE<TestValueType>						TestContainerType;
+typedef TestContainerType::iterator						TestIt;
+typedef TestContainerType::const_iterator					TestConstIt;
+typedef TestContainerType::const_reverse_iterator			TestConstRevIt;
 
 
-typedef typename std::vector<TestValueType>							StdVec;
-typedef typename std::vector<TestValueType>::iterator				StdVecIt;
-typedef typename std::vector<TestValueType>::const_iterator			StdVecConstIt;
-typedef typename std::vector<TestValueType>::const_reverse_iterator	StdVecConstRevIt;
+typedef std::vector<TestValueType>							StdVec;
+typedef std::vector<TestValueType>::iterator				StdVecIt;
+typedef std::vector<TestValueType>::const_iterator			StdVecConstIt;
+typedef std::vector<TestValueType>::const_reverse_iterator	StdVecConstRevIt;
 
 #include "catch.hpp"
 

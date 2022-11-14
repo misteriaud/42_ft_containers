@@ -13,7 +13,7 @@ FLAGS = -Wall -Wextra -Werror -std=c++98 -g
 # -D DEBUG
 # HDRS = ft_container
 HDRS = ../hdrs
-CC = g++
+CC = c++
 
 all: ${NAME} Makefile
 
