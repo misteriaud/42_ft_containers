@@ -220,7 +220,7 @@ namespace ft {
 			difference_type	diff = ft::distance<iterator>(begin(), position);
 			if (diff > 0)
 				diff--;
-			manage_array(_capacity + 1, diff, 1);
+			manage_array(_size + 1, diff, 1);
 			_alloc.construct(_buffer + diff, val);
 			return (iterator(_buffer + diff));
 		}
@@ -235,7 +235,7 @@ namespace ft {
 			difference_type	diff = ft::distance<iterator>(begin(), position);
 			if (diff > 0)
 				diff--;
-			manage_array(_capacity + n, diff, n);
+			manage_array(_size + n, diff, n);
 			for (size_type i = 0; i < n; i++)
 				_alloc.construct(_buffer + diff + i, val);
 			return ;
