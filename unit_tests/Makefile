@@ -7,7 +7,10 @@ VECTORS_SRCS = $(addprefix vector/, \
 	element_access.cpp \
 	modifier.cpp \
 	non_members_and_miscs.cpp )
-SRCS = $(addprefix srcs/, main.cpp common.cpp $(VECTORS_SRCS))
+MAP_SRCS = $(addprefix map/, \
+	constructor.cpp \
+	iterator.cpp)
+SRCS = $(addprefix srcs/, main.cpp common.cpp $(VECTORS_SRCS) $(MAP_SRCS))
 OBJS = ${SRCS:.cpp=.o}
 # https://github.com/tsduck/tsduck/issues/205
 FLAGS = -Wall -Wextra -Werror -std=c++98 -g

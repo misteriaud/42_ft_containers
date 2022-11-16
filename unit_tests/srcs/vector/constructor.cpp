@@ -2,54 +2,51 @@
 
 TEST_CASE("Vector constructors", "[vector][constructor]") {
 
-	srand (time(NULL));
-
-
 	SECTION("default constructor") {
-		TestContainerType	vec;
+		Vec	vec;
 
 		REQUIRE(vec.size() == 0);
 	}
 
 	SECTION("fill constructor w/ n < 0") {
-		TestContainerType*	vec = NULL;
-		REQUIRE_THROWS(vec = new TestContainerType(-100));
+		Vec*	vec = NULL;
+		REQUIRE_THROWS(vec = new Vec(-100));
 	}
 	SECTION("fill constructor w/ n == 0") {
-		TestContainerType	vec(0);
+		Vec	vec(0);
 
 		REQUIRE(vec.size() == 0);
 	}
 	SECTION("fill constructor w/ n > 0") {
-		TestContainerType	vec(1000);
+		Vec	vec(1000);
 
 		REQUIRE(vec.size() == 1000);
 		REQUIRE(vec.capacity() >= 1000);
 	}
 
-	StdVec range = Custom::generate_vec<TestValueType>();
+	StdVec range = Custom::mocking_value<StdVec>();
 
 	StdVecIt	range_begin = range.begin();
 	StdVecIt	range_end = range.end();
 
 	SECTION("range constructor begin-end") {
-		TestContainerType	vec(range_begin, range_end);
+		Vec	vec(range_begin, range_end);
 
-		REQUIRE_THAT(vec, Custom::VectorEqual<TestContainerType>(range));
+		REQUIRE_THAT(vec, Custom::VectorEqual<Vec>(range));
 	}
 	SECTION("range constructor somwhere-end") {
 		++(++(range_begin));
 		StdVec		ref(range_begin, range_end);
-		TestContainerType	vec(range_begin, range_end);
+		Vec	vec(range_begin, range_end);
 
-		REQUIRE_THAT(vec, Custom::VectorEqual<TestContainerType>(ref));
+		REQUIRE_THAT(vec, Custom::VectorEqual<Vec>(ref));
 	}
 	SECTION("range constructor somwhere-end") {
 		--(--(range_end));
 		StdVec		ref(range_begin, range_end);
-		TestContainerType	vec(range_begin, range_end);
+		Vec	vec(range_begin, range_end);
 
-		REQUIRE_THAT(vec, Custom::VectorEqual<TestContainerType>(ref));
+		REQUIRE_THAT(vec, Custom::VectorEqual<Vec>(ref));
 	}
 	SECTION("range with strict input_iterator") {
 		typedef std::istream_iterator<char>	is_iterator;
@@ -69,8 +66,8 @@ TEST_CASE("Vector constructors", "[vector][constructor]") {
 
 
 	SECTION("copy constructor") {
-		TestContainerType	origin_vec(++(++range_begin), --(--(--range_end)));
-		TestContainerType	copy_vec(origin_vec);
+		Vec	origin_vec(++(++range_begin), --(--(--range_end)));
+		Vec	copy_vec(origin_vec);
 
 		REQUIRE(Custom::same_vec(origin_vec, copy_vec) == true);
 	}

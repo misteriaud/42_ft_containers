@@ -2,8 +2,8 @@
 
 TEST_CASE("Vector iterator", "[vector][iterator]") {
 
-	StdVec ref = Custom::generate_vec<TestValueType>();
-	TestContainerType	vec(ref.begin(), ref.end());
+	StdVec ref = Custom::mocking_value<StdVec>();
+	Vec	vec(ref.begin(), ref.end());
 
 	SECTION("same begin && end it") {
 		REQUIRE(*ref.begin() == *vec.begin());
@@ -16,12 +16,12 @@ TEST_CASE("Vector iterator", "[vector][iterator]") {
 	}
 
 	SECTION("constructor") {
-		TestIt	it = vec.begin();
+		VecIt	it = vec.begin();
 
-		TestIt	temp; // default constructor
+		VecIt	temp; // default constructor
 		(void)temp;
 
-		TestIt	it2(it);
+		VecIt	it2(it);
 		REQUIRE(*it == *it2); // copy constructor
 
 		it++;
@@ -29,12 +29,12 @@ TEST_CASE("Vector iterator", "[vector][iterator]") {
 		it2 = it;
 		REQUIRE(*it == *it2); // assignement
 
-		TestConstIt	const_it(it);
+		VecConstIt	const_it(it);
 		REQUIRE(*const_it == *it); // construct iterator from const_iterator
 	}
 
 	SECTION("operator==() && operator!=()") {
-		TestIt	it;
+		VecIt	it;
 		it = vec.begin();
 
 		REQUIRE((it == vec.begin()) == true);
@@ -44,7 +44,7 @@ TEST_CASE("Vector iterator", "[vector][iterator]") {
 	}
 
 	SECTION("mutable operator *it = a") {
-		TestValueType tmp = Custom::mocking_value<TestValueType>();
+		ValueType tmp = Custom::mocking_value<ValueType>();
 		*ref.begin() = tmp;
 		*vec.begin() = tmp;
 
@@ -52,10 +52,10 @@ TEST_CASE("Vector iterator", "[vector][iterator]") {
 	}
 
 	StdVecConstIt	ref_tmp = ++(++(--(++(++ref.begin()))));
-	TestConstIt		 tmp = ++(++(--(++(++vec.begin()))));
+	VecConstIt		 tmp = ++(++(--(++(++vec.begin()))));
 
 	StdVecConstRevIt	r_ref_tmp = ++(++(--(++(++ref.rbegin()))));
-	TestConstRevIt		r_tmp = ++(++(--(++(++vec.rbegin()))));
+	VecConstRevIt		r_tmp = ++(++(--(++(++vec.rbegin()))));
 
 	SECTION("++it && --it") {
 		REQUIRE(*ref_tmp == *tmp);

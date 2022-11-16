@@ -3,13 +3,14 @@
 # define COMMON_HPP_123
 
 #ifdef DEBUG
-# define CONTAINER_TYPE std::vector
+# define NS std
 #else
-# define CONTAINER_TYPE ft::vector
+# define NS ft
 #endif
 
-#define VALUE_TYPE std::string
-// #define VALUE_TYPE std::vector<int>
+#define VALUE_TYPE		std::string
+#define KEY_TYPE		int
+#define MAPPED_TYPE		std::string
 
 //CONFIG
 #define REF_SIZE 500
@@ -19,6 +20,9 @@
 // INCLUDE OF CONTAINERS
 #include <vector.hpp>
 #include <vector>
+#include <map.hpp>
+#include <map>
+
 // INCLUDE OF REQUIRED LIBS
 #include <string>
 #include <fstream>
@@ -27,21 +31,33 @@
 #include <stdlib.h>     /* srand, rand */
 #include <time.h>       /* time */
 
-typedef VALUE_TYPE													TestValueType;
+typedef VALUE_TYPE										ValueType;
 
-typedef CONTAINER_TYPE<TestValueType>						TestContainerType;
-typedef TestContainerType::iterator							TestIt;
-typedef TestContainerType::const_iterator					TestConstIt;
-typedef TestContainerType::const_reverse_iterator			TestConstRevIt;
+typedef NS::vector<ValueType>							Vec;
+typedef Vec::iterator									VecIt;
+typedef Vec::const_iterator								VecConstIt;
+typedef Vec::const_reverse_iterator						VecConstRevIt;
+
+typedef std::vector<ValueType>							StdVec;
+typedef std::vector<ValueType>::iterator				StdVecIt;
+typedef std::vector<ValueType>::const_iterator			StdVecConstIt;
+typedef std::vector<ValueType>::const_reverse_iterator	StdVecConstRevIt;
 
 
-typedef std::vector<TestValueType>							StdVec;
-typedef std::vector<TestValueType>::iterator				StdVecIt;
-typedef std::vector<TestValueType>::const_iterator			StdVecConstIt;
-typedef std::vector<TestValueType>::const_reverse_iterator	StdVecConstRevIt;
+// typedef PAIR_TYPE										PairType;
+typedef NS::map<KEY_TYPE, MAPPED_TYPE, std::less<KEY_TYPE>, std::allocator<ft::pair<const KEY_TYPE, MAPPED_TYPE> > >		Map;
+typedef Map::iterator									MapIt;
+typedef Map::const_iterator								MapConstIt;
+typedef Map::const_reverse_iterator						MapConstRevIt;
+
+typedef std::map<KEY_TYPE, MAPPED_TYPE, std::less<KEY_TYPE>, std::allocator<ft::pair<const KEY_TYPE, MAPPED_TYPE> > >		StdMap;
+typedef StdMap::iterator								StdMapIt;
+typedef StdMap::const_iterator							StdMapConstIt;
+typedef StdMap::const_reverse_iterator					StdMapConstRevIt;
 
 #include "catch.hpp"
 #include "outstream_operators.hpp"
+#include "matchers.hpp"
 
 namespace Custom {
 
@@ -81,6 +97,13 @@ namespace Custom {
 	struct false_type { static const bool value = false; };
 	struct true_type { static const bool value = true; };
 
+	// IS_INTEGRAL
+	template<typename> struct is_integral: Custom::false_type {};
+
+	template<> struct is_integral<bool>: Custom::true_type {};
+	template<> struct is_integral<int>: Custom::true_type {};
+	template<> struct is_integral<size_t>: Custom::true_type {};
+
 	// IS VECTOR
 	template <typename T>
 	struct is_vector : Custom::false_type { };
@@ -90,77 +113,89 @@ namespace Custom {
 	template <typename T>
 	struct is_vector<ft::vector<T> > : Custom::true_type { };
 
+	// IS MAP
+	template <typename T>
+	struct is_map : Custom::false_type { };
+	template <typename T1, typename T2, typename T3, typename T4>
+	struct is_map<std::map<T1, T2, T3, T4> > : Custom::true_type { };
+	template <typename T1, typename T2, typename T3, typename T4>
+	struct is_map<ft::map<T1, T2, T3, T4> > : Custom::true_type { };
+
+	// IS CONT
+	template <typename T>
+	struct is_cont : Custom::false_type { };
+	template <typename T>
+	struct is_cont<std::vector<T> > : Custom::true_type { };
+	template <typename T>
+	struct is_cont<ft::vector<T> > : Custom::true_type { };
+	template <typename T1, typename T2, typename T3, typename T4>
+	struct is_cont<std::map<T1, T2, T3, T4> > : Custom::true_type { };
+	template <typename T1, typename T2, typename T3, typename T4>
+	struct is_cont<ft::map<T1, T2, T3, T4> > : Custom::true_type { };
+
 
 //
 //	GENERATOR
 //
 	template <typename T>
-	typename Custom::enable_if<!Custom::is_vector<T>::value, T>::type
+	typename Custom::enable_if<!Custom::is_cont<T>::value, T>::type
 	mocking_value() {
-		return (rand() % 500);
+		return (rand() % RANGE);
 	}
 
 	template <>
 	std::string mocking_value<std::string>();
 
-
 	template <typename T>
 	typename Custom::enable_if<Custom::is_vector<T>::value, T>::type
 	mocking_value() {
-		size_t	vector_size = 10;
 		T		result;
 
-		for (size_t i = 0; i < vector_size; i++)
+		for (size_t i = 0; i < REF_SIZE; i++)
 			result.push_back(Custom::mocking_value<typename T::value_type>());
 
 		return (result);
 	}
 
 	template <typename T>
-	std::vector<T>	generate_vec(){
-		std::vector<T>	range;
+	typename Custom::enable_if<Custom::is_map<T>::value, T>::type
+	mocking_value() {
+		typedef typename T::value_type	value_type;
+		typedef typename T::key_type	Key;
+		typedef typename T::mapped_type	Value;
+
+		T		result;
+
 		for (size_t i = 0; i < REF_SIZE; i++)
-			range.push_back(Custom::mocking_value<T>());
-		return range;
+			result.insert(
+				value_type(
+					Custom::mocking_value<Key>(),
+					Custom::mocking_value<Value>()
+				)
+			);
+
+		return (result);
 	}
 
 
-//
-// MATCHER
-//
-	template<typename VectorType>
-	class VectorEqual : public Catch::MatcherBase<VectorType> {
-	public:
-		typedef typename VectorType::value_type		ValueType;
-		typedef typename VectorType::allocator_type	AllocComp;
+	// template <typename T1, typename T2, typename T3, typename T4>
+	// std::map<T1, T2, T3, T4>	convert_map(const std::map<T1, T2, T3, T4>& from) {
+	// 	std::map<T1, T2, T3, T4>	out(from);
+	// 	return (out);
+	// }
 
+	template <typename T1, typename T2, typename T3, typename T4>
+	ft::map<T1, T2, T3, T4>	convert_map(const std::map<T1, T2, T3, T4>& from) {
+		typedef typename std::map<T1, T2, T3, T4>::const_iterator	const_it;
+		typedef typename std::map<T1, T2, T3, T4>::key_type			first_type;
+		typedef typename std::map<T1, T2, T3, T4>::mapped_type		second_type;
 
-		VectorEqual(std::vector<ValueType, AllocComp> const &comparator) : m_comparator( comparator ) {}
+		ft::map<T1, T2, T3, T4>	out;
+		for (const_it it = from.begin(); it != from.end(); it++)
+			out.insert(ft::pair<first_type, second_type>(it->first, it->second));
 
-		bool match(VectorType const &v) const {
-			// !TBD: This currently works if all elements can be compared using !=
-			// - a more general approach would be via a compare template that defaults
-			// to using !=. but could be specialised for, e.g. std::vector<T, Alloc> etc
-			// - then just call that directly
-			if (m_comparator.size() != v.size())
-				return false;
-			for (std::size_t i = 0; i < v.size(); ++i)
-				if (m_comparator[i] != v[i])
-					return false;
-			return true;
-		}
-		std::string describe() const {
-			std::ostringstream ss;
-			ss << "\nEquality between ft::vector && std::vector: \n";
-
-			// IF YOU GET A COMPILATION ERROR HERE, NEED TO IMPLEMENT : `std::ostream& operator<< (std::ostream& out, const YourType& rhs)`
-			ss << Catch::StringMaker<std::vector<ValueType> >::convert(m_comparator);
-			// ss << m_comparator;
-			return ss.str();
-		}
-		std::vector<ValueType, AllocComp> const& m_comparator;
-	};
-
+		return (out);
+	}
 }
 
 #endif
