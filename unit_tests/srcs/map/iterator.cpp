@@ -52,13 +52,14 @@ TEST_CASE("Map iterator", "[map][iterator]") {
 		REQUIRE((it != vec.end()) == true);
 	}
 
-	// SECTION("mutable operator *it = a") {
-	// 	ValueType tmp = Custom::mocking_value<>();
-	// 	*ref.begin() = tmp;
-	// 	*vec.begin() = tmp;
+	SECTION("mutable operator *it = a") {
+		MapSecondType tmp_second = Custom::mocking_value<MapSecondType>();
 
-	// 	REQUIRE(*ref.begin() == *vec.begin());
-	// }
+		ref.begin()->second = tmp_second;
+		vec.begin()->second = tmp_second;
+
+		REQUIRE(*ref.begin() == *vec.begin());
+	}
 
 	StdMapConstIt	ref_tmp = ++(++(--(++(++ref.begin()))));
 	MapConstIt		 tmp = ++(++(--(++(++vec.begin()))));
@@ -98,57 +99,4 @@ TEST_CASE("Map iterator", "[map][iterator]") {
 		REQUIRE(*r_ref_tmp-- == *r_tmp--);
 		REQUIRE(*r_ref_tmp == *r_tmp);
 	}
-
-	// ref_tmp = ref.begin()++;
-	// tmp = vec.begin()++;
-
-	// r_ref_tmp = ref.rbegin()++;
-	// r_tmp = vec.rbegin()++;
-
-	// SECTION("it < it2 && it > it2") {
-	// 	REQUIRE((tmp > vec.begin()) == (ref_tmp > ref.begin()));
-	// 	REQUIRE((tmp > vec.end()) == (ref_tmp > ref.end()));
-	// 	REQUIRE((tmp < vec.begin()) == (ref_tmp < ref.begin()));
-	// 	REQUIRE((tmp < vec.end()) == (ref_tmp < ref.end()));
-
-	// 	// with equal it
-	// 	REQUIRE((vec.begin() > vec.begin()) == (ref.begin() > ref.begin()));
-	// 	REQUIRE((vec.end() > vec.end()) == (ref.end() > ref.end()));
-	// 	REQUIRE((vec.begin() < vec.begin()) == (ref.begin() < ref.begin()));
-	// 	REQUIRE((vec.end() < vec.end()) == (ref.end() < ref.end()));
-
-	// 	// REVERSE IT
-	// 	REQUIRE((r_tmp > vec.rbegin()) == (r_ref_tmp > ref.rbegin()));
-	// 	REQUIRE((r_tmp > vec.rend()) == (r_ref_tmp > ref.rend()));
-	// 	REQUIRE((r_tmp < vec.rbegin()) == (r_ref_tmp < ref.rbegin()));
-	// 	REQUIRE((r_tmp < vec.rend()) == (r_ref_tmp < ref.rend()));
-
-	// 	// with equal it
-	// 	REQUIRE((vec.rbegin() > vec.rbegin()) == (ref.rbegin() > ref.rbegin()));
-	// 	REQUIRE((vec.rend() > vec.rend()) == (ref.rend() > ref.rend()));
-	// 	REQUIRE((vec.rbegin() < vec.rbegin()) == (ref.rbegin() < ref.rbegin()));
-	// 	REQUIRE((vec.rend() < vec.rend()) == (ref.rend() < ref.rend()));
-	// }
-	// SECTION("it <= it2 && it >= it2") {
-	// 	REQUIRE((tmp >= vec.begin()) == (ref_tmp >= ref.begin()));
-	// 	REQUIRE((tmp >= vec.end()) == (ref_tmp >= ref.end()));
-	// 	REQUIRE((tmp <= vec.begin()) == (ref_tmp <= ref.begin()));
-	// 	REQUIRE((tmp <= vec.end()) == (ref_tmp <= ref.end()));
-	// 	// with equal it
-	// 	REQUIRE((vec.begin() >= vec.begin()) == (ref.begin() >= ref.begin()));
-	// 	REQUIRE((vec.end() >= vec.end()) == (ref.end() >= ref.end()));
-	// 	REQUIRE((vec.begin() <= vec.begin()) == (ref.begin() <= ref.begin()));
-	// 	REQUIRE((vec.end() <= vec.end()) == (ref.end() <= ref.end()));
-
-	// 	//REVERSE
-	// 	REQUIRE((r_tmp >= vec.rbegin()) == (r_ref_tmp >= ref.rbegin()));
-	// 	REQUIRE((r_tmp >= vec.rend()) == (r_ref_tmp >= ref.rend()));
-	// 	REQUIRE((r_tmp <= vec.rbegin()) == (r_ref_tmp <= ref.rbegin()));
-	// 	REQUIRE((r_tmp <= vec.rend()) == (r_ref_tmp <= ref.rend()));
-	// 	// with equal it
-	// 	REQUIRE((vec.rbegin() >= vec.rbegin()) == (ref.rbegin() >= ref.rbegin()));
-	// 	REQUIRE((vec.rend() >= vec.rend()) == (ref.rend() >= ref.rend()));
-	// 	REQUIRE((vec.rbegin() <= vec.rbegin()) == (ref.rbegin() <= ref.rbegin()));
-	// 	REQUIRE((vec.rend() <= vec.rend()) == (ref.rend() <= ref.rend()));
-	// }
 }

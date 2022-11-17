@@ -45,6 +45,9 @@ typedef std::vector<ValueType>::const_reverse_iterator	StdVecConstRevIt;
 
 
 // typedef PAIR_TYPE										PairType;
+typedef const KEY_TYPE									MapFirstType;
+typedef MAPPED_TYPE										MapSecondType;
+
 typedef NS::map<KEY_TYPE, MAPPED_TYPE, std::less<KEY_TYPE>, std::allocator<ft::pair<const KEY_TYPE, MAPPED_TYPE> > >		Map;
 typedef Map::iterator									MapIt;
 typedef Map::const_iterator								MapConstIt;

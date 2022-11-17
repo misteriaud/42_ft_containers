@@ -9,6 +9,7 @@ VECTORS_SRCS = $(addprefix vector/, \
 	non_members_and_miscs.cpp )
 MAP_SRCS = $(addprefix map/, \
 	constructor.cpp \
+	assign.cpp \
 	iterator.cpp)
 SRCS = $(addprefix srcs/, main.cpp common.cpp $(VECTORS_SRCS) $(MAP_SRCS))
 OBJS = ${SRCS:.cpp=.o}

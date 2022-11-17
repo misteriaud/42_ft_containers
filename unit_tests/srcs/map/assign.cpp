@@ -1,15 +1,13 @@
 #include "../../hdrs/common.hpp"
 
-TEST_CASE("Vector assignement operator", "[vector]") {
-
-	StdVec	std_vec(3);
+TEST_CASE("Map assignement operator", "[map][assign]") {
 
 	SECTION("simple assignation test") {
-		Vec	foo(3);
-		Vec	bar(5);
+		Map foo = Custom::mocking_value<Map>();
+		Map	bar;
 
 		bar = foo;
 
-		REQUIRE(bar.size() == 3);
+		REQUIRE_THAT(bar, Custom::MapEqual<Map>(foo));
 	}
 }
