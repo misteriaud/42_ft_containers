@@ -10,7 +10,8 @@ VECTORS_SRCS = $(addprefix vector/, \
 MAP_SRCS = $(addprefix map/, \
 	constructor.cpp \
 	assign.cpp \
-	iterator.cpp)
+	iterator.cpp \
+	capacity.cpp)
 SRCS = $(addprefix srcs/, main.cpp common.cpp $(VECTORS_SRCS) $(MAP_SRCS))
 OBJS = ${SRCS:.cpp=.o}
 # https://github.com/tsduck/tsduck/issues/205

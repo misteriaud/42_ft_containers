@@ -12,20 +12,20 @@ bool operator==(const std::pair<const T1, T2>& lhs, const ft::pair<const T1, T2>
 TEST_CASE("Map iterator", "[map][iterator]") {
 
 	StdMap ref = Custom::mocking_value<StdMap>();
-	Map	vec = Custom::convert_map(ref);
+	Map	map = Custom::convert_map(ref);
 
 	SECTION("same begin && end it") {
-		REQUIRE(*ref.begin() == *vec.begin());
-		REQUIRE(*(--ref.end()) == *(--vec.end()));
+		REQUIRE(*ref.begin() == *map.begin());
+		REQUIRE(*(--ref.end()) == *(--map.end()));
 	}
 
 	SECTION("same reverse_begin && reverse_end it") {
-		REQUIRE(*ref.rbegin() == *vec.rbegin());
-		REQUIRE(*(--ref.rend()) == *(--vec.rend()));
+		REQUIRE(*ref.rbegin() == *map.rbegin());
+		REQUIRE(*(--ref.rend()) == *(--map.rend()));
 	}
 
 	SECTION("constructor") {
-		MapIt	it = vec.begin();
+		MapIt	it = map.begin();
 
 		MapIt	temp; // default constructor
 		(void)temp;
@@ -44,28 +44,28 @@ TEST_CASE("Map iterator", "[map][iterator]") {
 
 	SECTION("operator==() && operator!=()") {
 		MapIt	it;
-		it = vec.begin();
+		it = map.begin();
 
-		REQUIRE((it == vec.begin()) == true);
-		REQUIRE((it == vec.end()) == false);
-		REQUIRE((it != vec.begin()) == false);
-		REQUIRE((it != vec.end()) == true);
+		REQUIRE((it == map.begin()) == true);
+		REQUIRE((it == map.end()) == false);
+		REQUIRE((it != map.begin()) == false);
+		REQUIRE((it != map.end()) == true);
 	}
 
 	SECTION("mutable operator *it = a") {
 		MapSecondType tmp_second = Custom::mocking_value<MapSecondType>();
 
 		ref.begin()->second = tmp_second;
-		vec.begin()->second = tmp_second;
+		map.begin()->second = tmp_second;
 
-		REQUIRE(*ref.begin() == *vec.begin());
+		REQUIRE(*ref.begin() == *map.begin());
 	}
 
 	StdMapConstIt	ref_tmp = ++(++(--(++(++ref.begin()))));
-	MapConstIt		 tmp = ++(++(--(++(++vec.begin()))));
+	MapConstIt		 tmp = ++(++(--(++(++map.begin()))));
 
 	StdMapConstRevIt	r_ref_tmp = ++(++(--(++(++ref.rbegin()))));
-	MapConstRevIt		r_tmp = ++(++(--(++(++vec.rbegin()))));
+	MapConstRevIt		r_tmp = ++(++(--(++(++map.rbegin()))));
 
 	SECTION("++it && --it") {
 		REQUIRE(*ref_tmp == *tmp);
