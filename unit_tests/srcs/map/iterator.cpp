@@ -1,18 +1,10 @@
 #include "../../hdrs/common.hpp"
 
-template <typename T1, typename T2>
-bool operator==(const ft::pair<const T1, T2>& lhs, const std::pair<const T1, T2>& rhs) {
-	return (lhs.first == rhs.first && lhs.second == rhs.second);
-}
-template <typename T1, typename T2>
-bool operator==(const std::pair<const T1, T2>& lhs, const ft::pair<const T1, T2>& rhs) {
-	return (lhs.first == rhs.first && lhs.second == rhs.second);
-}
-
 TEST_CASE("Map iterator", "[map][iterator]") {
 
-	StdMap ref = Custom::mocking_value<StdMap>();
-	Map	map = Custom::convert_map(ref);
+	StdMap	ref = Custom::mocking_value<StdMap>();
+	Map		map;
+	Custom::copy_map(ref, map);
 
 	SECTION("same begin && end it") {
 		REQUIRE(*ref.begin() == *map.begin());

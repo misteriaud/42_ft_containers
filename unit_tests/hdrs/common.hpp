@@ -9,7 +9,7 @@
 #endif
 
 #define VALUE_TYPE		std::string
-#define KEY_TYPE		int
+#define KEY_TYPE		std::string
 #define MAPPED_TYPE		std::string
 
 //CONFIG
@@ -48,19 +48,30 @@ typedef std::vector<ValueType>::const_reverse_iterator	StdVecConstRevIt;
 typedef const KEY_TYPE									MapFirstType;
 typedef MAPPED_TYPE										MapSecondType;
 
-typedef NS::map<KEY_TYPE, MAPPED_TYPE, std::less<KEY_TYPE>, std::allocator<ft::pair<const KEY_TYPE, MAPPED_TYPE> > >		Map;
+typedef NS::map<KEY_TYPE, MAPPED_TYPE, std::less<KEY_TYPE>, std::allocator<NS::pair<const KEY_TYPE, MAPPED_TYPE> > >		Map;
 typedef Map::iterator									MapIt;
 typedef Map::const_iterator								MapConstIt;
 typedef Map::const_reverse_iterator						MapConstRevIt;
+typedef NS::pair<const KEY_TYPE, MAPPED_TYPE>			MapPair;
 
-typedef std::map<KEY_TYPE, MAPPED_TYPE, std::less<KEY_TYPE>, std::allocator<ft::pair<const KEY_TYPE, MAPPED_TYPE> > >		StdMap;
+typedef std::map<KEY_TYPE, MAPPED_TYPE, std::less<KEY_TYPE>, std::allocator<std::pair<const KEY_TYPE, MAPPED_TYPE> > >		StdMap;
 typedef StdMap::iterator								StdMapIt;
 typedef StdMap::const_iterator							StdMapConstIt;
 typedef StdMap::const_reverse_iterator					StdMapConstRevIt;
+typedef std::pair<const KEY_TYPE, MAPPED_TYPE>			StdMapPair;
 
 #include "catch.hpp"
 #include "outstream_operators.hpp"
 #include "matchers.hpp"
+
+template <typename T1, typename T2>
+bool operator==(const ft::pair<const T1, T2>& lhs, const std::pair<const T1, T2>& rhs) {
+	return (lhs.first == rhs.first && lhs.second == rhs.second);
+}
+template <typename T1, typename T2>
+bool operator==(const std::pair<const T1, T2>& lhs, const ft::pair<const T1, T2>& rhs) {
+	return (lhs.first == rhs.first && lhs.second == rhs.second);
+}
 
 namespace Custom {
 
@@ -136,6 +147,9 @@ namespace Custom {
 	template <typename T1, typename T2, typename T3, typename T4>
 	struct is_cont<ft::map<T1, T2, T3, T4> > : Custom::true_type { };
 
+	// REMOVE CONST
+	template< class T > struct remove_const                { typedef T type; };
+	template< class T > struct remove_const<const T>       { typedef T type; };
 
 //
 //	GENERATOR
@@ -181,23 +195,21 @@ namespace Custom {
 	}
 
 
-	// template <typename T1, typename T2, typename T3, typename T4>
-	// std::map<T1, T2, T3, T4>	convert_map(const std::map<T1, T2, T3, T4>& from) {
-	// 	std::map<T1, T2, T3, T4>	out(from);
-	// 	return (out);
-	// }
-
 	template <typename T1, typename T2, typename T3, typename T4>
-	ft::map<T1, T2, T3, T4>	convert_map(const std::map<T1, T2, T3, T4>& from) {
+	void	copy_map(const std::map<T1, T2, T3, T4>& from, std::map<T1, T2, T3, T4>&	to) {
+		to = from;
+	}
+
+	template <typename T1, typename T2, typename T3, typename T4,
+				typename T5, typename T6, typename T7, typename T8>
+	void	copy_map(const std::map<T1, T2, T3, T4>& from, ft::map<T5, T6, T7, T8>&	to) {
 		typedef typename std::map<T1, T2, T3, T4>::const_iterator	const_it;
 		typedef typename std::map<T1, T2, T3, T4>::key_type			first_type;
 		typedef typename std::map<T1, T2, T3, T4>::mapped_type		second_type;
 
-		ft::map<T1, T2, T3, T4>	out;
+		to.clear();
 		for (const_it it = from.begin(); it != from.end(); it++)
-			out.insert(ft::pair<first_type, second_type>(it->first, it->second));
-
-		return (out);
+			to.insert(ft::pair<first_type, second_type>(it->first, it->second));
 	}
 }
 

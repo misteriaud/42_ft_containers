@@ -3,7 +3,8 @@
 TEST_CASE("Map capacity", "[map][capacity]") {
 
 	StdMap		ref = Custom::mocking_value<StdMap>();
-	Map			map = Custom::convert_map(ref);
+	Map			map;
+	Custom::copy_map(ref, map);
 	ValueType	tmp = Custom::mocking_value<ValueType>();
 
 	SECTION("size()") {

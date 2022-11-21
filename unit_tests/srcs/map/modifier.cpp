@@ -1,233 +1,155 @@
 #include "../../hdrs/common.hpp"
 
-TEST_CASE("Vector modifiers", "[vector][modifier]") {
+TEST_CASE("Map modifiers", "[map][modifier]") {
 
-	StdVec 				ref = Custom::mocking_value<StdVec>();
-	StdVec				tmp;
-	Vec	vec;
-	ValueType		tmp_val = Custom::mocking_value<ValueType>();
+	Map				map;
+	StdMap 			ref;
 
-	SECTION("assign(first, last)") {
-		vec.assign(ref.begin(), ref.end());
-		REQUIRE_THAT(vec, Custom::VectorEqual<Vec>(ref)); // assign all of other container
+	typename Custom::remove_const<MapFirstType>::type	tmp_first = Custom::mocking_value<typename Custom::remove_const<MapFirstType>::type>();
+	MapSecondType	tmp_second = Custom::mocking_value<MapSecondType>();
 
-		{
-			StdVec		tmp;
-			tmp.assign(ref.begin() + REF_SIZE / 4, ref.end() - REF_SIZE / 4);
-			vec.assign(ref.begin() + REF_SIZE / 4, ref.end() - REF_SIZE / 4);
-			REQUIRE_THAT(vec, Custom::VectorEqual<Vec>(tmp)); // assign middle of other container
-		}
-		{
-			StdVec		tmp;
-			VecIt		it = vec.begin();
-			tmp.assign(ref.begin(), ref.begin());
-			vec.assign(ref.begin(), ref.begin());
-			REQUIRE_THAT(vec, Custom::VectorEqual<Vec>(tmp)); // assign am empty container
-			REQUIRE(it == vec.begin());
-		}
+	StdMapIt		std_it;
+	MapIt			it;
+
+	typedef NS::pair<MapIt, bool>		MapReturn;
+	typedef std::pair<StdMapIt, bool>	StdMapReturn;
+
+	SECTION("insert(val)") {
+		tmp_first = Custom::mocking_value<typename Custom::remove_const<MapFirstType>::type>();
+		tmp_second = Custom::mocking_value<MapSecondType>();
+
+		MapReturn		tmp_return;
+		StdMapReturn	tmp_std_return;
+
+		tmp_return = map.insert(MapPair(tmp_first, tmp_second));
+		tmp_std_return = ref.insert(StdMapPair(tmp_first, tmp_second));
+
+		REQUIRE(*tmp_return.first == *tmp_std_return.first);
+		REQUIRE(tmp_return.second == tmp_std_return.second);
+
+		// TRY TO REINSERT, bool must be false
+		tmp_return = map.insert(MapPair(tmp_first, tmp_second));
+		tmp_std_return = ref.insert(StdMapPair(tmp_first, tmp_second));
+
+		REQUIRE(*tmp_return.first == *tmp_std_return.first);
+		REQUIRE(tmp_return.second == tmp_std_return.second);
 	}
-	SECTION("assing(first, last) with input_iterator") {
-		typedef std::istream_iterator<char>	is_iterator;
-		std::ifstream		file;
-		is_iterator			file_it;
-
-		file.open(FILE_PATH);
-		file_it = is_iterator(file);
-		ft::vector<char>	vec;
-		vec.assign(file_it, is_iterator());
-
-		file.close();
-		file.open(FILE_PATH);
-		file_it = is_iterator(file);
-		REQUIRE(Custom::equal(file_it, is_iterator(), vec.begin(), vec.end()) == true);
-		file.close();
-	}
-
-	SECTION("assign(n, val)") {
-		StdVec		tmp;
-		VecIt		it = vec.begin();
-
-		REQUIRE_THROWS(vec.assign(-5, tmp_val));
-
-		{
-			tmp.assign(REF_SIZE, tmp_val);
-			vec.assign(REF_SIZE, tmp_val);
-			REQUIRE_THAT(vec, Custom::VectorEqual<Vec>(tmp));
-		}
-		{
-			it = vec.begin();
-			tmp.assign(0, tmp_val);
-			vec.assign(0, tmp_val);
-			REQUIRE_THAT(vec, Custom::VectorEqual<Vec>(tmp));
-			REQUIRE(it == vec.begin());
-		}
-		{
-			it = vec.begin();
-			tmp.assign(REF_SIZE / 2, tmp_val);
-			vec.assign(REF_SIZE / 2, tmp_val);
-			REQUIRE_THAT(vec, Custom::VectorEqual<Vec>(tmp));
-			REQUIRE(it == vec.begin());
-		}
-	}
-
-	SECTION("push_back() && pop_back()") {
-		ref.clear();
-		for (size_t i = 0; i < REF_SIZE + 100; i++)
-		{
-			tmp_val = Custom::mocking_value<ValueType>();
-			ref.push_back(tmp_val);
-			vec.push_back(tmp_val);
-		}
-		REQUIRE_THAT(vec, Custom::VectorEqual<Vec>(ref));
-
-		for (size_t i = 0; i < REF_SIZE; i++)
-		{
-			ref.pop_back();
-			vec.pop_back();
-		}
-		REQUIRE_THAT(vec, Custom::VectorEqual<Vec>(ref));
-	}
-
-	StdVecConstIt	std_it;
-	VecConstIt		it;
 
 	SECTION("insert(position, val)") {
 		for (size_t i = 0; i < REF_SIZE; i++)
 		{
-			// std::cout << i << std::endl;
-			tmp_val = Custom::mocking_value<ValueType>();
+			tmp_first = Custom::mocking_value<typename Custom::remove_const<MapFirstType>::type>();
+			tmp_second = Custom::mocking_value<MapSecondType>();
 			if (i % 3 == 0) {
-				std_it = tmp.insert(tmp.begin(), tmp_val);
-				it = vec.insert(vec.begin(), tmp_val);
+				std_it = ref.insert(ref.begin(), StdMapPair(tmp_first, tmp_second));
+				it = map.insert(map.begin(), MapPair(tmp_first, tmp_second));
 			}
-			else if (i % 3 == 1) {
-				std_it = tmp.insert(tmp.begin() + tmp.size() / 2, tmp_val);
-				it = vec.insert(vec.begin() + vec.size() / 2, tmp_val);
+			if (i % 3 == 1) {
+				std_it = ref.insert(++ref.begin(), StdMapPair(tmp_first, tmp_second));
+				it = map.insert(++map.begin(), MapPair(tmp_first, tmp_second));
 			}
 			else {
-				std_it = tmp.insert(tmp.end(), tmp_val);
-				it = vec.insert(vec.end(), tmp_val);
+				std_it = ref.insert(ref.end(), StdMapPair(tmp_first, tmp_second));
+				it = map.insert(map.end(), MapPair(tmp_first, tmp_second));
 			}
-			if (std_it == tmp.end())
-				REQUIRE(it == vec.end());
+			if (std_it == ref.end())
+				REQUIRE(it == map.end());
 			else
 				REQUIRE(*std_it == *it);
 		}
-		REQUIRE_THAT(vec, Custom::VectorEqual<Vec>(tmp));
-	}
-	SECTION("insert(position, n, val)") {
-		size_t		n;
-
-		for (size_t i = 0; i < REF_SIZE; i++)
-		{
-			tmp_val = Custom::mocking_value<ValueType>();
-			n = Custom::mocking_value<size_t>();
-			if (i % 3 == 0) {
-				tmp.insert(tmp.begin(), n, tmp_val);
-				vec.insert(vec.begin(), n, tmp_val);
-			}
-			else if (i % 3 == 1) {
-				tmp.insert(tmp.begin() + tmp.size() / 2, n, tmp_val);
-				vec.insert(vec.begin() + vec.size() / 2, n, tmp_val);
-			}
-			else {
-				tmp.insert(tmp.end(), n, tmp_val);
-				vec.insert(vec.end(), n, tmp_val);
-			}
-		}
-		REQUIRE_THAT(vec, Custom::VectorEqual<Vec>(tmp));
+		REQUIRE_THAT(map, Custom::MapEqual<Map>(ref));
 	}
 
-	SECTION("insert(position, first, last)") {
-		StdVecConstIt	first;
-		StdVecConstIt	last;
+	SECTION("insert(first, last)") {
+		Map	tmp_map = Custom::mocking_value<Map>();
 
+		map.insert(tmp_map.begin(), tmp_map.end());
+		REQUIRE_THAT(map, Custom::MapEqual<Map>(tmp_map));
 
-		for (size_t i = 0; i < REF_SIZE; i++)
-		{
-			ref = Custom::mocking_value<StdVec>();
-			first = ref.begin();
-			last = ref.end();
-			if (i % 2 == 0)
-				first = ref.begin() + ref.size() / 3;
-			if (i % 3 == 0)
-				last = ref.end() - ref.size() / 3;
-
-			tmp.insert(tmp.end(), first, last);
-			vec.insert(vec.end(), first, last);
-		}
-		// std::cout << vec;
-		REQUIRE_THAT(vec, Custom::VectorEqual<Vec>(tmp));
+		map.insert(map.begin(), map.end());
+		REQUIRE_THAT(map, Custom::MapEqual<Map>(tmp_map));
 	}
 
 	SECTION("erase(position)") {
-		tmp.assign(ref.begin(), ref.end());
-		vec.assign(ref.begin(), ref.end());
+		ref = Custom::mocking_value<StdMap>();
+		Custom::copy_map(ref, map);
 		for (size_t i = 0; i < REF_SIZE / 10; i++) {
 			if (i % 3 == 0) {
-				std_it = tmp.erase(tmp.begin());
-				it = vec.erase(vec.begin());
+				ref.erase(ref.begin());
+				map.erase(map.begin());
 			}
 			else if (i % 3 == 1) {
-				std_it = tmp.erase(tmp.begin() + tmp.size() / 2);
-				it = vec.erase(vec.begin() + vec.size() / 2);
+				ref.erase((++(++ref.begin())));
+				map.erase((++(++map.begin())));
 			}
 			else {
-				std_it = tmp.erase(tmp.end() - 2);
-				it = vec.erase(vec.end() - 2);
+				ref.erase((--(--ref.end())));
+				map.erase((--(--map.end())));
 			}
-			if (std_it == tmp.end())
-				REQUIRE(it == vec.end());
-			else
-				REQUIRE(*std_it == *it);
 		}
-		REQUIRE_THAT(vec, Custom::VectorEqual<Vec>(tmp));
+		REQUIRE_THAT(map, Custom::MapEqual<Map>(ref));
+	}
+	SECTION("erase(val)") {
+		ref = Custom::mocking_value<StdMap>();
+		Custom::copy_map(ref, map);
+		for (size_t i = 0; i < REF_SIZE / 10; i++) {
+			if (i % 3 == 0) {
+				ref.erase(ref.begin()->first);
+				map.erase(map.begin()->first);
+			}
+			else if (i % 3 == 1) {
+				ref.erase((++(++ref.begin()))->first);
+				map.erase((++(++map.begin()))->first);
+			}
+			else {
+				ref.erase((--(--ref.end()))->first);
+				map.erase((--(--map.end()))->first);
+			}
+		}
+		REQUIRE_THAT(map, Custom::MapEqual<Map>(ref));
 	}
 	SECTION("erase(first, last)") {
-		size_t	begin_offset;
-		size_t	end_offset;
-
-		tmp.assign(ref.begin(), ref.end());
-		vec.assign(ref.begin(), ref.end());
+		ref = Custom::mocking_value<StdMap>();
+		Custom::copy_map(ref, map);
 		for (size_t i = 0; i < REF_SIZE / 100; i++)
 		{
-			begin_offset = tmp.size() / 10;
-			end_offset = tmp.size() / 10;
-			if (i % 2 == 0)
-				begin_offset += tmp.size() / 3;
-			if (i % 3 == 0)
-				end_offset += tmp.size() / 3;
-
-			std_it = tmp.erase(tmp.begin() + begin_offset, tmp.end() - end_offset);
-			it = vec.erase(vec.begin() + begin_offset, vec.end() - end_offset);
-
-			if (std_it == tmp.end())
-				REQUIRE(it == vec.end());
-			else
-				REQUIRE(*std_it == *it);
+			if (i % 2) {
+				ref.erase(ref.begin(), ++(++ref.begin()));
+				map.erase(map.begin(), ++(++map.begin()));
+			}
+			else {
+				ref.erase(--(--ref.end()), ref.end());
+				map.erase(--(--map.end()), map.end());
+			}
 		}
-		REQUIRE_THAT(vec, Custom::VectorEqual<Vec>(tmp));
+		REQUIRE_THAT(map, Custom::MapEqual<Map>(ref));
 	}
 
 	SECTION("swap(a)") {
-		VecIt				it2;
-		Vec	tmp_test_vec;
+		Map					tmp_test_map;
+		MapIt				it2;
 
-		tmp_val = Custom::mocking_value<ValueType>();
+		map.insert(MapPair(
+			Custom::mocking_value<typename Map::key_type>(),
+			Custom::mocking_value<typename Map::mapped_type>()
+			)
+		);
+		tmp_test_map.insert(MapPair(
+			Custom::mocking_value<typename StdMap::key_type>(),
+			Custom::mocking_value<typename StdMap::mapped_type>()
+			)
+		);
+		it = map.begin();
+		it2 = tmp_test_map.begin();
 
-		vec.assign(ref.begin(), ref.end());
-		tmp_test_vec.insert(tmp_test_vec.begin(), 10, tmp_val);
-		it2 = tmp_test_vec.begin();
-		it = vec.begin();
-
-		tmp_test_vec.swap(vec);
-		REQUIRE(it == tmp_test_vec.begin());
-		REQUIRE(it2 == vec.begin());
+		tmp_test_map.swap(map);
+		REQUIRE(it == tmp_test_map.begin());
+		REQUIRE(it2 == map.begin());
 	}
 
 	SECTION("clear()") {
-		vec.assign(ref.begin(), ref.end());
-		vec.clear();
-		REQUIRE((vec.size() == 0 && vec.empty()));
+		map = Custom::mocking_value<Map>();
+		map.clear();
+		REQUIRE((map.size() == 0 && map.empty()));
 	}
 }

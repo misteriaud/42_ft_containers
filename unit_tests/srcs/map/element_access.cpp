@@ -1,38 +1,30 @@
 #include "../../hdrs/common.hpp"
 #include <stdexcept>
 
-TEST_CASE("Vector element access", "[vector][access]") {
+TEST_CASE("Map element access", "[map][access]") {
 
-	const StdVec			ref = Custom::mocking_value<StdVec>();
-	const Vec	vec(ref.begin(), ref.end());
+	StdMap			ref = Custom::mocking_value<StdMap>();
+	Map				map;
+	Custom::copy_map(ref, map);
 
 	SECTION("operator[]") {
-		REQUIRE(ref[0] == vec[0]);
-		REQUIRE(ref[ref.size() /2 ] == vec[vec.size() / 2]);
-		REQUIRE(ref[ref.size() - 1] == vec[vec.size() - 1]);
+		MapIt			tmp_it = map.begin();
 
-		const ValueType& tmp = vec[REF_SIZE / 2];
-		REQUIRE(ref[REF_SIZE /2 ] == tmp);
-	}
+		REQUIRE(ref[tmp_it->first] == map[tmp_it->first]);
+		tmp_it++;
+		tmp_it++;
+		REQUIRE(ref[tmp_it->first] == map[tmp_it->first]);
+		tmp_it = map.end();
+		tmp_it--;
+		tmp_it--;
+		REQUIRE(ref[tmp_it->first] == map[tmp_it->first]);
 
-	SECTION("at()") {
-		Vec	empty_vec;
+		MapFirstType	tmp_first = Custom::mocking_value<typename Custom::remove_const<MapFirstType>::type>();
+		MapSecondType	tmp_second = Custom::mocking_value<MapSecondType>();
 
-		REQUIRE(ref.at(0) == vec.at(0));
-		REQUIRE(ref.at(REF_SIZE / 2) == vec.at(REF_SIZE / 2));
-		REQUIRE(ref.at(REF_SIZE - 1) == vec.at(REF_SIZE - 1));
+		ref[tmp_first] = tmp_second;
+		map[tmp_first] = tmp_second;
 
-		const ValueType& tmp = vec.at(REF_SIZE / 2);
-		REQUIRE(ref.at(REF_SIZE / 2) == tmp);
-
-		REQUIRE_THROWS_AS(vec.at(-1), std::out_of_range const&);
-		REQUIRE_THROWS_AS(vec.at(REF_SIZE), std::out_of_range const&);
-		REQUIRE_THROWS_AS(empty_vec.at(0), std::out_of_range const&);
-	}
-	SECTION("front()") {
-		REQUIRE(vec.front() == ref.front());
-	}
-	SECTION("back()") {
-		REQUIRE(vec.back() == ref.back());
+		REQUIRE(ref[tmp_first] == map[tmp_first]);
 	}
 }

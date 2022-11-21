@@ -46,33 +46,52 @@ namespace Custom
 		typedef std::map<key_type, mapped_type, key_compare, allocator_type>	std_map_type;
 		typedef typename std_map_type::const_iterator	StdConstIt;
 
-
 		// MapEqual(std_map_type const& comparator) : std_map(&comparator), ft_map(NULL) {}
-		MapEqual(Map const& comparator) : ft_map(comparator) {}
+		MapEqual(Map const& comparator) : map(&comparator), std_map(NULL) {}
+		#ifndef DEBUG
+		MapEqual(StdMap const& comparator) : map(NULL), std_map(&comparator) {}
+		#endif
 
 		bool match(MapType const &v) const {
-			ConstIt mapFirst = v.begin(), mapLast = v.end();
-			ConstIt refFirst = ft_map.begin(), refLast = ft_map.end();
+			if (map) {
+				ConstIt mapFirst = v.begin(), mapLast = v.end();
+				ConstIt refFirst = map->begin(), refLast = map->end();
 
-			while (mapFirst!=mapLast && refFirst!=refLast) {
-				if (*mapFirst != *refFirst)
-					return false;
-				++mapFirst; ++refFirst;
+				while (mapFirst!=mapLast && refFirst!=refLast) {
+					if (*mapFirst != *refFirst)
+						return false;
+					++mapFirst; ++refFirst;
+				}
+				if (mapFirst == mapLast && refFirst == refLast)
+					return true;
+				return false;
 			}
-			if (mapFirst == mapLast && refFirst == refLast)
-				return true;
-			return false;
+			else {
+				ConstIt mapFirst = v.begin(), mapLast = v.end();
+				StdConstIt refFirst = std_map->begin(), refLast = std_map->end();
+
+				while (mapFirst!=mapLast && refFirst!=refLast) {
+					if (!(*mapFirst == *refFirst))
+						return false;
+					++mapFirst; ++refFirst;
+				}
+				if (mapFirst == mapLast && refFirst == refLast)
+					return true;
+				return false;
+			}
 		}
 		std::string describe() const {
 			std::ostringstream ss;
 			ss << "\nEquality two maps: \n";
 
 			// IF YOU GET A COMPILATION ERROR HERE, NEED TO IMPLEMENT : `std::ostream& operator<< (std::ostream& out, const YourType& rhs)`
-			ss << Catch::StringMaker<Map>::convert(ft_map);
+			if (map)
+				ss << Catch::StringMaker<Map>::convert(*map);
+			else
+				ss << Catch::StringMaker<StdMap>::convert(*std_map);
 			return ss.str();
 		}
-		// std_map_type const	*std_map;
-		Map const&			ft_map;
+		Map	const		*map;
+		StdMap const	*std_map;
 	};
-
 }
