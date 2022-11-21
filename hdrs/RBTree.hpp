@@ -246,7 +246,8 @@ class RBTree {
 			pointer y = NULL_NODE;
 			pointer temp = ROOT;
 
-			if (!hint || !IS_NODE(hint) || !(_comp(**hint, value) && _comp(value, **(hint->next())))) {
+			// if (!hint || !IS_NODE(hint) || !(_comp(**hint, value) && _comp(value, **(hint->next())))) {
+				(void)hint;
 				while(IS_NODE(temp)) {
 					y = temp;
 					if(SAME_KEY(**temp, value))
@@ -256,9 +257,14 @@ class RBTree {
 					else
 						temp = temp->right;
 				}
-			}
-			else
-				y = hint->right;
+			// }
+			// else {
+			// 	temp = find(value);
+			// 	if (IS_NODE(temp))
+			// 		return (temp);
+			// 	y = hint->right;
+
+			// }
 
 			pointer	new_node = create_node(Node<T>(value, RED, NULL_NODE));
 			new_node->set_parent(y);
