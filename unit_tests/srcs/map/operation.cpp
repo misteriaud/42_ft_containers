@@ -116,6 +116,8 @@ TEST_CASE("Map operation", "[map][operation]") {
 
 			if (std_eq_pair.first == ref.end())
 				REQUIRE(eq_pair.first == map.end());
+			else if (std_eq_pair.second ==  ref.end())
+				REQUIRE(eq_pair.second == map.end());
 			else
 			{
 				REQUIRE(*std_eq_pair.first == *eq_pair.first);
@@ -137,6 +139,8 @@ TEST_CASE("Map operation", "[map][operation]") {
 
 			if (std_const_eq_pair.first == ref.end())
 				REQUIRE(const_eq_pair.first == map.end());
+			else if (std_const_eq_pair.second ==  ref.end())
+				REQUIRE(const_eq_pair.second == map.end());
 			else
 			{
 				REQUIRE(*std_const_eq_pair.first == *const_eq_pair.first);

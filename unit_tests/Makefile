@@ -15,7 +15,8 @@ MAP_SRCS = $(addprefix map/, \
 	element_access.cpp \
 	modifier.cpp \
 	observer.cpp \
-	operation.cpp)
+	operation.cpp \
+	non_members_and_miscs.cpp )
 SRCS = $(addprefix srcs/, main.cpp common.cpp $(VECTORS_SRCS) $(MAP_SRCS))
 OBJS = ${SRCS:.cpp=.o}
 # https://github.com/tsduck/tsduck/issues/205

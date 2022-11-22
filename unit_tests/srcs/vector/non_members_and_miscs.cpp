@@ -2,33 +2,9 @@
 
 TEST_CASE("Vector non-members functions", "[vector][operator]") {
 
-	// StdVec 				ref = Custom::generate_vec<ValueType>();
-	// StdVec				tmp;
-	Vec		ref;
-	for(size_t i = 0; i < REF_SIZE; i++)
-		ref.push_back(Custom::mocking_value<ValueType>());
-
+	Vec		ref = Custom::mocking_value<Vec>();
 	Vec		vec(ref);
-	// ValueType		tmp_val = Custom::mocking_value<ValueType>();
 
-
-	// cmp(vct, vct);  // 0
-	// cmp(vct, vct2); // 1
-
-	// vct2.resize(10);
-
-	// cmp(vct, vct2); // 2
-	// cmp(vct2, vct); // 3
-
-	// vct[2] = 42;
-
-	// cmp(vct, vct2); // 4
-	// cmp(vct2, vct); // 5
-
-	// swap(vct, vct2);
-
-	// cmp(vct, vct2); // 6
-	// cmp(vct2, vct); // 7
 	SECTION("operator == && !=") {
 		REQUIRE(ref == vec);
 		REQUIRE(ref <= vec);

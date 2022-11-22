@@ -1,80 +1,55 @@
 #include "../../hdrs/common.hpp"
 
-TEST_CASE("Vector non-members functions", "[vector][operator]") {
+TEST_CASE("Map non-members functions", "[map][operator]") {
 
-	// StdVec 				ref = Custom::generate_vec<ValueType>();
-	// StdVec				tmp;
-	Vec		ref;
-	for(size_t i = 0; i < REF_SIZE; i++)
-		ref.push_back(Custom::mocking_value<ValueType>());
+	Map		ref = Custom::mocking_value<Map>();
+	Map		map(ref);
 
-	Vec		vec(ref);
-	// ValueType		tmp_val = Custom::mocking_value<ValueType>();
-
-
-	// cmp(vct, vct);  // 0
-	// cmp(vct, vct2); // 1
-
-	// vct2.resize(10);
-
-	// cmp(vct, vct2); // 2
-	// cmp(vct2, vct); // 3
-
-	// vct[2] = 42;
-
-	// cmp(vct, vct2); // 4
-	// cmp(vct2, vct); // 5
-
-	// swap(vct, vct2);
-
-	// cmp(vct, vct2); // 6
-	// cmp(vct2, vct); // 7
 	SECTION("operator == && !=") {
-		REQUIRE(ref == vec);
-		REQUIRE(ref <= vec);
-		REQUIRE(ref >= vec);
-		vec.pop_back();
-		REQUIRE(ref != vec);
-		REQUIRE_FALSE(ref < vec);
+		REQUIRE(ref == map);
+		REQUIRE(ref <= map);
+		REQUIRE(ref >= map);
+		ref.erase(--ref.end());
+		REQUIRE(ref != map);
 	}
 	SECTION("operator < && >") {
 		for(size_t i = 0; i < REF_SIZE / 10; i++) {
-			if (ref.back() < vec.back())
-				REQUIRE(ref < vec);
-			else if (ref.back() > vec.back())
-				REQUIRE(ref > vec);
+			if (*--ref.end() < *--map.end())
+				REQUIRE(ref < map);
+			else if (*--ref.end() > *--map.end())
+				REQUIRE(ref > map);
 			else {
-				REQUIRE_FALSE(ref < vec);
-				REQUIRE_FALSE(ref > vec);
+				REQUIRE_FALSE(ref < map);
+				REQUIRE_FALSE(ref > map);
 			}
-			ref.pop_back();
-			vec.pop_back();
+			ref.erase(--ref.end());
+			map.erase(--map.end());
 		}
 	}
 	SECTION("operator <= && >=") {
 		for(size_t i = 0; i < REF_SIZE / 10; i++) {
-			if (ref.back() < vec.back())
-				REQUIRE(ref <= vec);
-			else if (ref.back() > vec.back())
-				REQUIRE(ref >= vec);
+			if (*--ref.end() < *--map.end())
+				REQUIRE(ref <= map);
+			else if (*--ref.end() > *--map.end())
+				REQUIRE(ref >= map);
 			else {
-				REQUIRE(ref <= vec);
-				REQUIRE(ref >= vec);
+				REQUIRE(ref <= map);
+				REQUIRE(ref >= map);
 			}
-			ref.pop_back();
-			vec.pop_back();
+			ref.erase(--ref.end());
+			map.erase(--map.end());
 		}
 	}
 
 	SECTION("swap()") {
-		VecConstIt	it;
-		VecConstIt	it2;
+		MapConstIt	it;
+		MapConstIt	it2;
 
 		it = ref.begin();
-		it2 = vec.begin();
+		it2 = map.begin();
 
-		ref.swap(vec);
-		REQUIRE(it == vec.begin());
+		ref.swap(map);
+		REQUIRE(it == map.begin());
 		REQUIRE(it2 == ref.begin());
 	}
 }
