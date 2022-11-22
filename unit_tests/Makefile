@@ -7,6 +7,7 @@ VECTORS_SRCS = $(addprefix vector/, \
 	element_access.cpp \
 	modifier.cpp \
 	non_members_and_miscs.cpp )
+
 MAP_SRCS = $(addprefix map/, \
 	constructor.cpp \
 	assign.cpp \
@@ -17,11 +18,19 @@ MAP_SRCS = $(addprefix map/, \
 	observer.cpp \
 	operation.cpp \
 	non_members_and_miscs.cpp )
-SRCS = $(addprefix srcs/, main.cpp common.cpp $(VECTORS_SRCS) $(MAP_SRCS))
+
+SET_SRCS = $(addprefix set/, \
+	constructor.cpp )
+
+SRCS = $(addprefix srcs/, main.cpp common.cpp $(VECTORS_SRCS) $(MAP_SRCS) $(SET_SRCS))
 OBJS = ${SRCS:.cpp=.o}
 # https://github.com/tsduck/tsduck/issues/205
 FLAGS = -Wall -Wextra -Werror -std=c++98 -g
+# -D ENABLE_VECTOR \
+# -D ENABLE_MAP \
+# -D ENABLE_SET \
 # -D DEBUG
+
 # HDRS = ft_container
 HDRS = ../hdrs
 CC = c++

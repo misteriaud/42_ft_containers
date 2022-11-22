@@ -8,21 +8,25 @@
 # define NS ft
 #endif
 
+#define ENABLE_VECTOR
+#define ENABLE_MAP
+#define ENABLE_SET
+
+// FOR VECTOR, SET AND STACK ->
 #define VALUE_TYPE		std::string
+
+// FOR MAP ->
 #define KEY_TYPE		int
 #define MAPPED_TYPE		std::string
 
-//CONFIG
+// GENERATORS CONFIGURATION
 #define REF_SIZE 500
-#define FILE_PATH "./unit_test"
 
-// INCLUDE OF CONTAINERS
-#include <vector.hpp>
-#include <vector>
-#include <map.hpp>
-#include <map>
+// PATH USED FOR INPUT_ITERATOR GENERATION
+#define FILE_PATH "./Makefile"
 
 // INCLUDE OF REQUIRED LIBS
+#include "catch.hpp"
 #include <string>
 #include <fstream>
 #include <iterator>
@@ -31,46 +35,6 @@
 #include <time.h>       /* time */
 
 typedef VALUE_TYPE										ValueType;
-
-typedef NS::vector<ValueType>							Vec;
-typedef Vec::iterator									VecIt;
-typedef Vec::const_iterator								VecConstIt;
-typedef Vec::const_reverse_iterator						VecConstRevIt;
-
-typedef std::vector<ValueType>							StdVec;
-typedef std::vector<ValueType>::iterator				StdVecIt;
-typedef std::vector<ValueType>::const_iterator			StdVecConstIt;
-typedef std::vector<ValueType>::const_reverse_iterator	StdVecConstRevIt;
-
-
-// typedef PAIR_TYPE										PairType;
-typedef const KEY_TYPE									MapFirstType;
-typedef MAPPED_TYPE										MapSecondType;
-
-typedef NS::map<KEY_TYPE, MAPPED_TYPE, std::less<KEY_TYPE>, std::allocator<NS::pair<const KEY_TYPE, MAPPED_TYPE> > >		Map;
-typedef Map::iterator									MapIt;
-typedef Map::const_iterator								MapConstIt;
-typedef Map::const_reverse_iterator						MapConstRevIt;
-typedef NS::pair<const KEY_TYPE, MAPPED_TYPE>			MapPair;
-
-typedef std::map<KEY_TYPE, MAPPED_TYPE, std::less<KEY_TYPE>, std::allocator<std::pair<const KEY_TYPE, MAPPED_TYPE> > >		StdMap;
-typedef StdMap::iterator								StdMapIt;
-typedef StdMap::const_iterator							StdMapConstIt;
-typedef StdMap::const_reverse_iterator					StdMapConstRevIt;
-typedef std::pair<const KEY_TYPE, MAPPED_TYPE>			StdMapPair;
-
-#include "catch.hpp"
-#include "outstream_operators.hpp"
-#include "matchers.hpp"
-
-template <typename T1, typename T2>
-bool operator==(const ft::pair<const T1, T2>& lhs, const std::pair<const T1, T2>& rhs) {
-	return (lhs.first == rhs.first && lhs.second == rhs.second);
-}
-template <typename T1, typename T2>
-bool operator==(const std::pair<const T1, T2>& lhs, const ft::pair<const T1, T2>& rhs) {
-	return (lhs.first == rhs.first && lhs.second == rhs.second);
-}
 
 namespace Custom {
 
@@ -95,9 +59,9 @@ namespace Custom {
 	}
 
 
-//
-//	SFINAE
-//
+	//
+	//	SFINAE
+	//
 	// ENABLE IF
 	template <bool Cond, typename Result=void>
 	struct enable_if { };
@@ -112,39 +76,13 @@ namespace Custom {
 
 	// IS_INTEGRAL
 	template<typename> struct is_integral: Custom::false_type {};
-
 	template<> struct is_integral<bool>: Custom::true_type {};
 	template<> struct is_integral<int>: Custom::true_type {};
 	template<> struct is_integral<size_t>: Custom::true_type {};
 
-	// IS VECTOR
-	template <typename T>
-	struct is_vector : Custom::false_type { };
-
-	template <typename T>
-	struct is_vector<std::vector<T> > : Custom::true_type { };
-	template <typename T>
-	struct is_vector<ft::vector<T> > : Custom::true_type { };
-
-	// IS MAP
-	template <typename T>
-	struct is_map : Custom::false_type { };
-	template <typename T1, typename T2, typename T3, typename T4>
-	struct is_map<std::map<T1, T2, T3, T4> > : Custom::true_type { };
-	template <typename T1, typename T2, typename T3, typename T4>
-	struct is_map<ft::map<T1, T2, T3, T4> > : Custom::true_type { };
-
 	// IS CONT
 	template <typename T>
 	struct is_cont : Custom::false_type { };
-	template <typename T>
-	struct is_cont<std::vector<T> > : Custom::true_type { };
-	template <typename T>
-	struct is_cont<ft::vector<T> > : Custom::true_type { };
-	template <typename T1, typename T2, typename T3, typename T4>
-	struct is_cont<std::map<T1, T2, T3, T4> > : Custom::true_type { };
-	template <typename T1, typename T2, typename T3, typename T4>
-	struct is_cont<ft::map<T1, T2, T3, T4> > : Custom::true_type { };
 
 	// REMOVE CONST
 	template< class T > struct remove_const                { typedef T type; };
@@ -161,55 +99,29 @@ namespace Custom {
 
 	template <>
 	std::string mocking_value<std::string>();
-
-	template <typename T>
-	typename Custom::enable_if<Custom::is_vector<T>::value, T>::type
-	mocking_value() {
-		T		result;
-
-		for (size_t i = 0; i < REF_SIZE; i++)
-			result.push_back(Custom::mocking_value<typename T::value_type>());
-
-		return (result);
-	}
-
-	template <typename T>
-	typename Custom::enable_if<Custom::is_map<T>::value, T>::type
-	mocking_value() {
-		typedef typename T::value_type	value_type;
-		typedef typename T::key_type	Key;
-		typedef typename T::mapped_type	Value;
-
-		T		result;
-
-		for (size_t i = 0; i < REF_SIZE; i++)
-			result.insert(
-				value_type(
-					Custom::mocking_value<Key>(),
-					Custom::mocking_value<Value>()
-				)
-			);
-
-		return (result);
-	}
-
-
-	template <typename T1, typename T2, typename T3, typename T4>
-	void	copy_map(const std::map<T1, T2, T3, T4>& from, std::map<T1, T2, T3, T4>&	to) {
-		to = from;
-	}
-
-	template <typename T1, typename T2, typename T3, typename T4,
-				typename T5, typename T6, typename T7, typename T8>
-	void	copy_map(const std::map<T1, T2, T3, T4>& from, ft::map<T5, T6, T7, T8>&	to) {
-		typedef typename std::map<T1, T2, T3, T4>::const_iterator	const_it;
-		typedef typename std::map<T1, T2, T3, T4>::key_type			first_type;
-		typedef typename std::map<T1, T2, T3, T4>::mapped_type		second_type;
-
-		to.clear();
-		for (const_it it = from.begin(); it != from.end(); it++)
-			to.insert(ft::pair<first_type, second_type>(it->first, it->second));
-	}
 }
+
+//
+// VECTOR
+//
+#ifdef ENABLE_VECTOR
+# include "vector_utils.hpp"
+#endif
+
+
+//
+// MAP
+//
+#ifdef ENABLE_MAP
+# include "map_utils.hpp"
+#endif
+
+
+//
+// SET
+//
+#ifdef ENABLE_SET
+# include "set_utils.hpp"
+#endif
 
 #endif
