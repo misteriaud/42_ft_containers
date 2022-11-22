@@ -47,12 +47,17 @@ class Node {
 			if (curr == MAX)
 				return (_sentinel);
 			if (!curr->is_node())
-				return (left);
+				return (right);
 			if (right->is_node())
 				return right->min();
 			pointer tmp_parent = parent;
 			while (tmp_parent->is_node() && curr == tmp_parent->right) {
 				curr = tmp_parent;
+				if (curr == ROOT) {
+					if (curr->right)
+						return (curr->right->min());
+					return (ROOT);
+				}
 				tmp_parent = tmp_parent->parent;
 			}
 			return (tmp_parent);
@@ -60,7 +65,7 @@ class Node {
 		pointer	previous() const {
 			const_pointer	curr = this;
 			if (curr == MIN)
-				return (NULL);
+				return (right);
 			if (!curr->is_node())
 				return (right);
 			if (left->is_node())
@@ -395,7 +400,7 @@ class RBTree {
 
 		void remove_fixup(pointer x) {
 			while(IS_NODE(x) && x != ROOT && x->color == BLACK) {
-				if(x == x->parent->left) {
+				if(x == x->parent->left && IS_NODE(x->parent->right)) {
 					pointer w = x->parent->right;
 					if(w->color == RED) {
 						w->color = BLACK;
@@ -421,7 +426,7 @@ class RBTree {
 						x = ROOT;
 					}
 				}
-				else {
+				else if (IS_NODE(x->parent->left)) {
 					pointer w = x->parent->left;
 					if(w->color == RED) {
 						w->color = BLACK;
