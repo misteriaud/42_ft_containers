@@ -14,7 +14,7 @@
 
 //CONFIG
 #define REF_SIZE 5000
-#define RANGE 500
+// #define RANGE 500
 #define FILE_PATH "./unit_test"
 
 // INCLUDE OF CONTAINERS
@@ -157,7 +157,7 @@ namespace Custom {
 	template <typename T>
 	typename Custom::enable_if<!Custom::is_cont<T>::value, T>::type
 	mocking_value() {
-		return (rand() % RANGE);
+		return (rand() % REF_SIZE);
 	}
 
 	template <>
