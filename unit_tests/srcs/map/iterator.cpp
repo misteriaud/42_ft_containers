@@ -91,4 +91,36 @@ TEST_CASE("Map iterator", "[map][iterator]") {
 		REQUIRE(*r_ref_tmp-- == *r_tmp--);
 		REQUIRE(*r_ref_tmp == *r_tmp);
 	}
+
+	// SECTION("iterator comportements with --it.begin() && it.end()++") {
+	// 	ref = Custom::mocking_value<StdMap>();
+	// 	Custom::copy_map(ref, map);
+	// 	StdMapIt	std_it = ref.begin();
+	// 	MapIt		it = map.begin();
+
+	// 	// std::cout << Catch::StringMaker<Map>::convert(map) << std::endl;
+	// 	// std::cout << Catch::StringMaker<StdMap>::convert(ref) << std::endl;
+	// 	for (size_t i = 0; i < REF_SIZE + (REF_SIZE / 10); i++)
+	// 	{
+	// 		if (std_it == ref.end())
+	// 			REQUIRE(it == map.end());
+	// 		else
+	// 			REQUIRE(*it == *std_it);
+	// 		std_it--;
+	// 		it--;
+	// 	}
+
+	// 	std_it = --ref.end();
+	// 	it = --map.end();
+	// 	for (size_t i = 0; i < 10; i++)
+	// 	{
+	// 		std::cout << i << std::endl;
+	// 		if (std_it == ref.end())
+	// 			REQUIRE(it == map.end());
+	// 		else
+	// 			REQUIRE(*it == *std_it);
+	// 		std_it++;
+	// 		it++;
+	// 	}
+	// }
 }

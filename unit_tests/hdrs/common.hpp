@@ -9,11 +9,11 @@
 #endif
 
 #define VALUE_TYPE		std::string
-#define KEY_TYPE		std::string
+#define KEY_TYPE		int
 #define MAPPED_TYPE		std::string
 
 //CONFIG
-#define REF_SIZE 500
+#define REF_SIZE 5000
 #define RANGE 500
 #define FILE_PATH "./unit_test"
 

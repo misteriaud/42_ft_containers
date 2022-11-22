@@ -1,5 +1,12 @@
 #include "../../hdrs/common.hpp"
 
+size_t true_size(const Map& map) {
+	size_t	i = 0;
+	for (MapConstIt it = map.begin(); it != map.end(); it++)
+		i++;
+	return (i);
+}
+
 TEST_CASE("Map modifiers", "[map][modifier]") {
 
 	Map				map;
@@ -71,6 +78,7 @@ TEST_CASE("Map modifiers", "[map][modifier]") {
 	}
 
 	SECTION("erase(position)") {
+		size_t size = 0, truesize = 0;
 		ref = Custom::mocking_value<StdMap>();
 		Custom::copy_map(ref, map);
 		for (size_t i = 0; i < REF_SIZE / 10; i++) {
@@ -86,25 +94,28 @@ TEST_CASE("Map modifiers", "[map][modifier]") {
 				ref.erase((--(--ref.end())));
 				map.erase((--(--map.end())));
 			}
+			size = map.size();
+			truesize = true_size(map);
+			// std::cout << i << std::endl;
+			// REQUIRE(map.size() == true_size(map));
 		}
+		(void)size;
+		(void)truesize;
 		REQUIRE_THAT(map, Custom::MapEqual<Map>(ref));
 	}
 	SECTION("erase(val)") {
+		size_t	std_remove;
+		size_t	map_remove;
+
 		ref = Custom::mocking_value<StdMap>();
 		Custom::copy_map(ref, map);
 		for (size_t i = 0; i < REF_SIZE / 10; i++) {
-			if (i % 3 == 0) {
-				ref.erase(ref.begin()->first);
-				map.erase(map.begin()->first);
-			}
-			else if (i % 3 == 1) {
-				ref.erase((++(++ref.begin()))->first);
-				map.erase((++(++map.begin()))->first);
-			}
-			else {
-				ref.erase((--(--ref.end()))->first);
-				map.erase((--(--map.end()))->first);
-			}
+			if (i % 3 == 0)
+				REQUIRE(ref.erase(ref.begin()->first) == map.erase(map.begin()->first));
+			else if (i % 3 == 1)
+				REQUIRE(ref.erase((++(++ref.begin()))->first) == map.erase((++(++map.begin()))->first));
+			else
+				REQUIRE(ref.erase((--(--ref.end()))->first) == map.erase((--(--map.end()))->first));
 		}
 		REQUIRE_THAT(map, Custom::MapEqual<Map>(ref));
 	}
