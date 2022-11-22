@@ -1,55 +1,55 @@
 #include "../../hdrs/common.hpp"
 
-TEST_CASE("Map non-members functions", "[map][operator]") {
+TEST_CASE("Set non-members functions", "[set][operator]") {
 
-	Map		ref = Custom::mocking_value<Map>();
-	Map		map(ref);
+	Set		ref = Custom::mocking_value<Set>();
+	Set		set(ref);
 
 	SECTION("operator == && !=") {
-		REQUIRE(ref == map);
-		REQUIRE(ref <= map);
-		REQUIRE(ref >= map);
+		REQUIRE(ref == set);
+		REQUIRE(ref <= set);
+		REQUIRE(ref >= set);
 		ref.erase(--ref.end());
-		REQUIRE(ref != map);
+		REQUIRE(ref != set);
 	}
 	SECTION("operator < && >") {
 		for(size_t i = 0; i < REF_SIZE / 10; i++) {
-			if (*--ref.end() < *--map.end())
-				REQUIRE(ref < map);
-			else if (*--ref.end() > *--map.end())
-				REQUIRE(ref > map);
+			if (*--ref.end() < *--set.end())
+				REQUIRE(ref < set);
+			else if (*--ref.end() > *--set.end())
+				REQUIRE(ref > set);
 			else {
-				REQUIRE_FALSE(ref < map);
-				REQUIRE_FALSE(ref > map);
+				REQUIRE_FALSE(ref < set);
+				REQUIRE_FALSE(ref > set);
 			}
 			ref.erase(--ref.end());
-			map.erase(--map.end());
+			set.erase(--set.end());
 		}
 	}
 	SECTION("operator <= && >=") {
 		for(size_t i = 0; i < REF_SIZE / 10; i++) {
-			if (*--ref.end() < *--map.end())
-				REQUIRE(ref <= map);
-			else if (*--ref.end() > *--map.end())
-				REQUIRE(ref >= map);
+			if (*--ref.end() < *--set.end())
+				REQUIRE(ref <= set);
+			else if (*--ref.end() > *--set.end())
+				REQUIRE(ref >= set);
 			else {
-				REQUIRE(ref <= map);
-				REQUIRE(ref >= map);
+				REQUIRE(ref <= set);
+				REQUIRE(ref >= set);
 			}
 			ref.erase(--ref.end());
-			map.erase(--map.end());
+			set.erase(--set.end());
 		}
 	}
 
 	SECTION("swap()") {
-		MapConstIt	it;
-		MapConstIt	it2;
+		SetConstIt	it;
+		SetConstIt	it2;
 
 		it = ref.begin();
-		it2 = map.begin();
+		it2 = set.begin();
 
-		ref.swap(map);
-		REQUIRE(it == map.begin());
+		ref.swap(set);
+		REQUIRE(it == set.begin());
 		REQUIRE(it2 == ref.begin());
 	}
 }

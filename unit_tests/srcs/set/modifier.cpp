@@ -1,35 +1,33 @@
 #include "../../hdrs/common.hpp"
 
-TEST_CASE("Map modifiers", "[map][modifier]") {
+TEST_CASE("Set modifiers", "[set][modifier]") {
 
-	Map				map;
-	StdMap 			ref;
+	Set				set;
+	StdSet 			ref;
 
-	typename Custom::remove_const<MapFirstType>::type	tmp_first = Custom::mocking_value<typename Custom::remove_const<MapFirstType>::type>();
-	MapSecondType	tmp_second = Custom::mocking_value<MapSecondType>();
+	StdSetIt		std_it;
+	SetIt			it;
 
-	StdMapIt		std_it;
-	MapIt			it;
+	typedef NS::pair<SetIt, bool>		SetReturn;
+	typedef std::pair<StdSetIt, bool>	StdSetReturn;
 
-	typedef NS::pair<MapIt, bool>		MapReturn;
-	typedef std::pair<StdMapIt, bool>	StdMapReturn;
+	ValueType tmp_value;
 
 	SECTION("insert(val)") {
-		tmp_first = Custom::mocking_value<typename Custom::remove_const<MapFirstType>::type>();
-		tmp_second = Custom::mocking_value<MapSecondType>();
+		tmp_value = Custom::mocking_value<ValueType>();
 
-		MapReturn		tmp_return;
-		StdMapReturn	tmp_std_return;
+		SetReturn		tmp_return;
+		StdSetReturn	tmp_std_return;
 
-		tmp_return = map.insert(MapPair(tmp_first, tmp_second));
-		tmp_std_return = ref.insert(StdMapPair(tmp_first, tmp_second));
+		tmp_return = set.insert(tmp_value);
+		tmp_std_return = ref.insert(tmp_value);
 
 		REQUIRE(*tmp_return.first == *tmp_std_return.first);
 		REQUIRE(tmp_return.second == tmp_std_return.second);
 
 		// TRY TO REINSERT, bool must be false
-		tmp_return = map.insert(MapPair(tmp_first, tmp_second));
-		tmp_std_return = ref.insert(StdMapPair(tmp_first, tmp_second));
+		tmp_return = set.insert(tmp_value);
+		tmp_std_return = ref.insert(tmp_value);
 
 		REQUIRE(*tmp_return.first == *tmp_std_return.first);
 		REQUIRE(tmp_return.second == tmp_std_return.second);
@@ -38,115 +36,106 @@ TEST_CASE("Map modifiers", "[map][modifier]") {
 	SECTION("insert(position, val)") {
 		for (size_t i = 0; i < REF_SIZE; i++)
 		{
-			tmp_first = Custom::mocking_value<typename Custom::remove_const<MapFirstType>::type>();
-			tmp_second = Custom::mocking_value<MapSecondType>();
+			tmp_value = Custom::mocking_value<ValueType>();
 			if (i % 3 == 0) {
-				std_it = ref.insert(ref.begin(), StdMapPair(tmp_first, tmp_second));
-				it = map.insert(map.begin(), MapPair(tmp_first, tmp_second));
+				std_it = ref.insert(ref.begin(), tmp_value);
+				it = set.insert(set.begin(), tmp_value);
 			}
 			if (i % 3 == 1) {
-				std_it = ref.insert(++ref.begin(), StdMapPair(tmp_first, tmp_second));
-				it = map.insert(++map.begin(), MapPair(tmp_first, tmp_second));
+				std_it = ref.insert(++ref.begin(), tmp_value);
+				it = set.insert(++set.begin(), tmp_value);
 			}
 			else {
-				std_it = ref.insert(ref.end(), StdMapPair(tmp_first, tmp_second));
-				it = map.insert(map.end(), MapPair(tmp_first, tmp_second));
+				std_it = ref.insert(ref.end(), tmp_value);
+				it = set.insert(set.end(), tmp_value);
 			}
 			if (std_it == ref.end())
-				REQUIRE(it == map.end());
+				REQUIRE(it == set.end());
 			else
 				REQUIRE(*std_it == *it);
 		}
-		REQUIRE_THAT(map, Custom::MapEqual<Map>(ref));
+		REQUIRE_THAT(set, Custom::SetEqual<Set>(ref));
 	}
 
 	SECTION("insert(first, last)") {
-		Map	tmp_map = Custom::mocking_value<Map>();
+		Set	tmp_set = Custom::mocking_value<Set>();
 
-		map.insert(tmp_map.begin(), tmp_map.end());
-		REQUIRE_THAT(map, Custom::MapEqual<Map>(tmp_map));
+		set.insert(tmp_set.begin(), tmp_set.end());
+		REQUIRE_THAT(set, Custom::SetEqual<Set>(tmp_set));
 
-		map.insert(map.begin(), map.end());
-		REQUIRE_THAT(map, Custom::MapEqual<Map>(tmp_map));
+		set.insert(set.begin(), set.end());
+		REQUIRE_THAT(set, Custom::SetEqual<Set>(tmp_set));
 	}
 
 	SECTION("erase(position)") {
-		ref = Custom::mocking_value<StdMap>();
-		Custom::copy_map(ref, map);
+		ref = Custom::mocking_value<StdSet>();
+		Set set(ref.begin(), ref.end());
 		for (size_t i = 0; i < REF_SIZE / 10; i++) {
 			if (i % 3 == 0) {
 				ref.erase(ref.begin());
-				map.erase(map.begin());
+				set.erase(set.begin());
 			}
 			else if (i % 3 == 1) {
 				ref.erase((++(++ref.begin())));
-				map.erase((++(++map.begin())));
+				set.erase((++(++set.begin())));
 			}
 			else {
 				ref.erase((--(--ref.end())));
-				map.erase((--(--map.end())));
+				set.erase((--(--set.end())));
 			}
 		}
-		REQUIRE_THAT(map, Custom::MapEqual<Map>(ref));
+		REQUIRE_THAT(set, Custom::SetEqual<Set>(ref));
 	}
 	SECTION("erase(val)") {
 		size_t	std_remove;
-		size_t	map_remove;
+		size_t	set_remove;
 
-		ref = Custom::mocking_value<StdMap>();
-		Custom::copy_map(ref, map);
+		ref = Custom::mocking_value<StdSet>();
+		Set set(ref.begin(), ref.end());
 		for (size_t i = 0; i < REF_SIZE / 10; i++) {
 			if (i % 3 == 0)
-				REQUIRE(ref.erase(ref.begin()->first) == map.erase(map.begin()->first));
+				REQUIRE(ref.erase(*ref.begin()) == set.erase(*set.begin()));
 			else if (i % 3 == 1)
-				REQUIRE(ref.erase((++(++ref.begin()))->first) == map.erase((++(++map.begin()))->first));
+				REQUIRE(ref.erase(*(++(++ref.begin()))) == set.erase(*(++(++set.begin()))));
 			else
-				REQUIRE(ref.erase((--(--ref.end()))->first) == map.erase((--(--map.end()))->first));
+				REQUIRE(ref.erase(*(--(--ref.end()))) == set.erase(*(--(--set.end()))));
 		}
-		REQUIRE_THAT(map, Custom::MapEqual<Map>(ref));
+		REQUIRE_THAT(set, Custom::SetEqual<Set>(ref));
 	}
 	SECTION("erase(first, last)") {
-		ref = Custom::mocking_value<StdMap>();
-		Custom::copy_map(ref, map);
+		ref = Custom::mocking_value<StdSet>();
+		Set set(ref.begin(), ref.end());
 		for (size_t i = 0; i < REF_SIZE / 100; i++)
 		{
 			if (i % 2) {
 				ref.erase(ref.begin(), ++(++ref.begin()));
-				map.erase(map.begin(), ++(++map.begin()));
+				set.erase(set.begin(), ++(++set.begin()));
 			}
 			else {
 				ref.erase(--(--ref.end()), ref.end());
-				map.erase(--(--map.end()), map.end());
+				set.erase(--(--set.end()), set.end());
 			}
 		}
-		REQUIRE_THAT(map, Custom::MapEqual<Map>(ref));
+		REQUIRE_THAT(set, Custom::SetEqual<Set>(ref));
 	}
 
 	SECTION("swap(a)") {
-		Map					tmp_test_map;
-		MapIt				it2;
+		Set					tmp_test_set;
+		SetIt				it2;
 
-		map.insert(MapPair(
-			Custom::mocking_value<typename Map::key_type>(),
-			Custom::mocking_value<typename Map::mapped_type>()
-			)
-		);
-		tmp_test_map.insert(MapPair(
-			Custom::mocking_value<typename StdMap::key_type>(),
-			Custom::mocking_value<typename StdMap::mapped_type>()
-			)
-		);
-		it = map.begin();
-		it2 = tmp_test_map.begin();
+		set.insert(Custom::mocking_value<ValueType>());
+		tmp_test_set.insert(Custom::mocking_value<ValueType>());
+		it = set.begin();
+		it2 = tmp_test_set.begin();
 
-		tmp_test_map.swap(map);
-		REQUIRE(it == tmp_test_map.begin());
-		REQUIRE(it2 == map.begin());
+		tmp_test_set.swap(set);
+		REQUIRE(it == tmp_test_set.begin());
+		REQUIRE(it2 == set.begin());
 	}
 
 	SECTION("clear()") {
-		map = Custom::mocking_value<Map>();
-		map.clear();
-		REQUIRE((map.size() == 0 && map.empty()));
+		set = Custom::mocking_value<Set>();
+		set.clear();
+		REQUIRE((set.size() == 0 && set.empty()));
 	}
 }

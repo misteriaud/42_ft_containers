@@ -20,7 +20,14 @@ MAP_SRCS = $(addprefix map/, \
 	non_members_and_miscs.cpp )
 
 SET_SRCS = $(addprefix set/, \
-	constructor.cpp )
+	constructor.cpp \
+	assign.cpp \
+	iterator.cpp \
+	capacity.cpp \
+	modifier.cpp \
+	observer.cpp \
+	operation.cpp \
+	non_members_and_miscs.cpp )
 
 SRCS = $(addprefix srcs/, main.cpp common.cpp $(VECTORS_SRCS) $(MAP_SRCS) $(SET_SRCS))
 OBJS = ${SRCS:.cpp=.o}

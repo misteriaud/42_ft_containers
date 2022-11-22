@@ -37,7 +37,7 @@ namespace Custom {
 		T		result;
 
 		for (size_t i = 0; i < REF_SIZE; i++)
-			result.insert(Custom::mocking_value<typename T::value_type>());
+			result.insert(Custom::mocking_value<typename T::key_type>());
 
 		return (result);
 	}

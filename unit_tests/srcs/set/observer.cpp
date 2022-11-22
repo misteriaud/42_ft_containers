@@ -1,43 +1,22 @@
 #include "../../hdrs/common.hpp"
 
-TEST_CASE("Map observer", "[map][observer]") {
+TEST_CASE("Set observer", "[set][observer]") {
 
-	Map				map;
-
-	typedef typename Map::key_type	key_type;
-
-	key_type		tmp_first = Custom::mocking_value<key_type>();
-	MapSecondType	tmp_second = Custom::mocking_value<MapSecondType>();
+	Set				set;
 
 	SECTION("key_comp()") {
-		typename Map::key_compare	tmp_key_comp = map.key_comp();
+		typename Set::key_compare	tmp_key_comp = set.key_comp();
 
-		map.insert(MapPair(
-			Custom::mocking_value<typename Map::key_type>(),
-			Custom::mocking_value<typename Map::mapped_type>()
-			)
-		);
-		map.insert(MapPair(
-			Custom::mocking_value<typename Map::key_type>(),
-			Custom::mocking_value<typename Map::mapped_type>()
-			)
-		);
-		REQUIRE(tmp_key_comp(map.begin()->first, (++map.begin())->first) == true);
+		set.insert(Custom::mocking_value<ValueType>());
+		set.insert(Custom::mocking_value<ValueType>());
+		REQUIRE(tmp_key_comp(*set.begin(), *(++set.begin())) == true);
 	}
 	SECTION("value_comp()") {
-		typename Map::value_compare	tmp_value_comp = map.value_comp();
+		typename Set::value_compare	tmp_value_comp = set.value_comp();
 
-		map.insert(MapPair(
-			Custom::mocking_value<typename Map::key_type>(),
-			Custom::mocking_value<typename Map::mapped_type>()
-			)
-		);
-		map.insert(MapPair(
-			Custom::mocking_value<typename Map::key_type>(),
-			Custom::mocking_value<typename Map::mapped_type>()
-			)
-		);
-		REQUIRE(tmp_value_comp(*map.begin(), *(++map.begin())) == true);
+		set.insert(Custom::mocking_value<ValueType>());
+		set.insert(Custom::mocking_value<ValueType>());
+		REQUIRE(tmp_value_comp(*set.begin(), *(++set.begin())) == true);
 	}
 
 };

@@ -1,28 +1,27 @@
 #include "../../hdrs/common.hpp"
 
-TEST_CASE("Map iterator", "[map][iterator]") {
+TEST_CASE("Set iterator", "[set][iterator]") {
 
-	StdMap	ref = Custom::mocking_value<StdMap>();
-	Map		map;
-	Custom::copy_map(ref, map);
+	StdSet	ref = Custom::mocking_value<StdSet>();
+	Set		set(ref.begin(), ref.end());
 
 	SECTION("same begin && end it") {
-		REQUIRE(*ref.begin() == *map.begin());
-		REQUIRE(*(--ref.end()) == *(--map.end()));
+		REQUIRE(*ref.begin() == *set.begin());
+		REQUIRE(*(--ref.end()) == *(--set.end()));
 	}
 
 	SECTION("same reverse_begin && reverse_end it") {
-		REQUIRE(*ref.rbegin() == *map.rbegin());
-		REQUIRE(*(--ref.rend()) == *(--map.rend()));
+		REQUIRE(*ref.rbegin() == *set.rbegin());
+		REQUIRE(*(--ref.rend()) == *(--set.rend()));
 	}
 
 	SECTION("constructor") {
-		MapIt	it = map.begin();
+		SetIt	it = set.begin();
 
-		MapIt	temp; // default constructor
+		SetIt	temp; // default constructor
 		(void)temp;
 
-		MapIt	it2(it);
+		SetIt	it2(it);
 		REQUIRE(*it == *it2); // copy constructor
 
 		it++;
@@ -30,34 +29,25 @@ TEST_CASE("Map iterator", "[map][iterator]") {
 		it2 = it;
 		REQUIRE(*it == *it2); // assignement
 
-		MapConstIt	const_it(it);
+		SetConstIt	const_it(it);
 		REQUIRE(*const_it == *it); // construct iterator from const_iterator
 	}
 
 	SECTION("operator==() && operator!=()") {
-		MapIt	it;
-		it = map.begin();
+		SetIt	it;
+		it = set.begin();
 
-		REQUIRE((it == map.begin()) == true);
-		REQUIRE((it == map.end()) == false);
-		REQUIRE((it != map.begin()) == false);
-		REQUIRE((it != map.end()) == true);
+		REQUIRE((it == set.begin()) == true);
+		REQUIRE((it == set.end()) == false);
+		REQUIRE((it != set.begin()) == false);
+		REQUIRE((it != set.end()) == true);
 	}
 
-	SECTION("mutable operator *it = a") {
-		MapSecondType tmp_second = Custom::mocking_value<MapSecondType>();
+	StdSetConstIt	ref_tmp = ++(++(--(++(++ref.begin()))));
+	SetConstIt		 tmp = ++(++(--(++(++set.begin()))));
 
-		ref.begin()->second = tmp_second;
-		map.begin()->second = tmp_second;
-
-		REQUIRE(*ref.begin() == *map.begin());
-	}
-
-	StdMapConstIt	ref_tmp = ++(++(--(++(++ref.begin()))));
-	MapConstIt		 tmp = ++(++(--(++(++map.begin()))));
-
-	StdMapConstRevIt	r_ref_tmp = ++(++(--(++(++ref.rbegin()))));
-	MapConstRevIt		r_tmp = ++(++(--(++(++map.rbegin()))));
+	StdSetConstRevIt	r_ref_tmp = ++(++(--(++(++ref.rbegin()))));
+	SetConstRevIt		r_tmp = ++(++(--(++(++set.rbegin()))));
 
 	SECTION("++it && --it") {
 		REQUIRE(*ref_tmp == *tmp);
@@ -92,35 +82,4 @@ TEST_CASE("Map iterator", "[map][iterator]") {
 		REQUIRE(*r_ref_tmp == *r_tmp);
 	}
 
-	// SECTION("iterator comportements with --it.begin() && it.end()++") {
-	// 	ref = Custom::mocking_value<StdMap>();
-	// 	Custom::copy_map(ref, map);
-	// 	StdMapIt	std_it = ref.begin();
-	// 	MapIt		it = map.begin();
-
-	// 	// std::cout << Catch::StringMaker<Map>::convert(map) << std::endl;
-	// 	// std::cout << Catch::StringMaker<StdMap>::convert(ref) << std::endl;
-	// 	for (size_t i = 0; i < REF_SIZE + (REF_SIZE / 10); i++)
-	// 	{
-	// 		if (std_it == ref.end())
-	// 			REQUIRE(it == map.end());
-	// 		else
-	// 			REQUIRE(*it == *std_it);
-	// 		std_it--;
-	// 		it--;
-	// 	}
-
-	// 	std_it = --ref.end();
-	// 	it = --map.end();
-	// 	for (size_t i = 0; i < 10; i++)
-	// 	{
-	// 		std::cout << i << std::endl;
-	// 		if (std_it == ref.end())
-	// 			REQUIRE(it == map.end());
-	// 		else
-	// 			REQUIRE(*it == *std_it);
-	// 		std_it++;
-	// 		it++;
-	// 	}
-	// }
 }

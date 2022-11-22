@@ -1,22 +1,20 @@
 #include "../../hdrs/common.hpp"
 
-TEST_CASE("Map capacity", "[map][capacity]") {
+TEST_CASE("Set capacity", "[set][capacity]") {
 
-	StdMap		ref = Custom::mocking_value<StdMap>();
-	Map			map;
-	Custom::copy_map(ref, map);
-	ValueType	tmp = Custom::mocking_value<ValueType>();
+	StdSet		ref = Custom::mocking_value<StdSet>();
+	Set			set(ref.begin(), ref.end());
 
 	SECTION("size()") {
-		REQUIRE(ref.size() == map.size());
+		REQUIRE(ref.size() == set.size());
 	}
 	SECTION("max_size()") {
-		CHECK(ref.max_size() == map.max_size());
+		CHECK(ref.max_size() == set.max_size());
 	}
 	SECTION("empty()") {
-		Map tmp_map;
-		REQUIRE(tmp_map.empty());
-		REQUIRE_FALSE(map.empty());
+		Set tmp_set;
+		REQUIRE(tmp_set.empty());
+		REQUIRE_FALSE(set.empty());
 	}
 
 }
