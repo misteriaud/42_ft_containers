@@ -33,13 +33,31 @@ namespace ft {
 	struct true_type { static const bool value = true; };
 
 	// IS_INTEGRAL
+	// #define char16_t uint16_t
+	// #define char32_t uint32_t
 	template<typename> struct is_integral_base : false_type {};
 
 	template<> struct is_integral_base<bool>: true_type {};
-	template<> struct is_integral_base<int>: true_type {};
+	template<> struct is_integral_base<char>: true_type {};
+	// template<> struct is_integral_base<char16_t>: true_type {};
+	// template<> struct is_integral_base<char32_t>: true_type {};
+	template<> struct is_integral_base<wchar_t>: true_type {};
 	template<> struct is_integral_base<short>: true_type {};
+	template<> struct is_integral_base<int>: true_type {};
+	template<> struct is_integral_base<long>: true_type {};
+	template<> struct is_integral_base<long long>: true_type {};
+	template<> struct is_integral_base<unsigned char>: true_type {};
+	template<> struct is_integral_base<unsigned short>: true_type {};
+	template<> struct is_integral_base<unsigned int>: true_type {};
+	template<> struct is_integral_base<unsigned long>: true_type {};
+	template<> struct is_integral_base<unsigned long long>: true_type {};
 
-	template<typename T> struct is_integral: is_integral_base< typename ft::remove_cv<T>::type > {};
+	template<typename T> struct is_integral: is_integral_base< typename ft::remove_cv<T>::type > {
+		typedef bool												value_type;
+		typedef is_integral_base<typename ft::remove_cv<T>::type >	type;
+
+		operator value_type() { return (this->value); }
+	};
 
 
 	// CONDITIONAL

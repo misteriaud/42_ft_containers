@@ -6,9 +6,9 @@
 #include "iterators/RandomAccessIterator.hpp"
 #include "iterators/iterator_traits.hpp"
 #include "iterators/reverse_iterator.hpp"
-#include "SFINAE.hpp"
-#include "lexicographical_compare.hpp"
-#include "equal.hpp"
+#include "utils/SFINAE.hpp"
+#include "utils/lexicographical_compare.hpp"
+#include "utils/equal.hpp"
 
 namespace ft {
 

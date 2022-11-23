@@ -1,15 +1,15 @@
 #pragma once
-#ifndef set_HPP
-# define set_HPP
+#ifndef SET_HPP
+# define SET_HPP
 
 #include <functional>
 #include <memory>
-#include "pair.hpp"
 #include "iterators/BidirectionalIterator.hpp"
 #include "iterators/reverse_iterator.hpp"
-#include "RBTree.hpp"
-#include "equal.hpp"
-#include "lexicographical_compare.hpp"
+#include "utils/pair.hpp"
+#include "utils/RBTree.hpp"
+#include "utils/equal.hpp"
+#include "utils/lexicographical_compare.hpp"
 
 namespace ft {
 
@@ -22,21 +22,21 @@ namespace ft {
 			//
 			//	TYPES DEFINITIONS
 			//
-			typedef T										key_type;
-			typedef const T									value_type;
-			typedef Compare									key_compare;
-			typedef Compare 								value_compare;
-			typedef Alloc									allocator_type;
-			typedef typename Alloc::reference				reference;
-			typedef typename Alloc::const_reference			const_reference;
-			typedef typename Alloc::pointer					pointer;
-			typedef typename Alloc::const_pointer			const_pointer;
-			typedef ft::BidirectionalIterator<value_type>	iterator;
+			typedef T												key_type;
+			typedef const T											value_type;
+			typedef Compare											key_compare;
+			typedef Compare 										value_compare;
+			typedef Alloc											allocator_type;
+			typedef typename Alloc::reference						reference;
+			typedef typename Alloc::const_reference					const_reference;
+			typedef typename Alloc::pointer							pointer;
+			typedef typename Alloc::const_pointer					const_pointer;
+			typedef ft::BidirectionalIterator<value_type>			iterator;
 			typedef ft::BidirectionalIterator<const value_type>		const_iterator;
-			typedef ft::reverse_iterator<iterator>			reverse_iterator;
-			typedef ft::reverse_iterator<const_iterator>	const_reverse_iterator;
-			typedef std::ptrdiff_t							difference_type;
-			typedef std::size_t								size_type;
+			typedef ft::reverse_iterator<iterator>					reverse_iterator;
+			typedef ft::reverse_iterator<const_iterator>			const_reverse_iterator;
+			typedef std::ptrdiff_t									difference_type;
+			typedef std::size_t										size_type;
 
 			//
 			// Constructors AND Sestrucor
