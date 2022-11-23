@@ -21,13 +21,15 @@ typedef StdMap::const_iterator							StdMapConstIt;
 typedef StdMap::const_reverse_iterator					StdMapConstRevIt;
 typedef std::pair<const KEY_TYPE, MAPPED_TYPE>			StdMapPair;
 
-template <typename T1, typename T2>
-bool operator==(const ft::pair<const T1, T2>& lhs, const std::pair<const T1, T2>& rhs) {
-	return (lhs.first == rhs.first && lhs.second == rhs.second);
-}
-template <typename T1, typename T2>
-bool operator==(const std::pair<const T1, T2>& lhs, const ft::pair<const T1, T2>& rhs) {
-	return (lhs.first == rhs.first && lhs.second == rhs.second);
+namespace ft {
+	template <typename T1, typename T2>
+	bool operator==(const ft::pair<const T1, T2>& lhs, const std::pair<const T1, T2>& rhs) {
+		return (lhs.first == rhs.first && lhs.second == rhs.second);
+	}
+	template <typename T1, typename T2>
+	bool operator==(const std::pair<const T1, T2>& lhs, const ft::pair<const T1, T2>& rhs) {
+		return (lhs.first == rhs.first && lhs.second == rhs.second);
+	}
 }
 
 

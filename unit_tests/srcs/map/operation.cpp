@@ -1,7 +1,7 @@
 #include "../../hdrs/common.hpp"
 
 TEST_CASE("Map operation", "[map][operation]") {
-	typedef typename Map::key_type	key_type;
+	typedef Map::key_type	key_type;
 
 	StdMap			ref = Custom::mocking_value<StdMap>();
 	Map				map;

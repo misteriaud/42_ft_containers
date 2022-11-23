@@ -13,5 +13,4 @@ TEST_CASE("Stacktor constructors", "[stack][constructor]") {
 		// REQUIRE(Custom::equal(std_cont.begin(), std_cont.end(), cont.begin(), cont.end()));
 		REQUIRE_THAT(stack, Custom::StackEqual<Stack>(std_stack));
 	}
-
 }

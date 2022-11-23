@@ -5,7 +5,7 @@ TEST_CASE("Map modifiers", "[map][modifier]") {
 	Map				map;
 	StdMap 			ref;
 
-	typename Custom::remove_const<MapFirstType>::type	tmp_first = Custom::mocking_value<typename Custom::remove_const<MapFirstType>::type>();
+	Custom::remove_const<MapFirstType>::type	tmp_first = Custom::mocking_value<Custom::remove_const<MapFirstType>::type>();
 	MapSecondType	tmp_second = Custom::mocking_value<MapSecondType>();
 
 	StdMapIt		std_it;
@@ -15,7 +15,7 @@ TEST_CASE("Map modifiers", "[map][modifier]") {
 	typedef std::pair<StdMapIt, bool>	StdMapReturn;
 
 	SECTION("insert(val)") {
-		tmp_first = Custom::mocking_value<typename Custom::remove_const<MapFirstType>::type>();
+		tmp_first = Custom::mocking_value<Custom::remove_const<MapFirstType>::type>();
 		tmp_second = Custom::mocking_value<MapSecondType>();
 
 		MapReturn		tmp_return;
@@ -38,7 +38,7 @@ TEST_CASE("Map modifiers", "[map][modifier]") {
 	SECTION("insert(position, val)") {
 		for (size_t i = 0; i < REF_SIZE; i++)
 		{
-			tmp_first = Custom::mocking_value<typename Custom::remove_const<MapFirstType>::type>();
+			tmp_first = Custom::mocking_value<Custom::remove_const<MapFirstType>::type>();
 			tmp_second = Custom::mocking_value<MapSecondType>();
 			if (i % 3 == 0) {
 				std_it = ref.insert(ref.begin(), StdMapPair(tmp_first, tmp_second));
@@ -127,13 +127,13 @@ TEST_CASE("Map modifiers", "[map][modifier]") {
 		MapIt				it2;
 
 		map.insert(MapPair(
-			Custom::mocking_value<typename Map::key_type>(),
-			Custom::mocking_value<typename Map::mapped_type>()
+			Custom::mocking_value<Map::key_type>(),
+			Custom::mocking_value<Map::mapped_type>()
 			)
 		);
 		tmp_test_map.insert(MapPair(
-			Custom::mocking_value<typename StdMap::key_type>(),
-			Custom::mocking_value<typename StdMap::mapped_type>()
+			Custom::mocking_value<StdMap::key_type>(),
+			Custom::mocking_value<StdMap::mapped_type>()
 			)
 		);
 		it = map.begin();

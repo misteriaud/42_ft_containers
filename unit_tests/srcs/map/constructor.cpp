@@ -3,7 +3,7 @@
 typedef std::istream_iterator<char>	is_iterator;
 
 bool	check_input_it(is_iterator file_it, const NS::map<size_t, char>& map) {
-	typename NS::map<size_t, char>::const_iterator	it = map.begin();
+	NS::map<size_t, char>::const_iterator	it = map.begin();
 
 	while (file_it!=is_iterator() && it!=map.end()) {
 		if (*file_it != it->second)

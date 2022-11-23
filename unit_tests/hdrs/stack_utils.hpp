@@ -40,26 +40,16 @@ namespace Custom {
 	}
 
 
-	template<typename T>
-	class MutantStack : public Stack
+	template<typename StackType>
+	class MutantStack : public StackType
 	{
 	public:
-		MutantStack(const Stack& ref): Stack(ref) {}
+		MutantStack(const StackType& ref): StackType(ref) {}
 		~MutantStack() {}
 
-		const StackCont& get_cont() const {
-			return (this->c);
-		}
-	};
+		typedef typename StackType::container_type	container_type;
 
-	template<typename T>
-	class StdMutantStack : public StdStack
-	{
-	public:
-		StdMutantStack(const StdStack& ref): StdStack(ref) {}
-		~StdMutantStack() {}
-
-		const StdStackCont& get_cont() const {
+		const container_type& get_cont() const {
 			return (this->c);
 		}
 	};
@@ -74,18 +64,20 @@ namespace Custom {
 		StackEqual(StdStack const &comparator) : m_comparator( comparator ) {}
 
 		bool match(StackType const &v) const {
-			const StdStackCont&	std_cont = Custom::StdMutantStack<StdStackCont>(m_comparator).get_cont();
-			const StackCont&		cont = Custom::MutantStack<StackCont>(v).get_cont();
+			const Custom::MutantStack<StdStack>	std_mutant(m_comparator);
+			const Custom::MutantStack<Stack>	mutant(v);
+			const StdStackCont&					std_cont = std_mutant.get_cont();
+			const StackCont&					cont = mutant.get_cont();
 
-			typename StackCont::const_iterator mapFirst = cont.begin(), mapLast = cont.end();
+			typename StackCont::const_iterator stackFirst = cont.begin(), stackLast = cont.end();
 			typename StdStackCont::const_iterator refFirst = std_cont.begin(), refLast = std_cont.end();
 
-			while (mapFirst!=mapLast && refFirst!=refLast) {
-				if (*mapFirst != *refFirst)
+			while (stackFirst!=stackLast && refFirst!=refLast) {
+				if (*stackFirst != *refFirst)
 					return false;
-				++mapFirst; ++refFirst;
+				++stackFirst; ++refFirst;
 			}
-			if (mapFirst == mapLast && refFirst == refLast)
+			if (stackFirst == stackLast && refFirst == refLast)
 				return true;
 			return false;
 		}
@@ -94,7 +86,7 @@ namespace Custom {
 			ss << "\nEquality between ft::stack && std::stack: \n";
 
 			// IF YOU GET A COMPILATION ERROR HERE, NEED TO IMPLEMENT : `std::ostream& operator<< (std::ostream& out, const YourType& rhs)`
-			ss << Catch::StringMaker<StdStackCont>::convert(Custom::StdMutantStack<StdStackCont>(m_comparator).get_cont());
+			ss << Catch::StringMaker<StdStackCont>::convert(Custom::MutantStack<StdStack>(m_comparator).get_cont());
 			return ss.str();
 		}
 		StdStack const& m_comparator;

@@ -11,7 +11,7 @@ std::string Custom::mocking_value<std::string>() {
 	return (result);
 }
 
-// template <typename T1, typename T2>
+// template <T1, T2>
 // const ft::pair<T1, T2>	operator=(const std::pair<T1, T2>&	rhs) {
 // 	return (ft::pair<T1, T2>(rhs.first, rhs.second));
 // }

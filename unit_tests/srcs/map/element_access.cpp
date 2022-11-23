@@ -19,7 +19,7 @@ TEST_CASE("Map element access", "[map][access]") {
 		tmp_it--;
 		REQUIRE(ref[tmp_it->first] == map[tmp_it->first]);
 
-		MapFirstType	tmp_first = Custom::mocking_value<typename Custom::remove_const<MapFirstType>::type>();
+		MapFirstType	tmp_first = Custom::mocking_value<Custom::remove_const<MapFirstType>::type>();
 		MapSecondType	tmp_second = Custom::mocking_value<MapSecondType>();
 
 		ref[tmp_first] = tmp_second;

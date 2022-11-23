@@ -1,7 +1,7 @@
 #include "../../hdrs/common.hpp"
 
 TEST_CASE("Set operation", "[set][operation]") {
-	typedef typename Set::key_type	key_type;
+	typedef Set::key_type	key_type;
 
 	StdSet			ref = Custom::mocking_value<StdSet>();
 	Set				set(ref.begin(), ref.end());
