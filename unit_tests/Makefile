@@ -29,7 +29,10 @@ SET_SRCS = $(addprefix set/, \
 	operation.cpp \
 	non_members_and_miscs.cpp )
 
-SRCS = $(addprefix srcs/, main.cpp common.cpp $(VECTORS_SRCS) $(MAP_SRCS) $(SET_SRCS))
+STACK_SRCS = $(addprefix stack/, \
+	constructor.cpp)
+
+SRCS = $(addprefix srcs/, main.cpp common.cpp $(VECTORS_SRCS) $(MAP_SRCS) $(SET_SRCS) $(STACK_SRCS))
 OBJS = ${SRCS:.cpp=.o}
 # https://github.com/tsduck/tsduck/issues/205
 FLAGS = -Wall -Wextra -Werror -std=c++98 -g

@@ -62,8 +62,6 @@ namespace Custom {
 			if (std_set) {
 				SetConstIt mapFirst = v.begin(), mapLast = v.end();
 				StdSetConstIt refFirst = std_set->begin(), refLast = std_set->end();
-				// typename SetType::const_iterator mapFirst = v.begin(), mapLast = v.end();
-				// typename std_set_type::const_iterator refFirst = std_set->begin(), refLast = std_set->end();
 
 				while (mapFirst!=mapLast && refFirst!=refLast) {
 					if (*mapFirst != *refFirst)
@@ -102,4 +100,54 @@ namespace Custom {
 		Set const		*ft_set;
 	};
 }
+
+
+// //
+// // StringMaker
+// //
+// namespace Catch {
+
+// 	// STD MAP
+// 	template<typename T1, typename T2, typename T3>
+// 	struct StringMaker<std::set<T1, T2, T3> > {
+// 		static std::string convert(std::set<T1, T2, T3> const& value ) {
+
+// 			std::string	out;
+// 			typename std::set<T1, T2, T3>::const_iterator it = value.begin();
+
+// 			if (it == value.end())
+// 				return (out);
+// 			out += "{ ";
+// 			out += Catch::StringMaker<T1>::convert(*it);
+// 			it++;
+// 			for (; it != value.end(); it++) {
+// 				out += ", ";
+// 				out += Catch::StringMaker<T1>::convert(*it);
+// 			}
+// 			out += " }";
+// 			return (out);
+// 		}
+// 	};
+
+// 	// MAP
+// 	template<typename T1, typename T2, typename T3>
+// 	struct StringMaker<ft::set<T1, T2, T3> > {
+// 		static std::string convert(ft::set<T1, T2, T3> const& value ) {
+
+// 			std::string	out;
+// 			typename ft::set<T1, T2, T3>::const_iterator it = value.begin();
+
+// 			if (it == value.end())
+// 				return (out);
+// 			out += "{ ";
+// 			out += Catch::StringMaker<T1>::convert(*it);
+// 			it++;
+// 			for (; it != value.end(); it++) {
+// 				out += ", ";
+// 				out += Catch::StringMaker<T1>::convert(*it);
+// 			}
+// 			return (out);
+// 		}
+// 	};
+// }
 #endif
