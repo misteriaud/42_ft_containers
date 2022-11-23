@@ -7,7 +7,8 @@ VECTORS_SRCS = $(addprefix srcs/vector/, \
 	capacity.cpp \
 	element_access.cpp \
 	modifier.cpp \
-	non_members_and_miscs.cpp )
+	non_members_and_miscs.cpp \
+	benchmark.cpp)
 
 MAP_SRCS = $(addprefix srcs/map/, \
 	constructor.cpp \
@@ -64,7 +65,7 @@ $(info )
 
 OBJS = ${SRCS:.cpp=.o}
 DEPS = ${SRCS:.cpp=.d}
-FLAGS = -MMD -MP -Wall -Wextra -Werror -std=c++98 -g
+FLAGS = -MMD -MP -Wall -Wextra -Werror -std=c++98
 
 CC = c++
 

@@ -1,6 +1,6 @@
 #include "../../hdrs/stack_utils.hpp"
 
-TEST_CASE("Stacktor constructors", "[stack][constructor]") {
+TEST_CASE("Stack constructors", "[stack][constructor]") {
 
 	StdStackCont	std_cont = Custom::mocking_value<StdStackCont>();
 	StackCont		cont(std_cont.begin(), std_cont.end());
