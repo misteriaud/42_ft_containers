@@ -356,10 +356,8 @@ namespace ft {
 		}
 		template <typename Iterator>
 		void	assign(Iterator first, Iterator last, std::bidirectional_iterator_tag) {
-			// std::cout << "some iterator" << std::endl;
 			size_type 	distance = static_cast<size_type>(ft::distance(first, last));
 			size_type	i = 0;
-			// std::cout << "distance: " << distance << std::endl;
 			if (distance < 1)
 				return (clear());
 			if (distance > _capacity) {
