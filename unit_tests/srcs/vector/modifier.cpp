@@ -1,4 +1,4 @@
-#include "../../hdrs/common.hpp"
+#include "../../hdrs/vector_utils.hpp"
 
 TEST_CASE("Vector modifiers", "[vector][modifier]") {
 
@@ -94,7 +94,6 @@ TEST_CASE("Vector modifiers", "[vector][modifier]") {
 	SECTION("insert(position, val)") {
 		for (size_t i = 0; i < REF_SIZE; i++)
 		{
-			// std::cout << i << std::endl;
 			tmp_val = Custom::mocking_value<ValueType>();
 			if (i % 3 == 0) {
 				std_it = tmp.insert(tmp.begin(), tmp_val);
@@ -156,7 +155,6 @@ TEST_CASE("Vector modifiers", "[vector][modifier]") {
 			tmp.insert(tmp.end(), first, last);
 			vec.insert(vec.end(), first, last);
 		}
-		// std::cout << vec;
 		REQUIRE_THAT(vec, Custom::VectorEqual<Vec>(tmp));
 	}
 

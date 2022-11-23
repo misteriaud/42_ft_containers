@@ -8,27 +8,26 @@
 # define NS ft
 #endif
 
-#define ENABLE_VECTOR
-#define ENABLE_MAP
-#define ENABLE_SET
-#define ENABLE_STACK
+//
+//	CONFIGURATION ->
+//
 
 // FOR VECTOR, SET AND STACK ->
 #define VALUE_TYPE		std::string
-
 // FOR MAP ->
 #define KEY_TYPE		int
 #define MAPPED_TYPE		std::string
-
 // FOR STACK ->
 #define CONT_TYPE		vector
-
-
 // GENERATORS CONFIGURATION
 #define REF_SIZE 500
-
 // PATH USED FOR INPUT_ITERATOR GENERATION
 #define FILE_PATH "./Makefile"
+
+//
+//	<- CONFIGURATION
+//
+
 
 // INCLUDE OF REQUIRED LIBS
 #include "catch.hpp"
@@ -106,35 +105,35 @@ namespace Custom {
 	std::string mocking_value<std::string>();
 }
 
-//
-// VECTOR
-//
-#ifdef ENABLE_VECTOR
-# include "vector_utils.hpp"
-#endif
+// //
+// // VECTOR
+// //
+// #ifdef ENABLE_VECTOR
+// # include "vector_utils.hpp"
+// #endif
 
 
-//
-// MAP
-//
-#ifdef ENABLE_MAP
-# include "map_utils.hpp"
-#endif
+// //
+// // MAP
+// //
+// #ifdef ENABLE_MAP
+// # include "map_utils.hpp"
+// #endif
 
 
-//
-// SET
-//
-#ifdef ENABLE_SET
-# include "set_utils.hpp"
-#endif
+// //
+// // SET
+// //
+// #ifdef ENABLE_SET
+// # include "set_utils.hpp"
+// #endif
 
 
-//
-// STACK
-//
-#ifdef ENABLE_STACK
-# include "stack_utils.hpp"
-#endif
+// //
+// // STACK
+// //
+// #ifdef ENABLE_STACK
+// # include "stack_utils.hpp"
+// #endif
 
 #endif

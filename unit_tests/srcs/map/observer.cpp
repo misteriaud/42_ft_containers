@@ -1,4 +1,4 @@
-#include "../../hdrs/common.hpp"
+#include "../../hdrs/map_utils.hpp"
 
 TEST_CASE("Map observer", "[map][observer]") {
 

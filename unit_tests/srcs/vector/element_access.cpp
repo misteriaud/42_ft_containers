@@ -1,4 +1,4 @@
-#include "../../hdrs/common.hpp"
+#include "../../hdrs/vector_utils.hpp"
 #include <stdexcept>
 
 TEST_CASE("Vector element access", "[vector][access]") {

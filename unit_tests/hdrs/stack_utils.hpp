@@ -3,12 +3,13 @@
 # define STACK_UNIT_TEST_HPP
 
 #include "common.hpp"
+#include "vector_utils.hpp"
 
 #include <stack.hpp>
 #include <stack>
 
-typedef	Vec										StackCont;
-typedef	StdVec									StdStackCont;
+typedef	std::vector<ValueType>					StackCont;
+typedef	std::vector<ValueType>					StdStackCont;
 
 typedef NS::stack<ValueType, StackCont >		Stack;
 typedef std::stack<ValueType, StdStackCont >	StdStack;

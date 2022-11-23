@@ -1,4 +1,4 @@
-#include "../../hdrs/common.hpp"
+#include "../../hdrs/vector_utils.hpp"
 
 TEST_CASE("Vector assignement operator", "[vector]") {
 

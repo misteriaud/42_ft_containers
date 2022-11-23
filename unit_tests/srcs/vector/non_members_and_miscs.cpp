@@ -1,4 +1,4 @@
-#include "../../hdrs/common.hpp"
+#include "../../hdrs/vector_utils.hpp"
 
 TEST_CASE("Vector non-members functions", "[vector][operator]") {
 

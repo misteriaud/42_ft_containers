@@ -1,4 +1,4 @@
-#include "../../hdrs/common.hpp"
+#include "../../hdrs/map_utils.hpp"
 
 TEST_CASE("Map iterator", "[map][iterator]") {
 
@@ -98,8 +98,6 @@ TEST_CASE("Map iterator", "[map][iterator]") {
 	// 	StdMapIt	std_it = ref.begin();
 	// 	MapIt		it = map.begin();
 
-	// 	// std::cout << Catch::StringMaker<Map>::convert(map) << std::endl;
-	// 	// std::cout << Catch::StringMaker<StdMap>::convert(ref) << std::endl;
 	// 	for (size_t i = 0; i < REF_SIZE + (REF_SIZE / 10); i++)
 	// 	{
 	// 		if (std_it == ref.end())

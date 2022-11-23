@@ -1,2 +1,4 @@
 unit_test
 ft_container
+**/*.o
+**/*.d
