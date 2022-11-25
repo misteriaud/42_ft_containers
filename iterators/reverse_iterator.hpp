@@ -35,10 +35,6 @@ namespace ft {
 				return (*this);
 			}
 
-			// Comp overloading
-			// Here we have to use friend keyword to be able to access to the protected attribute _elem of both of the iterators
-
-
 			pointer			operator->() const { return &(operator*()); }
 			reference		operator*() const {
 				It tmp = _current;
@@ -82,14 +78,10 @@ namespace ft {
 	template< typename T> // 1 + it
 	reverse_iterator<T>	operator+(const typename reverse_iterator<T>::difference_type lhs, const reverse_iterator<T>& rhs) {
 		return (operator+(rhs, lhs));
-		// reverse_iterator<T> temp(rhs);
-		// return temp += lhs;
 	};
 	template< typename T> // 1 - it
 	reverse_iterator<T>	operator-(const typename reverse_iterator<T>::difference_type lhs, const reverse_iterator<T>& rhs) {
 		return (operator-(rhs, lhs));
-		// reverse_iterator<T> temp(rhs);
-		// return temp -= lhs;
 	};
 
 	template< class It1, class It2> // it2 - it1

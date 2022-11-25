@@ -358,6 +358,8 @@ namespace ft {
 		void	assign(Iterator first, Iterator last, std::bidirectional_iterator_tag) {
 			size_type 	distance = static_cast<size_type>(ft::distance(first, last));
 			size_type	i = 0;
+			if (distance > 0)
+				distance--;
 			if (distance < 1)
 				return (clear());
 			if (distance > _capacity) {
@@ -370,7 +372,7 @@ namespace ft {
 				for (;i < distance; i++)
 					_alloc.construct(_buffer + i, *(first++));
 			}
-			_size = distance - 1;
+			_size = distance;
 		}
 		template <typename InputIterator>
 		void	insert(iterator position, InputIterator first, InputIterator last, std::input_iterator_tag) {
