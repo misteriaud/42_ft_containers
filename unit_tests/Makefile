@@ -1,5 +1,5 @@
 NAME = unit_test
-HDRS = ../hdrs
+HDRS = ..
 VECTORS_SRCS = $(addprefix srcs/vector/, \
 	constructor.cpp \
 	assign.cpp \
