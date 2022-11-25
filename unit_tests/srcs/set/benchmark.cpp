@@ -1,8 +1,8 @@
 #include "../../hdrs/set_utils.hpp"
 #include <iostream>
 
-typedef typename ft::set<size_t>	ft_set_type;
-typedef typename std::set<size_t>	std_set_type;
+typedef ft::set<size_t>	ft_set_type;
+typedef std::set<size_t>	std_set_type;
 
 template <typename SetType>
 SetType	fill_inc_set(size_t n) {

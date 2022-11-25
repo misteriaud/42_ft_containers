@@ -1,8 +1,8 @@
 #include "../../hdrs/map_utils.hpp"
 #include <iostream>
 
-typedef typename ft::map<size_t, MapSecondType>		ft_map_type;
-typedef typename std::map<size_t, MapSecondType>	std_map_type;
+typedef ft::map<size_t, MapSecondType>		ft_map_type;
+typedef std::map<size_t, MapSecondType>	std_map_type;
 
 template <typename MapType>
 MapType	fill_inc_map(size_t n, const MapSecondType& k) {
