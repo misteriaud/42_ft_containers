@@ -19,7 +19,8 @@ MAP_SRCS = $(addprefix srcs/map/, \
 	modifier.cpp \
 	observer.cpp \
 	operation.cpp \
-	non_members_and_miscs.cpp )
+	non_members_and_miscs.cpp \
+	benchmark.cpp)
 
 SET_SRCS = $(addprefix srcs/set/, \
 	constructor.cpp \
@@ -29,12 +30,13 @@ SET_SRCS = $(addprefix srcs/set/, \
 	modifier.cpp \
 	observer.cpp \
 	operation.cpp \
-	non_members_and_miscs.cpp )
+	non_members_and_miscs.cpp \
+	benchmark.cpp)
 
 STACK_SRCS = $(addprefix srcs/stack/, \
 	general.cpp)
 
-SRCS_BASE = $(addprefix srcs/, main.cpp common.cpp)
+SRCS_BASE = $(addprefix srcs/, main.cpp common.cpp 42_main.cpp)
 SRCS += $(SRCS_BASE)
 
 ifneq ("$(wildcard $(HDRS)/vector.hpp)","")

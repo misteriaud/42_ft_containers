@@ -38,7 +38,14 @@
 #include <stdlib.h>     /* srand, rand */
 #include <time.h>       /* time */
 
-typedef VALUE_TYPE										ValueType;
+#define RESET				"\033[0m"
+#define BOLDGREEN	 		"\033[1m\033[32m"      /* Bold Green */
+#define BOLDBLUE			"\033[1m\033[34m"      /* Bold Blue */
+#define BOLDWHITE			"\033[1m\033[37m"      /* Bold White */
+
+#define BENCHMARK_SIZE		16777216
+#define SEED 				123456789
+typedef VALUE_TYPE			ValueType;
 
 namespace Custom {
 
@@ -92,9 +99,9 @@ namespace Custom {
 	template< class T > struct remove_const                { typedef T type; };
 	template< class T > struct remove_const<const T>       { typedef T type; };
 
-//
-//	GENERATOR
-//
+	//
+	//	GENERATOR
+	//
 	template <typename T>
 	typename Custom::enable_if<!Custom::is_cont<T>::value, T>::type
 	mocking_value() {
@@ -104,36 +111,5 @@ namespace Custom {
 	template <>
 	std::string mocking_value<std::string>();
 }
-
-// //
-// // VECTOR
-// //
-// #ifdef ENABLE_VECTOR
-// # include "vector_utils.hpp"
-// #endif
-
-
-// //
-// // MAP
-// //
-// #ifdef ENABLE_MAP
-// # include "map_utils.hpp"
-// #endif
-
-
-// //
-// // SET
-// //
-// #ifdef ENABLE_SET
-// # include "set_utils.hpp"
-// #endif
-
-
-// //
-// // STACK
-// //
-// #ifdef ENABLE_STACK
-// # include "stack_utils.hpp"
-// #endif
 
 #endif
