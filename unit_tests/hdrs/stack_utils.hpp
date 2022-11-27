@@ -2,11 +2,41 @@
 #ifndef STACK_UNIT_TEST_HPP
 # define STACK_UNIT_TEST_HPP
 
-#include "common.hpp"
-#include "vector_utils.hpp"
-
+#include "catch.hpp"
 #include <stack.hpp>
 #include <stack>
+//
+// StringMaker
+//
+namespace Custom {
+	template<typename StackType>
+	class MutantStack;
+}
+namespace Catch {
+
+	// StringMaker
+	template<typename T, typename Cont>
+	struct StringMaker<std::stack<T, Cont> > {
+		static std::string convert(std::stack<T, Cont> const& value ) {
+			Custom::MutantStack<std::stack<T, Cont> >	mutant(value);
+
+			return (Catch::StringMaker<Cont>::convert(mutant.get_cont()));
+		}
+	};
+
+	template<typename T, typename Cont>
+	struct StringMaker<ft::stack<T, Cont> > {
+		static std::string convert(ft::stack<T, Cont> const& value ) {
+			Custom::MutantStack<ft::stack<T, Cont> >	mutant(value);
+
+			return (Catch::StringMaker<Cont>::convert(mutant.get_cont()));
+		}
+	};
+}
+
+
+#include "common.hpp"
+#include "vector_utils.hpp"
 
 typedef	std::vector<ValueType>					StackCont;
 typedef	std::vector<ValueType>					StdStackCont;
@@ -94,47 +124,5 @@ namespace Custom {
 	};
 }
 
-
-//
-// StringMaker
-//
-namespace Catch {
-
-	// // StringMaker
-	// template<typename T> struct StringMaker<std::stack<T> > {
-	// 	static std::string convert(std::stack<T> const& value ) {
-	// 		std::string	out;
-
-	// 		if (it == value.end())
-	// 			return (out);
-	// 		out += "{ ";
-	// 		out += "\"" + *it + "\"";
-	// 		it++;
-	// 		for (; it != value.end(); it++)
-	// 			out += ", \"" + *it + "\"";
-	// 		out += " }";
-	// 		return (out);
-	// 	}
-	// };
-
-	// template<>
-	// struct StringMaker<StackCont > {
-	// 	static std::string convert(StackCont const& value ) {
-
-	// 		return (Catch::StringMaker<StackCont>::convert(Custom::MutantStack<StackCont>(value).get_cont()));
-	// 		// typename ft::stack<T>::const_iterator it = value.begin();
-
-	// 		// if (it == value.end())
-	// 		// 	return (out);
-	// 		// out += "{ ";
-	// 		// out += "\"" + *it + "\"";
-	// 		// it++;
-	// 		// for (; it != value.end(); it++)
-	// 		// 	out += ", \"" + *it + "\"";
-	// 		// out += " }";
-	// 		// return (out);
-	// 	}
-	// };
-}
 
 #endif

@@ -2,10 +2,60 @@
 #ifndef SET_UNIT_TEST_HPP
 # define SET_UNIT_TEST_HPP
 
-#include "common.hpp"
-
+#include "catch.hpp"
 #include <set.hpp>
 #include <set>
+//
+// StringMaker
+//
+namespace Catch {
+
+	// STD MAP
+	template<typename T1, typename T2, typename T3>
+	struct StringMaker<std::set<T1, T2, T3> > {
+		static std::string convert(std::set<T1, T2, T3> const& value ) {
+
+			std::string	out;
+			typename std::set<T1, T2, T3>::const_iterator it = value.begin();
+
+			if (it == value.end())
+				return (out);
+			out += "{ ";
+			out += Catch::StringMaker<T1>::convert(*it);
+			it++;
+			for (; it != value.end(); it++) {
+				out += ", ";
+				out += Catch::StringMaker<T1>::convert(*it);
+			}
+			out += " }";
+			return (out);
+		}
+	};
+
+	// MAP
+	template<typename T1, typename T2, typename T3>
+	struct StringMaker<ft::set<T1, T2, T3> > {
+		static std::string convert(ft::set<T1, T2, T3> const& value ) {
+
+			std::string	out;
+			typename ft::set<T1, T2, T3>::const_iterator it = value.begin();
+
+			if (it == value.end())
+				return (out);
+			out += "{ ";
+			out += Catch::StringMaker<T1>::convert(*it);
+			it++;
+			for (; it != value.end(); it++) {
+				out += ", ";
+				out += Catch::StringMaker<T1>::convert(*it);
+			}
+			return (out);
+		}
+	};
+}
+
+#include "common.hpp"
+
 typedef NS::set<ValueType, std::less<ValueType>, std::allocator<ValueType> >	Set;
 typedef Set::iterator															SetIt;
 typedef Set::const_iterator														SetConstIt;
@@ -102,52 +152,4 @@ namespace Custom {
 }
 
 
-// //
-// // StringMaker
-// //
-// namespace Catch {
-
-// 	// STD MAP
-// 	template<typename T1, typename T2, typename T3>
-// 	struct StringMaker<std::set<T1, T2, T3> > {
-// 		static std::string convert(std::set<T1, T2, T3> const& value ) {
-
-// 			std::string	out;
-// 			typename std::set<T1, T2, T3>::const_iterator it = value.begin();
-
-// 			if (it == value.end())
-// 				return (out);
-// 			out += "{ ";
-// 			out += Catch::StringMaker<T1>::convert(*it);
-// 			it++;
-// 			for (; it != value.end(); it++) {
-// 				out += ", ";
-// 				out += Catch::StringMaker<T1>::convert(*it);
-// 			}
-// 			out += " }";
-// 			return (out);
-// 		}
-// 	};
-
-// 	// MAP
-// 	template<typename T1, typename T2, typename T3>
-// 	struct StringMaker<ft::set<T1, T2, T3> > {
-// 		static std::string convert(ft::set<T1, T2, T3> const& value ) {
-
-// 			std::string	out;
-// 			typename ft::set<T1, T2, T3>::const_iterator it = value.begin();
-
-// 			if (it == value.end())
-// 				return (out);
-// 			out += "{ ";
-// 			out += Catch::StringMaker<T1>::convert(*it);
-// 			it++;
-// 			for (; it != value.end(); it++) {
-// 				out += ", ";
-// 				out += Catch::StringMaker<T1>::convert(*it);
-// 			}
-// 			return (out);
-// 		}
-// 	};
-// }
 #endif

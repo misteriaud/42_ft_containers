@@ -2,10 +2,61 @@
 #ifndef VECTOR_UNIT_TEST_HPP
 # define VECTOR_UNIT_TEST_HPP
 
-#include "common.hpp"
-
+#include "catch.hpp"
 #include <vector.hpp>
 #include <vector>
+//
+// StringMaker
+//
+namespace Catch {
+
+	// StringMaker
+	template<typename T> struct StringMaker<std::vector<T> > {
+		static std::string convert(std::vector<T> const& value ) {
+			std::string	out;
+			typename std::vector<T>::const_iterator it = value.begin();
+
+			if (it == value.end())
+				return (out);
+			out += "{ ";
+			out += "\"";
+			out += Catch::StringMaker<T>::convert(*it);
+			out += "\"";
+			it++;
+			for (; it != value.end(); it++) {
+				out += ", \"";
+				out += Catch::StringMaker<T>::convert(*it);
+				out += "\"";
+			}
+			out += " }";
+			return (out);
+		}
+	};
+
+	template<typename T> struct StringMaker<ft::vector<T> > {
+		static std::string convert(ft::vector<T> const& value ) {
+			std::string	out;
+			typename ft::vector<T>::const_iterator it = value.begin();
+
+			if (it == value.end())
+				return (out);
+			out += "{ ";
+			out += "\"";
+			out += Catch::StringMaker<T>::convert(*it);
+			out += "\"";
+			it++;
+			for (; it != value.end(); it++) {
+				out += ", \"";
+				out += Catch::StringMaker<T>::convert(*it);
+				out += "\"";
+			}
+			out += " }";
+			return (out);
+		}
+	};
+}
+
+#include "common.hpp"
 typedef NS::vector<ValueType>							Vec;
 typedef Vec::iterator									VecIt;
 typedef Vec::const_iterator								VecConstIt;
@@ -76,45 +127,5 @@ namespace Custom {
 }
 
 
-//
-// StringMaker
-//
-namespace Catch {
-
-	// StringMaker
-	template<typename T> struct StringMaker<std::vector<T> > {
-		static std::string convert(std::vector<T> const& value ) {
-			std::string	out;
-			typename std::vector<T>::const_iterator it = value.begin();
-
-			if (it == value.end())
-				return (out);
-			out += "{ ";
-			out += "\"" + *it + "\"";
-			it++;
-			for (; it != value.end(); it++)
-				out += ", \"" + *it + "\"";
-			out += " }";
-			return (out);
-		}
-	};
-
-	template<typename T> struct StringMaker<ft::vector<T> > {
-		static std::string convert(ft::vector<T> const& value ) {
-			std::string	out;
-			typename ft::vector<T>::const_iterator it = value.begin();
-
-			if (it == value.end())
-				return (out);
-			out += "{ ";
-			out += "\"" + *it + "\"";
-			it++;
-			for (; it != value.end(); it++)
-				out += ", \"" + *it + "\"";
-			out += " }";
-			return (out);
-		}
-	};
-}
 
 #endif

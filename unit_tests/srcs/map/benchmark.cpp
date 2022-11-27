@@ -37,7 +37,7 @@ MapType	fill_rand_map(const std::vector<size_t>& rand_vec, const MapSecondType& 
 TEST_CASE("Map fill benchmarck", "[!hide][map][fill][benchmark]") {
 	srand(SEED);
 
-	MapSecondType	tmp_second = Custom::mocking_value<ValueType>();
+	MapSecondType	tmp_second = Custom::mocking_value<MapSecondType>();
 	size_t		n = BENCHMARK_SIZE >> 1;
 
 	SECTION("inc fill ft::map") {
@@ -76,7 +76,7 @@ TEST_CASE("Map fill benchmarck", "[!hide][map][fill][benchmark]") {
 TEST_CASE("Map traversal benchmarck", "[!hide][map][traversal][benchmark]") {
 	srand(SEED);
 
-	MapSecondType	tmp_second = Custom::mocking_value<ValueType>();
+	MapSecondType	tmp_second = Custom::mocking_value<MapSecondType>();
 	size_t			n = BENCHMARK_SIZE >> 1;
 	std_map_type	std_map = fill_inc_map<std_map_type>(n, tmp_second);
 	ft_map_type		ft_map = fill_inc_map<ft_map_type>(n, tmp_second);
