@@ -36,7 +36,7 @@ SET_SRCS = $(addprefix srcs/set/, \
 STACK_SRCS = $(addprefix srcs/stack/, \
 	general.cpp)
 
-SRCS_BASE = $(addprefix srcs/, main.cpp common.cpp 42_main.cpp)
+SRCS_BASE = $(addprefix srcs/, main.cpp common.cpp)
 SRCS += $(SRCS_BASE)
 
 ifneq ("$(wildcard $(HDRS)/vector.hpp)","")
@@ -58,6 +58,16 @@ ifneq ("$(wildcard $(HDRS)/set.hpp)","")
 SRCS += $(SET_SRCS)
 $(info set detected)
 endif
+
+ifneq ("$(wildcard $(HDRS)/vector.hpp)","")
+	ifneq ("$(wildcard $(HDRS)/map.hpp)","")
+		ifneq ("$(wildcard $(HDRS)/stack.hpp)","")
+			SRCS += srcs/42_main.cpp
+		endif
+	endif
+endif
+
+
 
 ifeq ("$(SRCS)", "$(SRCS_BASE)")
 $(error None of the containers headers were turned in, please check the HDRS variable path at the top of the makefile)
